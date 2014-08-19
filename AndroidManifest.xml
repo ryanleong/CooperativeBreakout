@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="me.ryanleong.cooperativebreakout"
+    package="com.comp90018.cooperativebreakout"
     android:versionCode="1"
     android:versionName="1.0" >
 
     <uses-sdk
         android:minSdkVersion="14"
-        android:targetSdkVersion="21" />
+        android:targetSdkVersion="19" />
 
     <application
         android:allowBackup="true"
@@ -14,13 +14,29 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.comp90018.cooperativebreakout.MainActivity"
+            android:name=".MainMenu"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".SinglePlayerLevelSelect"
+            android:label="@string/title_activity_single_player_level_select" >
+        </activity>
+        <activity
+            android:name=".MultiplayerFindPlayer"
+            android:label="@string/title_activity_multiplayer_find_player" >
+        </activity>
+        <activity
+            android:name=".MultiplayerLevelSelect"
+            android:label="@string/title_activity_multiplayer_level_select" >
+        </activity>
+        <activity
+            android:name=".DownloadMapsMenu"
+            android:label="@string/title_activity_download_maps_menu" >
         </activity>
     </application>
 
