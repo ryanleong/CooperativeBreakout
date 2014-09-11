@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.comp90018.cooperativebreakout.MainMenu" >
+    tools:context="com.example.breakout.MainActivity" >
 
     <item
         android:id="@+id/action_settings"
