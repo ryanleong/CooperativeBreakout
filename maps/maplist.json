@@ -1,0 +1,17 @@
+{
+	"name": "Map List",
+	"maps": [
+		{
+			"name": "Zone 1",
+			"filename": "zone1.json"
+		},
+		{
+			"name": "Zone 2",
+			"filename": "zone2.json"
+		},
+		{
+			"name": "Zone 3",
+			"filename": "zone3.json"
+		}
+	]
+}
