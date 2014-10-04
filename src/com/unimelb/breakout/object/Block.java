@@ -28,21 +28,21 @@ public class Block {
 		this.height = height;
 	}
 
-	public float getX() {
-		return x;
-	}
-
-	public void setX(float x) {
-		this.x = x;
-	}
-
-	public float getY() {
-		return y;
-	}
-
-	public void setY(float y) {
-		this.y = y;
-	}
+//	public float getX() {
+//		return x;
+//	}
+//
+//	public void setX(float x) {
+//		this.x = x;
+//	}
+//
+//	public float getY() {
+//		return y;
+//	}
+//
+//	public void setY(float y) {
+//		this.y = y;
+//	}
 	
 	public void onDraw(Canvas canvas){
 		Paint paint = new Paint();
@@ -55,6 +55,7 @@ public class Block {
 		}
 	}
 	
+	
 	public boolean isCovered(float x, float y){
 		if(x >= this.x && x <= (this.x + this.width) && y >= this.y && y <= (this.y + this.height)){
 			return true;
@@ -62,45 +63,29 @@ public class Block {
 		return false;
 	}
 	
-	public void bounce(Ball ball){
-	float WIDTH = 2*ball.getRadius() + this.width;
-	float HEIGHT = 2*ball.getRadius() + this.height;
-	
-	float angle = HEIGHT/WIDTH;
-	
-	float x = ball.getX() - (this.getX() + this.getWidth()/2);
-	float y = ball.getY() - (this.getY() + this.getHeight()/2);
-
-	if(x == 0){
-		ball.yBounce();
-	}else if(angle == Math.abs(y/x)){
-		ball.xBounce(0);
-		ball.yBounce();
-	}else if(angle > Math.abs(y/x)){
-		ball.xBounce(0);
-	}else{
-		ball.yBounce();
-	}
-	
-		
-}
-	
-	public float getWidth() {
-		return width;
-	}
-
-	public void setWidth(float width) {
-		this.width = width;
-	}
-
-	public float getHeight() {
-		return height;
-	}
-
-	public void setHeight(float height) {
-		this.height = height;
-	}
-	
+//	public void bounce(Ball ball){
+//	float WIDTH = 2*ball.r + this.width;
+//	float HEIGHT = 2*ball.r + this.height;
+//	
+//	float angle = HEIGHT/WIDTH;
+//	
+//	float x = ball.x - (this.getX() + this.width/2);
+//	float y = ball.y - (this.getY() + this.height/2);
+//
+//	if(x == 0){
+//		ball.yBounce();
+//	}else if(angle == Math.abs(y/x)){
+//		ball.xBounce(0);
+//		ball.yBounce();
+//	}else if(angle > Math.abs(y/x)){
+//		ball.xBounce(0);
+//	}else{
+//		ball.yBounce();
+//	}
+//	
+//		
+//}
+//	
 	public Point[] getBoxPoints(){
 		return new Point[]
 				{

@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import com.unimelb.breakout.utils.GameState;
 import com.unimelb.breakout.utils.Point;
 import com.unimelb.breakout.view.WorldView;
 
@@ -14,18 +15,24 @@ public class Ball {
 	private Bitmap bitmap;
 	
 	//x coordinate
-	private volatile float x;
+	public volatile float x;
 	//y coordinate
-	private volatile float y;
+	public volatile float y;
 	//ball radius
-	private float radius;
+	public float r;
+	
+	public volatile float last_x;
+	public volatile float last_y; 
 	
 	//x speed
-	private volatile float dx;
+	public volatile float dx;
 	//y speed
-	private volatile float dy;
+	public volatile float dy;
+	//acceleration
+	public volatile float da = 0;
 		
-	private boolean isActive;
+	//private boolean isActive;
+	GameState state;
 	
 	private float INITIAL_SPEED_X = 10;
 	private float INITIAL_SPEED_Y = 2;
@@ -46,52 +53,55 @@ public class Ball {
 		this.bitmap = bitmap;
 		this.screenWidth = worldView.width;
 		this.screenHeight = worldView.height;
-		this.radius = worldView.ball_r;
-		this.MIN_X = worldView.wallWidth+radius;
+		this.r = worldView.ball_r;
+		this.MIN_X = worldView.wallWidth+r;
 		this.MAX_X = screenWidth - MIN_X;
-		this.MIN_Y = worldView.wallWidth+radius;
+		this.MIN_Y = worldView.wallWidth+r;
 		this.MAX_Y = screenHeight - MIN_Y;
 		
 		this.ballPaint = getPaint(Color.RED);
 		
 		this.x = worldView.initial_x;
-		this.y = worldView.initial_y - worldView.paddle_h/2 - radius;
+		this.y = worldView.initial_y - worldView.paddle_h/2 - r;
+		
+		this.last_x = x;
+		this.last_y = y;
 		
 		this.dx = 0;
 		this.dy = 0;
+		this.da = 0;
 		//setXspeed(INITIAL_SPEED_X);
 		//setYspeed(INITIAL_SPEED_Y);
 		
-		this.isActive = true;
+		this.state = GameState.READY;
 		
 	}
 
 	public void activate(){
-		this.isActive = true;
+		this.state = GameState.ACTIVE;
+		
 	}
 	
 	public void deactivate(){
-		this.isActive = false;
+		this.state = GameState.READY;
 	}
 	
-	public float getX() {
-		return x;
+	public void end(){
+		this.state = GameState.DEAD;
 	}
-
-	public void setX(float x) {
-		this.x = x;
+	
+	public boolean isActive(){
+		if(this.state == GameState.ACTIVE){
+			return true;
+		}
+		return false;
 	}
-
-	public float getY() {
-		return y;
-	}
-
-	public void setY(float y) {
-		this.y = y;
-	}
-
-	public float getXspeed() {
-		return dx;
+	
+	public boolean isEnd(){
+		if(this.state == GameState.DEAD){
+			return true;
+		}
+		return false;
 	}
 
 	public void setXspeed(float xspeed) {
@@ -105,23 +115,15 @@ public class Ball {
 			this.dx = xspeed;
 		}
 	}
-
-	public float getYspeed() {
-		return dy;
-	}
-
-	public void setYspeed(float yspeed) {
-		this.dy = yspeed;
-	}
-	
-	public float getRadius(){
-		return radius;
-	}
 	
 	public void update(float dt){
-		if (isActive) {
+		if (isActive()) {
+			
 	        updatePosition(dt);
-	        handleWallCollision(dt);
+	        handleWallCollision();
+	        
+		}else if (dy >= screenHeight){
+			end();
 		}
 //	        if (position.Y > screenHeight) {
 //	            state = State.Dead;
@@ -133,10 +135,7 @@ public class Ball {
 //	        LaunchBall();
 //	    }
 	}
-	public void handleWallCollision(float dt){
-		
-		this.x = this.x + (this.dx * dt);
-	    this.y = this.y + (this.dy * dt);
+	public void handleWallCollision(){
 	      
 		if(x > MAX_X && dx > 0){
 			x = MAX_X;
@@ -146,62 +145,28 @@ public class Ball {
 			x = MIN_X;
 			this.xBounce(0);
 			
-		}else if(y > MAX_Y && dy > 0){
-			y = MAX_Y;
-			this.yBounce();
-			
 		}else if(y < MIN_Y && dy < 0){
 			y = MIN_Y;
 			this.yBounce();
 		}
+		else if(y > MAX_Y && dy > 0){
+			y = MAX_Y;
+			this.yBounce();
+			
+		}
 		
 	}
-	
-//	private void updatePhysics() {
-//		// TODO Auto-generated method stub
-//		if(x>=(this.screenWidth-radius)){
-//			this.setX((this.screenWidth-radius));
-//			this.xBounce(0);
-//		}
-//		
-//		if(x<=radius){
-//			this.setX(radius);
-//			this.xBounce(0);
-//		}
-//		
-//		if(y>=(this.screenHeight-radius)){
-//			this.setY(this.screenHeight-radius);
-//			this.yBounce();
-//		}
-//		
-//		if(y<=radius){
-//			this.setY(radius);
-//			this.yBounce();
-//		}
-//		
-//	}
-	
-	public void moveBall(float x, float y) {
-		// TODO Auto-generated method stub
-		setX(x);
-		setY(y);
-	}
-	
 
 	private void updatePosition(float dt) {
 		// TODO Auto-generated method stub
-
-		this.x = this.x + (this.dx * dt);
-	    this.y = this.y + (this.dy * dt);
-	}
-	
-	public BallState getNextState(float x, float y, float dx, float dy, float accel, float dt){
-		float x2  = x + (dt * dx) + (accel * dt * dt * 0.5f);
-		float y2  = y + (dt * dy) + (accel * dt * dt * 0.5f);
-		float dx2 = dx + (accel * dt) * (dx > 0 ? 1 : -1);
-		float dy2 = dy + (accel * dt) * (dy > 0 ? 1 : -1);
 		
-		return new BallState(x2,y2,dx2,dy2);
+		this.last_x = x;
+		this.last_y = y;
+		
+		this.x = x + (dt * dx) + (da * dt * dt * 0.5f);
+		this.y  = y + (dt * dy) + (da * dt * dt * 0.5f);
+		this.dx = dx + (da * dt) * (dx > 0 ? 1 : -1);
+		this.dy = dy + (da * dt) * (dy > 0 ? 1 : -1);
 	}
 	
 	public void accelerate(float x, float y, float dx, float dy, float accel, float dt){
@@ -212,23 +177,19 @@ public class Ball {
 		
 	}
 	
-	public Point getPosition(){
-		return new Point(x, y);
-	}
-	
 	public void yBounce(){
-		setYspeed(-dy);
+		dy = -dy;
 	}
 
 	public void xBounce(float acceleration){
 		if(Math.abs(dx) > INITIAL_SPEED_X){
 			if(dx >= 0){
-				setXspeed(dx - 2);
+				dx -= 2;
 			}else{
-				setXspeed(dx + 2);
+				dx += 2;
 			}
 		}
-		setXspeed(-dx + acceleration);
+		dx = -dx + acceleration;
 	}
 	
 	public void onDraw(Canvas canvas){
@@ -237,8 +198,7 @@ public class Ball {
 			
 		if(worldView.getOnScreen()){
 			
-			//updatePosition(x,y);
-			canvas.drawCircle(x, y, radius, this.ballPaint);
+			canvas.drawCircle(x, y, r, this.ballPaint);
 		}
 	}
 	
@@ -251,94 +211,149 @@ public class Ball {
 
 
 	public void bounceBlock(Block block){
-		float WIDTH = 2*this.getRadius() + block.getWidth();
-		float HEIGHT = 2*this.getRadius() + block.getHeight();
+		float WIDTH = 2*r + block.width;
+		float HEIGHT = 2*this.r + block.height;
 		
-		float angle = HEIGHT/WIDTH;
+		double angle = HEIGHT/WIDTH;
 		
-		float x = this.getX() - (block.getX() + block.getWidth()/2);
-		float y = this.getY() - (block.getY() + block.getHeight()/2);
-	
+		double x = Math.abs(this.x - block.x);
+		double y = Math.abs(this.y - block.y);
+		
 		if(x == 0){
 			this.yBounce();
-		}else if(angle == Math.abs(y/x) ){
+		}else if(angle == y/x ){
 			//hit the corner
 			this.xBounce(0);
 			this.yBounce();
-		}else if(angle > Math.abs(y/x)){
+		}else if(angle > y/x){
 			//hit left or right edge
 			this.xBounce(0);
 		}else{
 			//hit top or bottom edge
 			this.yBounce();
 		}
+//		boolean left = false;
+//        boolean right = false;
+//        boolean up = false;
+//        boolean down = false;
+//        if (dx < 0) {
+//            left = true;
+//        } else if (dx > 0) {
+//            right = true;
+//        }
+//        if (dy < 0) {
+//            up = true;
+//        } else if (dy > 0) {
+//            down = true;
+//        }
+//        if (left && up) {
+//            dx = -dx;
+//        }
+//        if (left && down) {
+//            dy = -dy;
+//        }
+//        if (right && up) {
+//            dx = -dx;
+//        }
+//        if (right && down) {
+//            dy = -dy;
+//        }
+//        
+//        if ((up || down) && !left && !right){
+//        	dy = -dy;
+//        }
+//        
+//        if ((left || right) && !up && !down){
+//        	dx = -dx;
+//        }
+        
+        //Log.d("BOUNCE", "left :" + left + " right: " + right + " up: " + up + " down: " + down);
 	}
-//	
-//	private void HandlePaddleCollision(Paddle paddle) {
-//	    if (dy > 0 && paddle.collide(this)) {
-//	    	
-//	        dy = -dy;
-//	        
-//	        position.Y = paddle.Bounds.Y - sprite.Height;
-//	 
-//	        direction.X = ((float)Bounds.Center.X - paddle.Bounds.Center.X) / 
-//	                      (paddle.Bounds.Width / 2);
-//	        direction = Vector2.Normalize(direction);
-//	 
-//	        // Increase the speed when the ball is hit
-//	        speed += speedIncrement;
-//	        speed = Math.Min(speed, maxSpeed);
-//	    }
-//	}
 	
 	public void bouncePaddle(Paddle paddle){
-		float WIDTH = 2*this.getRadius() + paddle.getWidth();
-		float HEIGHT = 2*this.getRadius() + paddle.getHeight();
-		
-		float angle = HEIGHT/WIDTH;
-		
-		float x = this.getX() - (paddle.getX() + paddle.getWidth()/2);
-		float y = this.getY() - (paddle.getY() + paddle.getHeight()/2);
 
 		dy = - dy; //reverse y direction
-		dx =  2* (this.x - paddle.x)/ paddle.width;
+		float speed = (float) Math.sqrt(Math.pow(dy, 2)+Math.pow(dx, 2));
+		
+		dx =  (2* (this.x - paddle.x)/ paddle.width) * (speed);
 		
 	}
 	
-	/**
-	 * Internal class for recording state information
-	 * @author BinGo
-	 *
-	 */
-	class BallState{
-		float x;
-		float y;
-		float dx;
-		float dy;
-		
-		public BallState(float x, float y, float dx, float dy){
-			this.x = x;
-			this.y = y;
-			this.dx = dx;
-			this.dy = dy;
-		}
-
-		public float getX() {
-			return x;
-		}
-
-		public float getY() {
-			return y;
-		}
-
-		public float getDx() {
-			return dx;
-		}
-
-		public float getDy() {
-			return dy;
-		}
-		
-	}
-	
+//	public boolean handleCollision(Block block){
+//		Point intersect;
+//		boolean collide = false;;
+//		Point block_left_top = new Point(block.x - block.width/2, block.y - block.height/2);
+//		Point block_right_top = new Point(block.x + block.width/2, block.y - block.height/2);
+//		Point block_left_bot = new Point(block.x - block.width/2, block.y + block.height/2);
+//		Point block_right_bot = new Point(block.x + block.width/2, block.y + block.height/2);
+//		
+//		float last_x = this.last_x;
+//		float last_y = this.last_x;
+//		float x = this.x;
+//		float y = this.y;
+//		
+//		if(last_x < x){
+//			last_x -= r;
+//			x += r;
+//		}else{
+//			last_x += r;
+//			x -= r;
+//		}
+//		
+//		if(last_y < y){
+//			last_y -= r;
+//			y += r;
+//		}else{
+//			last_y += r;
+//			y -= r;
+//		}
+//		
+//		Point from = new Point(last_x, last_y);
+//		Point to = new Point(x, y);
+//		
+//		//collide left edge of the block
+//		intersect = Utils.intersect(from, to, block_left_top, block_left_bot);
+//		if(intersect != null){
+//			x = intersect.x - r;
+//			y = intersect.y;
+//			dx = -dx;
+//			collide=true;
+//		}
+//		
+//		//collide right edge of the block
+//		intersect = Utils.intersect(from, to, block_right_top, block_right_bot);
+//		if(intersect != null){
+//			x = intersect.x + r;
+//			y = intersect.y;
+//
+//			dx = -dx;
+//			collide=true;
+//
+//		}
+//		
+//		//collide top edge of the block
+//		intersect = Utils.intersect(from, to, block_left_top, block_right_top);
+//		if(intersect != null){
+//			x = intersect.x;
+//
+//			y = intersect.y - r;
+//			dy = -dy;
+//			collide=true;
+//
+//		}
+//		
+//		//collide bottom edge of the block
+//		intersect = Utils.intersect(from, to, block_left_bot, block_right_bot);
+//		if(intersect != null){
+//			x = intersect.x;
+//
+//			y = intersect.y + r;
+//			dy = -dy;
+//			collide=true;
+//
+//		}
+//		
+//		return collide;
+//		
+//	}
 }

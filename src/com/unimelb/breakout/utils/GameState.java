@@ -1,9 +1,8 @@
 package com.unimelb.breakout.utils;
 
-public enum State {
+public enum GameState {
 
+	READY,
 	ACTIVE,
-	DEAD,
-	READY;
-	
+	DEAD;
 }

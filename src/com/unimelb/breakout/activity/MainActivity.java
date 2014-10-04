@@ -14,12 +14,15 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements WorldView.onBlockRemoveListener{
+public class MainActivity extends Activity implements WorldView.onBlockRemoveListener, WorldView.onLifeLostListener{
 	
 	private WorldView worldView;
 	
 	private TextView myScore;
 	private int score = 0;
+	
+	private TextView myLives;
+	private int lives = 3;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -78,4 +81,23 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		this.myScore.setText(Integer.toString(score));
 	}
 	
+	@Override
+	public void onLifeLost() {
+		// TODO Auto-generated method stub
+		runOnUiThread(new Runnable() {
+		     @Override
+		     public void run() {
+
+		 		lostLife();
+
+		    }
+		});
+	}
+	
+	public void lostLife(){
+		if(lives > 0){
+			lives -= 1;
+		}
+		this.myLives.setText(Integer.toString(lives));
+	}
 }
