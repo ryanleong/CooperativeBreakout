@@ -1,6 +1,6 @@
 package com.unimelb.breakout.activity;
 
-import com.example.breakout.R;
+import com.unimelb.breakout.R;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -74,7 +74,8 @@ public class WelcomeActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				
+				Intent intent = new Intent(WelcomeActivity.this, ScoreActivity.class);
+				startActivity(intent);
 			}
     		
     	});

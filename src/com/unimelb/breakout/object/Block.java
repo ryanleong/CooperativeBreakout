@@ -18,7 +18,14 @@ public class Block {
 	public float x;
 	public float y;
 	
-	public Block(WorldView worldView, Bitmap bitmap, float x, float y, float width, float height) {
+	float left_edge;
+	float right_edge;
+	float top_edge;
+	float bottom_edge;
+	
+	int i;
+	
+	public Block(WorldView worldView, Bitmap bitmap, float x, float y, float width, float height, int i) {
 		super();
 		this.worldView = worldView;
 		this.bitmap = bitmap;
@@ -26,6 +33,12 @@ public class Block {
 		this.y = y;
 		this.width = width;
 		this.height = height;
+		this.i = i;
+		
+		this.left_edge = x - width/2;
+		this.right_edge = x + width/2;
+		this.top_edge = y - height/2;
+		this.bottom_edge = y + height/2;
 	}
 
 //	public float getX() {
@@ -47,11 +60,14 @@ public class Block {
 	public void onDraw(Canvas canvas){
 		Paint paint = new Paint();
 		paint.setAntiAlias(true);
-		paint.setColor(Color.RED);
+		
+		int colors[] = {Color.RED, Color.MAGENTA, Color.YELLOW, Color.DKGRAY, Color.CYAN};
+		
+		paint.setColor(colors[i%5]);
 				
 		if(worldView.getOnScreen()){
 			
-			canvas.drawRect(x-width/2, y-height/2, x+width/2, y+height/2, paint);
+			canvas.drawRect(this.left_edge, this.top_edge, this.right_edge, this.bottom_edge, paint);
 		}
 	}
 	
@@ -89,10 +105,10 @@ public class Block {
 	public Point[] getBoxPoints(){
 		return new Point[]
 				{
-				 new Point(x+width/2,y-height/2), //right-top corner point
-				 new Point(x+width/2,y+height/2), //right-bottom corner point
-				 new Point(x-width/2,y+height/2), //left-bottom corner point
-				 new Point(x-width/2,y-height/2)};//left-top corner point
+				 new Point(right_edge,top_edge), //right-top corner point
+				 new Point(right_edge,bottom_edge), //right-bottom corner point
+				 new Point(left_edge,bottom_edge), //left-bottom corner point
+				 new Point(left_edge/2,top_edge)};//left-top corner point
 	}
 	
 	public Point getNearestPoint(float x, float y){

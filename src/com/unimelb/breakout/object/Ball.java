@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
 import com.unimelb.breakout.utils.GameState;
 import com.unimelb.breakout.utils.Point;
@@ -20,9 +21,6 @@ public class Ball {
 	public volatile float y;
 	//ball radius
 	public float r;
-	
-	public volatile float last_x;
-	public volatile float last_y; 
 	
 	//x speed
 	public volatile float dx;
@@ -61,12 +59,6 @@ public class Ball {
 		
 		this.ballPaint = getPaint(Color.RED);
 		
-		this.x = worldView.initial_x;
-		this.y = worldView.initial_y - worldView.paddle_h/2 - r;
-		
-		this.last_x = x;
-		this.last_y = y;
-		
 		this.dx = 0;
 		this.dy = 0;
 		this.da = 0;
@@ -76,17 +68,23 @@ public class Ball {
 		this.state = GameState.READY;
 		
 	}
+	
+	public void setPosition(float x, float y){
+		this.x = x;
+		this.y = y;
+	}
 
 	public void activate(){
 		this.state = GameState.ACTIVE;
 		
 	}
 	
-	public void deactivate(){
+	public void ready(){
 		this.state = GameState.READY;
 	}
 	
 	public void end(){
+		Log.i("BALL", "Lost One Life");
 		this.state = GameState.DEAD;
 	}
 	
@@ -117,13 +115,15 @@ public class Ball {
 	}
 	
 	public void update(float dt){
+		if (y >= screenHeight){
+			end();
+		}
+		
 		if (isActive()) {
 			
 	        updatePosition(dt);
 	        handleWallCollision();
 	        
-		}else if (dy >= screenHeight){
-			end();
 		}
 //	        if (position.Y > screenHeight) {
 //	            state = State.Dead;
@@ -149,19 +149,16 @@ public class Ball {
 			y = MIN_Y;
 			this.yBounce();
 		}
-		else if(y > MAX_Y && dy > 0){
-			y = MAX_Y;
-			this.yBounce();
-			
-		}
+//		else if(y > MAX_Y && dy > 0){
+//			y = MAX_Y;
+//			this.yBounce();
+//			
+//		}
 		
 	}
 
 	private void updatePosition(float dt) {
 		// TODO Auto-generated method stub
-		
-		this.last_x = x;
-		this.last_y = y;
 		
 		this.x = x + (dt * dx) + (da * dt * dt * 0.5f);
 		this.y  = y + (dt * dy) + (da * dt * dt * 0.5f);
@@ -169,13 +166,13 @@ public class Ball {
 		this.dy = dy + (da * dt) * (dy > 0 ? 1 : -1);
 	}
 	
-	public void accelerate(float x, float y, float dx, float dy, float accel, float dt){
-		this.x = x + (dt * dx) + (accel * dt * dt * 0.5f);
-		this.y  = y + (dt * dy) + (accel * dt * dt * 0.5f);
-		this.dx = dx + (accel * dt) * (dx > 0 ? 1 : -1);
-		this.dy = dy + (accel * dt) * (dy > 0 ? 1 : -1);
-		
-	}
+//	public void accelerate(float x, float y, float dx, float dy, float accel, float dt){
+//		this.x = x + (dt * dx) + (accel * dt * dt * 0.5f);
+//		this.y  = y + (dt * dy) + (accel * dt * dt * 0.5f);
+//		this.dx = dx + (accel * dt) * (dx > 0 ? 1 : -1);
+//		this.dy = dy + (accel * dt) * (dy > 0 ? 1 : -1);
+//		
+//	}
 	
 	public void yBounce(){
 		dy = -dy;
@@ -211,6 +208,7 @@ public class Ball {
 
 
 	public void bounceBlock(Block block){
+		
 		float WIDTH = 2*r + block.width;
 		float HEIGHT = 2*this.r + block.height;
 		
@@ -221,58 +219,25 @@ public class Ball {
 		
 		if(x == 0){
 			this.yBounce();
-		}else if(angle == y/x ){
-			//hit the corner
-			this.xBounce(0);
-			this.yBounce();
-		}else if(angle > y/x){
+		}
+//		else if(angle == y/x ){
+//			//hit the corner
+//			this.xBounce(0);
+//			this.yBounce();
+//		}
+		else if(angle > y/x){
 			//hit left or right edge
 			this.xBounce(0);
 		}else{
 			//hit top or bottom edge
 			this.yBounce();
 		}
-//		boolean left = false;
-//        boolean right = false;
-//        boolean up = false;
-//        boolean down = false;
-//        if (dx < 0) {
-//            left = true;
-//        } else if (dx > 0) {
-//            right = true;
-//        }
-//        if (dy < 0) {
-//            up = true;
-//        } else if (dy > 0) {
-//            down = true;
-//        }
-//        if (left && up) {
-//            dx = -dx;
-//        }
-//        if (left && down) {
-//            dy = -dy;
-//        }
-//        if (right && up) {
-//            dx = -dx;
-//        }
-//        if (right && down) {
-//            dy = -dy;
-//        }
-//        
-//        if ((up || down) && !left && !right){
-//        	dy = -dy;
-//        }
-//        
-//        if ((left || right) && !up && !down){
-//        	dx = -dx;
-//        }
-        
-        //Log.d("BOUNCE", "left :" + left + " right: " + right + " up: " + up + " down: " + down);
 	}
 	
 	public void bouncePaddle(Paddle paddle){
 
 		dy = - dy; //reverse y direction
+		
 		float speed = (float) Math.sqrt(Math.pow(dy, 2)+Math.pow(dx, 2));
 		
 		dx =  (2* (this.x - paddle.x)/ paddle.width) * (speed);

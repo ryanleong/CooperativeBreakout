@@ -18,10 +18,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.support.v4.view.VelocityTrackerCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.VelocityTracker;
+import android.widget.Toast;
 
 /**
  * TODO: document your custom view class.
@@ -52,15 +54,17 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	public int ballRadius = 30;
 	public int initial_x;
 	public int initial_y;
-	public int lives = 3;
+	public int lives = 1;
 	
 	private onBlockRemoveListener blockRemoveListener;
 	
 	private onLifeLostListener lifeLostListener;
 
-	
+	private onGameOverListener gameOverListener;
 	//listener of motion velocity
 	private VelocityTracker mVelocityTracker = null;
+	
+	Thread thread;
 
 	public WorldView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -82,9 +86,9 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 		this.initial_x = width/2;
 		this.initial_y = height/6*5;
 		
-		this.start();
+		this.initialise();
 		
-		Thread thread = new Thread(this);
+		thread = new Thread(this);
 		thread.start();
 	}
 
@@ -109,48 +113,57 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 		// TODO Auto-generated method stub
 		while(isRunning){
 			Canvas canvas = null;
+			boolean ballReacted = false;
+
 			try{
 				
-				if(lives > 0){
-					canvas = surfaceHolder.lockCanvas(null);
-					synchronized(surfaceHolder){
+				canvas = surfaceHolder.lockCanvas(null);
+				synchronized(surfaceHolder){
+					if(canvas!= null)
 						onDraw(canvas);
-						
-						if(!ball.isEnd()){
-							if(!blocks.isEmpty()){
-								//stage not clear
-								Iterator<Block> list = blocks.iterator();
-								//iterate each block
-								while(list.hasNext()){
-									Block b = list.next();
-									//if collide then remove the block
-									if(this.hasCollision(ball, b)){
-									//if(ball.handleCollision(b)){
-										list.remove();
+					
+					if(!ball.isEnd()){
+						if(!blocks.isEmpty()){
+							//stage not clear
+							Iterator<Block> list = blocks.iterator();
+							//iterate each block
+							while(list.hasNext()){
+								Block b = list.next();
+								//if collide then remove the block
+								if(this.hasCollision(ball, b)){
+								//if(ball.handleCollision(b)){
+									list.remove();
+									if(!ballReacted){
 										ball.bounceBlock(b);
-										this.blockRemoved();
-									}else{
-										b.onDraw(canvas);
+										ballReacted = true;
 									}
+									this.blockRemoved();
+								}else{
+									b.onDraw(canvas);
 								}
-							}else{
-								//notify that the stage is clear.
 							}
 						}else{
-							this.start();
+							//notify that the stage is clear.
 						}
-						//enable collision detection after the ball is launched
-						if(isBallLaunched){
-							if(this.hasCollision(ball, paddle)){
-								ball.bouncePaddle(paddle);
-							}
-						}
+					}else{
 						
-						ball.onDraw(canvas);
-						paddle.onDraw(canvas);
+						Log.i("BLOCKS", "size: " + blocks.size());
+						this.lifeLost();
+						if(lives > 0){
+							this.start();	
+						}else{
+							this.gameover();
+						}			
 					}
-				}else{				
-					gameover();					
+					//enable collision detection after the ball is launched
+					if(isBallLaunched){
+						if(this.hasCollision(ball, paddle)){
+							ball.bouncePaddle(paddle);
+						}
+					}
+					
+					ball.onDraw(canvas);
+					paddle.onDraw(canvas);
 				}
 				
 			}finally{
@@ -172,34 +185,21 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 		canvas.drawColor(Color.BLUE);
 	}
 	
-	public void gameover(){
-		AlertDialog.Builder dialog = new AlertDialog.Builder(this.getContext());
-		dialog.setTitle("Game Over");
-		dialog.setMessage("Do you want to play again?");
-		dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
-
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		
-		dialog.setPositiveButton("No", new DialogInterface.OnClickListener(){
-
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-	}
-	
 	public void start(){
 		this.isBallLaunched = false;
+		ball.ready();
+		ball.x = this.initial_x;
+		ball.y = this.initial_y - this.paddle_h/2 - ball.r;
+		
+		paddle.x = this.initial_x;
+		paddle.y = this.initial_y;
+	}
+	
+	public void initialise(){
 		this.blocks = this.generateBlocks(width, height, 1);
 		this.paddle = new Paddle(this, null);
 		this.ball = new Ball(this, null);
+		start();
 	}
 	
 	public boolean getOnScreen(){
@@ -212,7 +212,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	private void launchBall(){
 		this.isBallLaunched = true;
 		this.ball.activate();
-		this.ball.dy = 2;
+		this.ball.dy = 5;
 	}
 	
 	/**
@@ -222,6 +222,13 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 		this.isRunning = false;
 		this.onScreen = false;
 		this.isBallLaunched = false;
+	}
+	
+	public void restart(){
+		this.isRunning = true;
+		this.thread = new Thread(this);
+		this.thread.start();
+		this.initialise();
 	}
 	
 	/**
@@ -242,7 +249,9 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 		
 		for(int i = 0; i < map.length; i++){
 			if(map[i]==1){
-				blocks.add(new Block(this, null, padding+(i%8)*blockWidth, padding+(i%5)*blockHeight, blockWidth/2, blockHeight/2));
+				//blocks.add(new Block(this, null, padding+(i%8)*blockWidth, padding+(i%5)*blockHeight, blockWidth/2, blockHeight/2, i));
+
+				blocks.add(new Block(this, null, padding+blockWidth/2+(i%8)*blockWidth, padding+blockHeight/2+ (i%5)*+blockHeight, blockWidth, blockHeight, i));
 			}
 		}
 		
@@ -259,35 +268,35 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	public boolean hasCollision(Ball ball, Block block){
 
 		//Separating Axis Theorem
-		Point p = block.getNearestPoint(ball.x, ball.y);
-		Vector v_p = new Vector(p.x - block.x, p.y - block.y);
-		
-		Vector v = new Vector(ball.x - block.x, ball.y - block.y);
-		Vector v_u = v.getUnitVector();
-		
-		float projection = v_p.dotProduct(v_u);
-		
-		if (v.magnitude- Math.abs(projection) - ball.r > 0 && v.magnitude > 0){
-			return false;
-		}
-		
-		return true;
+//		Point p = block.getNearestPoint(ball.x, ball.y);
+//		Vector v_p = new Vector(p.x - block.x, p.y - block.y);
+//		
+//		Vector v = new Vector(ball.x - block.x, ball.y - block.y);
+//		Vector v_u = v.getUnitVector();
+//		
+//		float projection = v_p.dotProduct(v_u);
+//		
+//		if (v.magnitude- Math.abs(projection) - ball.r > 0 && v.magnitude > 0){
+//			return false;
+//		}
+//		
+//		return true;
 
 		//Axis-Aligned Bounding Box Algorithm
-//		float ball_left = ball.x - ball.r;
-//		float ball_right = ball.x + ball.r;
-//		float ball_top = ball.y - ball.r;
-//		float ball_bottom = ball.y + ball.r;
-//		
-//		float block_left = block.x - block.width/2;
-//		float block_right = block.x + block.width/2;
-//		float block_top = block.y- block.height/2;
-//		float block_bottom = block.y + block.height/2;
-//
-//		return (ball_left <= block_right
-//				&& block_left <= ball_right
-//				&& ball_top <= block_bottom
-//				&& block_top <= ball_bottom);
+		float ball_left = ball.x - ball.r;
+		float ball_right = ball.x + ball.r;
+		float ball_top = ball.y - ball.r;
+		float ball_bottom = ball.y + ball.r;
+		
+		float block_left = block.x - block.width/2;
+		float block_right = block.x + block.width/2;
+		float block_top = block.y- block.height/2;
+		float block_bottom = block.y + block.height/2;
+
+		return (ball_left <= block_right
+				&& block_left <= ball_right
+				&& ball_top <= block_bottom
+				&& block_top <= ball_bottom);
 	}
 
 	/**
@@ -301,53 +310,41 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
         
 		float px = 0;
 		float py = 0;
+		
+		float x_diff = 0;
 		switch(event.getAction()){
 			case MotionEvent.ACTION_DOWN:
 				
-				if(mVelocityTracker == null) {
-                    mVelocityTracker = VelocityTracker.obtain();
-                }
-                else {
-                    mVelocityTracker.clear();
-                }
-                mVelocityTracker.addMovement(event);
+//				if(mVelocityTracker == null) {
+//                    mVelocityTracker = VelocityTracker.obtain();
+//                }
+//                else {
+//                    mVelocityTracker.clear();
+//                }
+//                mVelocityTracker.addMovement(event);
                 
 				px = event.getX();
-				py = event.getY();
+				//py = event.getY();
 				
-				if(!isBallLaunched && this.paddle.isXCovered(px)){
-					this.ball.x = px;
+
+						
+				if(this.paddle.isXCovered(px)){
+					x_diff = paddle.x - px;
 				}
-//                
+               
 				break;
 			case MotionEvent.ACTION_MOVE:
-				float mx = event.getX();
-				//float my = event.getY();
-				mVelocityTracker.addMovement(event); 
-                mVelocityTracker.computeCurrentVelocity(1000);
-//                this.paddle.setXspeed(VelocityTrackerCompat.getXVelocity(mVelocityTracker, 
-//                        pointerId));
-//                
-				if(this.paddle.isXCovered(mx)){
-					float d = this.paddle.width/2 + 2*ball.r;
-//					if(hasCollision(this.ball, this.paddle) && this.paddle.collisionOnLeft(ball)){
-//						if(px < d){
-//							px = d;
-//						}
-//					}else if(hasCollision(this.ball, this.paddle) && this.paddle.collisionOnRight(ball)){
-//						if(px > (width - d)){
-//							px = width - d;
-//						}
-//					}
+				px = event.getX();
+				
+				if(this.paddle.isXCovered(px)){
+
 					
-					//this.paddle.movePaddle(px, 0);
-					this.paddle.x = mx;
-					//this.paddle.x += (mx - px);
-					//px = mx;
+					this.paddle.x = px + x_diff;
+
 				}
 				
 				if(!isBallLaunched){
-					ball.x = mx;
+					ball.x = px + x_diff;
 				}
 				
 				break;
@@ -376,6 +373,8 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	 * This interface must be implemented by the activity that contains
 	 * this view to enable the communication between this view and its
 	 * host activity.
+	 * 
+	 * This listener notifies the activity that a block is being removed.
 	 *
 	 */
 	public interface onBlockRemoveListener{
@@ -392,8 +391,16 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 		}
 	}
 	
+	/**
+	 * This interface must be implemented by the activity that contains
+	 * this view to enable the communication between this view and its
+	 * host activity.
+	 *
+	 * This listener notifies the activity that the user lost one life.
+	 * 
+	 */
 	public interface onLifeLostListener{
-		void onLifeLost();
+		void onLifeLost(int lives);
 	}
 	
 	public void setOnLifeLostListener(onLifeLostListener l) {
@@ -401,10 +408,36 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	}
 	
 	public void lifeLost(){
+		Log.i("Lives", "Lives: " + lives);
+		lives -= 1;
 		if(lifeLostListener != null){
-			lifeLostListener.onLifeLost();
+			lifeLostListener.onLifeLost(lives);
 		}
 	}
 	
+	/**
+	 * This interface must be implemented by the activity that contains
+	 * this view to enable the communication between this view and its
+	 * host activity.
+	 *
+	 * This listener notifies the activity that the game is over.
+	 * 
+	 */
+	public interface onGameOverListener{
+		void onGameOver();
+	}
+	
+	public void setOnGameOverListener(onGameOverListener l) {
+		gameOverListener = l;
+	}
+	
+	public void gameover(){
+		Log.i("STATUS", "Game over!");
+		isRunning = false;
+		thread = null;
+		if(gameOverListener != null){
+			gameOverListener.onGameOver();
+		}
+	}
 	
 }

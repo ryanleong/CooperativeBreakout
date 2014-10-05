@@ -22,14 +22,19 @@ public class Paddle extends Block{
 	private float MAX_X;
 	
 	public Paddle(WorldView worldView, Bitmap bitmap) {
-		super(worldView, bitmap, worldView.initial_x, worldView.initial_y, worldView.paddle_w,  worldView.paddle_h);
+		super(worldView, bitmap, worldView.initial_x, worldView.initial_y, worldView.paddle_w,  worldView.paddle_h, 0);
 		screenWidth = worldView.width;
 		screenHeight = worldView.height;
 		MIN_X =  worldView.paddle_w/2;
 		MAX_X = screenWidth - MIN_X;
-;
+
 	}
 
+	public void setPosition(float x, float y){
+		this.x = x;
+		this.y = y;
+	}
+	
 	private void updatePhysics() {
 		// TODO Auto-generated method stub
 		if(x<MIN_X){
