@@ -1,0 +1,17 @@
+{
+    "scores": [
+        {
+            "score": 3,
+            "name": "lily"
+        },
+        {
+            "score": 5,
+            "name": "storm"
+        },
+        {
+            "score": 13,
+            "name": "rick"
+        }
+    ],
+    "name": "highscores"
+}
