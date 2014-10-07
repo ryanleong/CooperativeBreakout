@@ -1,6 +1,26 @@
 package com.unimelb.breakout.object;
 
-public class Maps {
+public class Map {
+
+	private String name;
+	private int[] map;
+	
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int[] getMap() {
+		return map;
+	}
+	
+	public void setMap(int[] map){
+		this.map = map;
+	}
 
 	private final static int map_one[] = {1,1,1,1,1,1,1,1,
 								   1,1,1,1,1,1,1,1,
@@ -23,4 +43,5 @@ public class Maps {
 		}
 		return map_one;
 	}
+	
 }

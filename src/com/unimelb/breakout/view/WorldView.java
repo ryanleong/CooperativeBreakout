@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 import com.unimelb.breakout.object.Ball;
 import com.unimelb.breakout.object.Block;
-import com.unimelb.breakout.object.Maps;
+import com.unimelb.breakout.object.Map;
 import com.unimelb.breakout.object.Paddle;
 import com.unimelb.breakout.utils.Point;
 import com.unimelb.breakout.utils.Vector;
@@ -241,7 +241,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	 */
 	public ArrayList<Block> generateBlocks(int screenWidth, int screenHeight, int level){
 		ArrayList<Block> blocks = new ArrayList<Block>();
-		int map[] = Maps.getMap(level);
+		int map[] = Map.getMap(level);
 		
 		int padding = 10;
 		float blockWidth = (float)(screenWidth-2*padding)/8;

@@ -1,6 +1,9 @@
 package com.unimelb.breakout.activity;
 
 import com.unimelb.breakout.R;
+import com.unimelb.breakout.object.MapList;
+import com.unimelb.breakout.utils.JsonUtils;
+import com.unimelb.breakout.utils.LocalMapUtils;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -100,6 +103,11 @@ public class WelcomeActivity extends Activity {
 			}
     		
     	});
+    	
+    	String maps = LocalMapUtils.getMap(this);
+    	MapList mapList = JsonUtils.fromJson(maps, MapList.class);
+    	
+    	mapList.getMaps();
     }
     
 }
