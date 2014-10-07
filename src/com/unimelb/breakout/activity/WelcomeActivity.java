@@ -104,10 +104,9 @@ public class WelcomeActivity extends Activity {
     		
     	});
     	
-    	String maps = LocalMapUtils.getMap(this);
-    	MapList mapList = JsonUtils.fromJson(maps, MapList.class);
+    	MapList maps = LocalMapUtils.getMap(this);
     	
-    	mapList.getMaps();
+    	maps.getMaps();
     }
     
 }

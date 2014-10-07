@@ -5,29 +5,38 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import android.content.Context;
+import android.util.Log;
 
-import com.unimelb.breakout.R;
+import com.unimelb.breakout.object.Map;
+import com.unimelb.breakout.object.MapList;
 
 public class LocalMapUtils {
 	
     /** The path to the maps file in the classpath. */
     private static final String MAPS_FILE = "./maps/maplist.json";
-
-
-    public static String getMap(Context context){
-//    	try{
-//	        InputStream in = LocalMapUtils.class.getResourceAsStream(MAPS_FILE);
-//	        byte[] b = new byte[in.available()];
-//	        in.read(b);
-//	        return new String(b);
-//    	}catch(Exception e){
-//    		e.printStackTrace();
-//    		return "error";
-//    	}
-    	
-    	String text = "";
+    
+    public static MapList getMap(Context context){
     	try {
-    		InputStream inputStream = context.getAssets().open("maps/maplist.json");
+    		InputStream inputStream = context.getAssets().open("maps/maplist");
+    		
+    		int fileLen = inputStream.available();
+    		// Read the entire resource into a local byte buffer.
+    		byte[] fileBuffer = new byte[fileLen];
+    		inputStream.read(fileBuffer);
+    		inputStream.close();
+    		return JsonUtils.fromJson(new String(fileBuffer), MapList.class);
+    		
+    	} catch (IOException e) {
+    		Log.e("FILE SYSTEM", "Error occurs when trying to open the map list file");
+    		return null;
+    	}
+    }
+
+
+    public Map getMap(String name, Context context){
+    	Map map = null;
+    	try {
+    		InputStream inputStream = context.getAssets().open("maps/"+name);
     		BufferedInputStream bis = new BufferedInputStream(inputStream);
     		
     		int fileLen = inputStream.available();
@@ -35,38 +44,22 @@ public class LocalMapUtils {
     		byte[] fileBuffer = new byte[fileLen];
     		inputStream.read(fileBuffer);
     		inputStream.close();
-    		text = new String(fileBuffer);
+    		String text = new String(fileBuffer);
+    		map = JsonUtils.fromJson(text, Map.class);
     		
     	} catch (IOException e) {
-    		text = "error";
+    		Log.e("FILE SYSTEM", "Error occurs when trying to open the map file. Map: " + name);
     	}
     	
-    	return text;
-    	
-//        try {
-//            properties.load(in);
-//        } catch (IOException e) {
-//            Log.e("Failed to load properties file: {}", PROPERTIES_FILE, e);
-//        } finally {
-//            CloseableUtils.close(in);
-//        }
+    	return map;
     }
-
-//    /**
-//     * Load property from the project properties file.
-//     * The properties may have arguments eg:
-//     * <br>
-//     * config.example={} World{}
-//     * <br>
-//     * get("config.example", "Hello", "!") => "Hello World!"
-//     * @see MessageFormat
-//     */
-//    public static String get(String configOption, Object... args) {
-//        if (properties.containsKey(configOption)) {
-//            return FormatUtils.string(properties.getProperty(configOption), args);
-//        } else {
-//            throw new PropertyNotFoundException(
-//                    FormatUtils.string("Property {} not found.", configOption));
-//        }
+    
+//    public Map getNextLevel(Map current, MapList maps){
+//    	Map next = null;
+//    	for(MapMeta map : maps.getMaps()){
+//    		if(map.getName().equals(current.getName())){
+//    			next 
+//    		}
+//    	}
 //    }
 }

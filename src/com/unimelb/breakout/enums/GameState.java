@@ -1,4 +1,4 @@
-package com.unimelb.breakout.utils;
+package com.unimelb.breakout.enums;
 
 public enum GameState {
 

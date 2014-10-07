@@ -6,7 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 
-import com.unimelb.breakout.utils.GameState;
+import com.unimelb.breakout.enums.GameState;
 import com.unimelb.breakout.utils.Point;
 import com.unimelb.breakout.view.WorldView;
 

@@ -4,8 +4,17 @@ public class Map {
 
 	private String name;
 	private int[] map;
+	private String nextLevel;
 	
 	
+	public String getNextLevel() {
+		return nextLevel;
+	}
+
+	public void setNextLevel(String nextLevel) {
+		this.nextLevel = nextLevel;
+	}
+
 	public String getName() {
 		return name;
 	}
