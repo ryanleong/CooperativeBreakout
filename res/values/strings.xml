@@ -10,7 +10,8 @@
     <string name="menu_text_download">Download New Maps</string>
     <string name="menu_text_quit">Quit The Game</string>
     <string name="title_activity_main">Breakout</string>
-    <string name="title_activity_score">MyScore</string>
+    <string name="title_activity_score">My Score</string>
+    <string name="title_activity_mapselection">Select a map</string>
     <string name="list_text_score">Score</string>
     <string name="list_text_level">Level</string>
     <string name="list_text_time">Time</string>

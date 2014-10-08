@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:layout_gravity="center_horizontal|center_vertical"
+    android:layout_margin="20dp"
+    android:background="@drawable/background_dialog"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:padding="10dp" >
+
+    <TextView
+        android:id="@+id/dialog_gameclear_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text=""
+        android:textColor="@color/white"
+        android:textSize="@dimen/large_text"
+        android:textStyle="bold" />
+
+    <LinearLayout 
+        android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_margin="20dp"
+    	android:gravity="center_vertical"
+    	android:orientation="vertical"
+        >
+    	<TextView
+	        android:id="@+id/dialog_gameclear_score"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+	        android:text=""
+	        android:textColor="@color/white"
+	        android:layout_marginTop="10dp"
+	        android:layout_marginBottom="20dp"
+	        android:textSize="@dimen/medium_text" />
+    	
+    	<TextView
+	        android:id="@+id/dialog_gameclear_next"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+	        android:text=""
+	        android:textColor="@color/white"
+	        android:layout_marginTop="10dp"
+	        android:layout_marginBottom="10dp"
+	        android:textSize="@dimen/medium_text" />
+        
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal">
+	    
+	    <Button
+	        android:id="@+id/dialog_home_button"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Home"
+	        android:layout_gravity="center"
+	        android:paddingBottom="15dp"
+	        android:paddingTop="15dp"
+	        android:layout_alignParentLeft="true"
+	        android:textColor="@color/white"
+	        android:textStyle="bold" />
+	
+	    <Button
+	        android:id="@+id/dialog_next_button"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Next"
+	        android:layout_gravity="center"
+	        android:paddingBottom="15dp"
+	        android:layout_marginLeft="10dp"
+	        android:layout_toRightOf="@id/dialog_home_button"
+	        android:paddingTop="15dp"
+	        android:textColor="@color/white"
+	        android:textStyle="bold" />
+
+    </RelativeLayout>
+</LinearLayout>

@@ -23,6 +23,7 @@ public class Block {
 	float top_edge;
 	float bottom_edge;
 	
+	Paint paint;
 	int i;
 	
 	public Block(WorldView worldView, Bitmap bitmap, float x, float y, float width, float height, int i) {
@@ -39,6 +40,13 @@ public class Block {
 		this.right_edge = x + width/2;
 		this.top_edge = y - height/2;
 		this.bottom_edge = y + height/2;
+		
+		paint = new Paint();
+		paint.setAntiAlias(true);
+		
+		int colors[] = {Color.RED, Color.MAGENTA, Color.YELLOW, Color.DKGRAY, Color.CYAN};
+		
+		paint.setColor(colors[i%5]);
 	}
 
 //	public float getX() {
@@ -58,12 +66,6 @@ public class Block {
 //	}
 	
 	public void onDraw(Canvas canvas){
-		Paint paint = new Paint();
-		paint.setAntiAlias(true);
-		
-		int colors[] = {Color.RED, Color.MAGENTA, Color.YELLOW, Color.DKGRAY, Color.CYAN};
-		
-		paint.setColor(colors[i%5]);
 				
 		if(worldView.getOnScreen()){
 			

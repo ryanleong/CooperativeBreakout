@@ -1,0 +1,17 @@
+{
+	"name": "Map List",
+	"maps": [
+		{
+			"name": "map1",
+			"filename": "map1.json"
+		},
+		{
+			"name": "map2",
+			"filename": "map2.json"
+		},
+		{
+			"name": "map3",
+			"filename": "map3.json"
+		}
+	]
+}

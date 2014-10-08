@@ -3,14 +3,17 @@ package com.unimelb.breakout.view;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.unimelb.breakout.activity.MainActivity;
 import com.unimelb.breakout.object.Ball;
 import com.unimelb.breakout.object.Block;
 import com.unimelb.breakout.object.Map;
 import com.unimelb.breakout.object.Paddle;
+import com.unimelb.breakout.utils.LocalMapUtils;
 import com.unimelb.breakout.utils.Point;
 import com.unimelb.breakout.utils.Vector;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -31,6 +34,7 @@ import android.widget.Toast;
 public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Runnable{
 	
 	private SurfaceHolder surfaceHolder;
+	private Activity weakReference;
 	
 	//Game Control flags
 	private boolean isRunning = false;
@@ -54,15 +58,18 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	public int ballRadius = 30;
 	public int initial_x;
 	public int initial_y;
-	public int lives = 1;
+	public int lives = 3;
 	
 	private onBlockRemoveListener blockRemoveListener;
 	
 	private onLifeLostListener lifeLostListener;
 
 	private onGameOverListener gameOverListener;
+	
+	private onGameClearListener gameClearListener;
+	
 	//listener of motion velocity
-	private VelocityTracker mVelocityTracker = null;
+	//private VelocityTracker mVelocityTracker = null;
 	
 	Thread thread;
 
@@ -118,54 +125,56 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 			try{
 				
 				canvas = surfaceHolder.lockCanvas(null);
-				synchronized(surfaceHolder){
-					if(canvas!= null)
+				if(canvas!= null){
+
+					synchronized(surfaceHolder){
 						onDraw(canvas);
 					
-					if(!ball.isEnd()){
-						if(!blocks.isEmpty()){
-							//stage not clear
-							Iterator<Block> list = blocks.iterator();
-							//iterate each block
-							while(list.hasNext()){
-								Block b = list.next();
-								//if collide then remove the block
-								if(this.hasCollision(ball, b)){
-								//if(ball.handleCollision(b)){
-									list.remove();
-									if(!ballReacted){
-										ball.bounceBlock(b);
-										ballReacted = true;
+						if(!ball.isEnd()){
+							if(!blocks.isEmpty()){
+								//stage not clear
+								Iterator<Block> list = blocks.iterator();
+								//iterate each block
+								while(list.hasNext()){
+									Block b = list.next();
+									//if collide then remove the block
+									if(this.hasCollision(ball, b)){
+									//if(ball.handleCollision(b)){
+										list.remove();
+										if(!ballReacted){
+											ball.bounceBlock(b);
+											ballReacted = true;
+										}
+										this.blockRemoved();
+									}else{
+										b.onDraw(canvas);
 									}
-									this.blockRemoved();
-								}else{
-									b.onDraw(canvas);
 								}
+							}else{
+								//notify that the stage is clear.
+								gameclear();
 							}
 						}else{
-							//notify that the stage is clear.
+							
+							Log.i("BLOCKS", "size: " + blocks.size());
+							this.lifeLost();
+							if(lives > 0){
+								this.start();	
+							}else{
+								this.gameover();
+							}			
 						}
-					}else{
+						//enable collision detection after the ball is launched
+						if(isBallLaunched){
+							if(this.hasCollision(ball, paddle)){
+								ball.bouncePaddle(paddle);
+							}
+						}
 						
-						Log.i("BLOCKS", "size: " + blocks.size());
-						this.lifeLost();
-						if(lives > 0){
-							this.start();	
-						}else{
-							this.gameover();
-						}			
+						ball.onDraw(canvas);
+						paddle.onDraw(canvas);
 					}
-					//enable collision detection after the ball is launched
-					if(isBallLaunched){
-						if(this.hasCollision(ball, paddle)){
-							ball.bouncePaddle(paddle);
-						}
-					}
-					
-					ball.onDraw(canvas);
-					paddle.onDraw(canvas);
 				}
-				
 			}finally{
 				if(canvas!=null){
 					surfaceHolder.unlockCanvasAndPost(canvas);
@@ -241,17 +250,21 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	 */
 	public ArrayList<Block> generateBlocks(int screenWidth, int screenHeight, int level){
 		ArrayList<Block> blocks = new ArrayList<Block>();
-		int map[] = Map.getMap(level);
+		Map mMap = LocalMapUtils.getMap(((MainActivity) weakReference).getMap(), weakReference);
+		int map[][] = mMap.getMap();
 		
 		int padding = 10;
 		float blockWidth = (float)(screenWidth-2*padding)/8;
 		float blockHeight = (float)(screenHeight-2*padding)/10;
 		
 		for(int i = 0; i < map.length; i++){
-			if(map[i]==1){
-				//blocks.add(new Block(this, null, padding+(i%8)*blockWidth, padding+(i%5)*blockHeight, blockWidth/2, blockHeight/2, i));
-
-				blocks.add(new Block(this, null, padding+blockWidth/2+(i%8)*blockWidth, padding+blockHeight/2+ (i%5)*+blockHeight, blockWidth, blockHeight, i));
+			for(int j = 0; j < map[0].length; j++){
+			
+				if(map[i][j]==1){
+					//blocks.add(new Block(this, null, padding+(i%8)*blockWidth, padding+(i%5)*blockHeight, blockWidth/2, blockHeight/2, i));
+	
+					blocks.add(new Block(this, null, padding+blockWidth/2+((i+j)%8)*blockWidth, padding+blockHeight/2+ ((i+j)%5)*+blockHeight, blockWidth, blockHeight, i));
+				}
 			}
 		}
 		
@@ -349,7 +362,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 				
 				break;
 			case MotionEvent.ACTION_UP:
-				mVelocityTracker = null;
+				//mVelocityTracker = null;
 				
 				if(!isBallLaunched){
 					this.launchBall();
@@ -357,12 +370,17 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 				
 				break;
 			case MotionEvent.ACTION_CANCEL:
-				mVelocityTracker = null;
+				//mVelocityTracker = null;
 				break;
 			
 		}
 		return true;
 		
+	}
+	
+	public void setActivity(Activity activity) {
+		// TODO Auto-generated method stub
+		this.weakReference = activity;
 	}
 	
 	/**
@@ -439,5 +457,32 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 			gameOverListener.onGameOver();
 		}
 	}
+
+
 	
+	/**
+	 * This interface must be implemented by the activity that contains
+	 * this view to enable the communication between this view and its
+	 * host activity.
+	 *
+	 * This listener notifies the activity that the stage is clear.
+	 * 
+	 */
+	public interface onGameClearListener{
+		void onGameClear();
+	}
+	
+	public void setOnGameClearListener(onGameClearListener l) {
+		gameClearListener = l;
+	}
+	
+	public void gameclear(){
+		Log.i("STATUS", "Game clear!");
+		isRunning = false;
+		thread = null;
+		if(gameClearListener != null){
+			gameClearListener.onGameClear();
+		}
+	}
+
 }

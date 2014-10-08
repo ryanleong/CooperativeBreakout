@@ -20,5 +20,4 @@ public class MapList {
 		this.maps = maps;
 	}
 	
-
 }

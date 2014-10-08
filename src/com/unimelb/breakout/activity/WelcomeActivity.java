@@ -6,13 +6,17 @@ import com.unimelb.breakout.utils.JsonUtils;
 import com.unimelb.breakout.utils.LocalMapUtils;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 
 
 public class WelcomeActivity extends Activity {
@@ -56,8 +60,10 @@ public class WelcomeActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+				
+				final Intent intent = new Intent(WelcomeActivity.this, MapSelectionActivity.class);
 				startActivity(intent);
+
 			}
     		
     	});
@@ -103,10 +109,8 @@ public class WelcomeActivity extends Activity {
 			}
     		
     	});
-    	
-    	MapList maps = LocalMapUtils.getMap(this);
-    	
-    	maps.getMaps();
     }
+    
+    
     
 }

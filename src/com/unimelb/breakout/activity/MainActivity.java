@@ -2,12 +2,14 @@ package com.unimelb.breakout.activity;
 
 import com.unimelb.breakout.R;
 import com.unimelb.breakout.utils.DBHelper;
+import com.unimelb.breakout.utils.LocalMapUtils;
 import com.unimelb.breakout.view.WorldView;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -23,32 +25,62 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity implements WorldView.onBlockRemoveListener, 
 													  WorldView.onLifeLostListener,
-													  WorldView.onGameOverListener{
+													  WorldView.onGameOverListener,
+													  WorldView.onGameClearListener{
 	private DBHelper dbHelper;
 	private WorldView worldView;
 	
-	private TextView myScore;
+	private String currentMap;
+	
 	private int score = 0;
 	private int level = 0;
 	private int next = 2000;
 	
 	private TextView myLives;
+	private TextView myScore;
+	private TextView myLevel;
+
+
 	//private int lives = 3;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		Bundle bundle = this.getIntent().getExtras();
+		if(!bundle.isEmpty() && bundle != null){
+			int screenOrientation = bundle.getInt("screenOrientation");
+			
+			switch(screenOrientation){
+			
+				case ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE:
+					setRequestedOrientation(screenOrientation);
+					break;
+				case ActivityInfo.SCREEN_ORIENTATION_PORTRAIT:
+					setRequestedOrientation(screenOrientation);
+					break;
+			}	
+			
+			currentMap = bundle.getString("map");
+		}
+		
 		setContentView(R.layout.activity_main);
 		
 		worldView = (WorldView) this.findViewById(R.id.main_worldView);
+		
+		worldView.setActivity(this);
 
 		myScore = (TextView) this.findViewById(R.id.main_text_myscore);
 		myLives = (TextView) this.findViewById(R.id.main_text_lives);
+		myLevel = (TextView) this.findViewById(R.id.main_text_level);
+		
+		myLevel.setText(currentMap);
 		//myScore.setText(score);
 		
 		worldView.setOnBlockRemoveListener(this);
 		worldView.setOnLifeLostListener(this);
 		worldView.setOnGameOverListener(this);
+		worldView.setOnGameClearListener(this);
 		
 		dbHelper = new DBHelper(this);
 		
@@ -140,11 +172,7 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		});
 
 	}
-	
-	public void restart(){
-		this.myScore.setText(Integer.toString(0));
-		this.myLives.setText(Integer.toString(3));
-	}
+
 	
 	public void gameover(){
 		
@@ -180,6 +208,7 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
             	Log.i("MainActivity", "Game starts again");
             	dialog.dismiss();
             	recordScore();
+            	
 				worldView.restart();
             }
         });
@@ -192,5 +221,69 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		
         dbHelper.insertScoreRecord(this.level, this.score);
 
+	}
+	
+	public String getMap(){
+		return currentMap;
+	}
+
+	@Override
+	public void onGameClear() {
+		// TODO Auto-generated method stub
+		runOnUiThread(new Runnable() {
+		     @Override
+		     public void run() {
+		    	 
+		 		Log.i("MAIN ACTIVITY", "Game Clear");
+
+		 		gameclear();
+
+		    }
+		});
+	}
+	
+	public void gameclear(){
+		
+		final Dialog dialog = new Dialog(this, R.style.dialog_no_decoration);
+        dialog.setContentView(R.layout.dialog_gameclear);
+
+        TextView title = (TextView) dialog.findViewById(R.id.dialog_gameclear_title);
+        TextView score = (TextView) dialog.findViewById(R.id.dialog_gameclear_score);
+        TextView nex = (TextView) dialog.findViewById(R.id.dialog_gameclear_next);
+
+        
+        Button home = (Button) dialog.findViewById(R.id.dialog_home_button);
+        Button next = (Button) dialog.findViewById(R.id.dialog_next_button);
+
+        title.setText("title");
+
+        score.setText("You got " + this.score + " in level " + this.level +" game. Congratulations!..");
+        nex.setText("Your highest score is " + this.score);
+
+        
+        home.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                recordScore();
+                finish();
+            }
+        });
+
+        next.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            	dialog.dismiss();
+            	recordScore();
+            	String nextLevel = LocalMapUtils.getNextLevel(currentMap, MainActivity.this);
+            	Log.d("MAINACTIVITY", "Next Level is " + nextLevel);
+            	currentMap = nextLevel;
+        		myLevel.setText(currentMap);
+				worldView.restart();
+				Log.d("MAINACTIVITY", "Next Level game starts");
+            }
+        });
+        
+        dialog.show();
 	}
 }

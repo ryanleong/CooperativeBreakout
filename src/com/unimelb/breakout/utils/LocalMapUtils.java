@@ -1,6 +1,5 @@
 package com.unimelb.breakout.utils;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -9,15 +8,16 @@ import android.util.Log;
 
 import com.unimelb.breakout.object.Map;
 import com.unimelb.breakout.object.MapList;
+import com.unimelb.breakout.object.MapMeta;
 
 public class LocalMapUtils {
 	
-    /** The path to the maps file in the classpath. */
-    private static final String MAPS_FILE = "./maps/maplist.json";
+	private static final String MAPS_PATH = "maps/";
+    private static final String MAPS_FILE = MAPS_PATH + "maplist";
     
-    public static MapList getMap(Context context){
+    public static MapList getMaps(Context context){
     	try {
-    		InputStream inputStream = context.getAssets().open("maps/maplist");
+    		InputStream inputStream = context.getAssets().open(MAPS_FILE);
     		
     		int fileLen = inputStream.available();
     		// Read the entire resource into a local byte buffer.
@@ -33,11 +33,10 @@ public class LocalMapUtils {
     }
 
 
-    public Map getMap(String name, Context context){
+    public static Map getMap(String name, Context context){
     	Map map = null;
     	try {
-    		InputStream inputStream = context.getAssets().open("maps/"+name);
-    		BufferedInputStream bis = new BufferedInputStream(inputStream);
+    		InputStream inputStream = context.getAssets().open(MAPS_PATH+name);
     		
     		int fileLen = inputStream.available();
     		// Read the entire resource into a local byte buffer.
@@ -54,12 +53,29 @@ public class LocalMapUtils {
     	return map;
     }
     
-//    public Map getNextLevel(Map current, MapList maps){
-//    	Map next = null;
-//    	for(MapMeta map : maps.getMaps()){
-//    		if(map.getName().equals(current.getName())){
-//    			next 
-//    		}
-//    	}
-//    }
+    public static String getNextLevel(String current, Context context){
+    	
+    	MapList maps = getMaps(context);
+    	for(MapMeta map : maps.getMaps()){
+    		if(map.getName().equals(current)){
+    			String nextLevel = map.getNext();
+    			if(hasMap(nextLevel, maps)){
+        			return nextLevel;
+    			}
+    		}
+    	}
+    	
+    	return null;
+    }
+    
+    public static boolean hasMap(String name, MapList maps){
+    	
+    	for(MapMeta map : maps.getMaps()){
+    		if(map.getName().equals(name)){
+    			return true;
+    		}
+    	}
+    	
+    	return false;
+    }
 }
