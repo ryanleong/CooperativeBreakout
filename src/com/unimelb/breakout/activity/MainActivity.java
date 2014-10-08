@@ -1,14 +1,17 @@
 package com.unimelb.breakout.activity;
 
 import com.unimelb.breakout.R;
+import com.unimelb.breakout.object.MapMeta;
 import com.unimelb.breakout.utils.DBHelper;
 import com.unimelb.breakout.utils.LocalMapUtils;
+import com.unimelb.breakout.utils.Utils;
 import com.unimelb.breakout.view.WorldView;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
@@ -275,12 +278,35 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
             public void onClick(View v) {
             	dialog.dismiss();
             	recordScore();
-            	String nextLevel = LocalMapUtils.getNextLevel(currentMap, MainActivity.this);
-            	Log.d("MAINACTIVITY", "Next Level is " + nextLevel);
-            	currentMap = nextLevel;
-        		myLevel.setText(currentMap);
-				worldView.restart();
-				Log.d("MAINACTIVITY", "Next Level game starts");
+            	MapMeta nextLevel = LocalMapUtils.getNextLevel(currentMap, MainActivity.this);
+            	
+            	if(nextLevel != null){
+            		Log.d("MAINACTIBITY", nextLevel.getType().equals("remote")+"");
+            		Log.d("MAINACTIBITY", LocalMapUtils.hasDownloaded(nextLevel.getName(), MainActivity.this)+"");
+
+            		if(nextLevel.getType().equals("remote") && !LocalMapUtils.hasDownloaded(nextLevel.getName(), MainActivity.this)){
+            				Dialog ok = Utils.showOkDialog(MainActivity.this, "New Map", "You need to download the next level from the server.");
+            				ok.setOnDismissListener(new OnDismissListener(){
+
+								@Override
+								public void onDismiss(DialogInterface dialog) {
+									// TODO Auto-generated method stub
+									finish();
+								}
+            					
+            				});
+            				//finish();
+            		}else{
+            		
+		            	Log.d("MAINACTIVITY", "Next Level is " + nextLevel);
+		            	currentMap = nextLevel.getName();
+		        		myLevel.setText(currentMap);
+						worldView.restart();
+						Log.d("MAINACTIVITY", "Next Level game starts");
+					}
+				}else{
+					Utils.showOkDialog(MainActivity.this, "Congratulations!", "You have clear all stages!");
+				}         	
             }
         });
         

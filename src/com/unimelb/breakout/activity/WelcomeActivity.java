@@ -62,6 +62,7 @@ public class WelcomeActivity extends Activity {
 				// TODO Auto-generated method stub
 				
 				final Intent intent = new Intent(WelcomeActivity.this, MapSelectionActivity.class);
+				//intent.putExtra("map_type", "local");
 				startActivity(intent);
 
 			}
@@ -89,15 +90,17 @@ public class WelcomeActivity extends Activity {
     		
     	});
     	
-    	downloadButton.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				
-			}
-    		
-    	});
+//    	downloadButton.setOnClickListener(new OnClickListener(){
+//
+//			@Override
+//			public void onClick(View v) {
+//				// TODO Auto-generated method stub
+//				final Intent intent = new Intent(WelcomeActivity.this, MapSelectionActivity.class);
+//				//intent.putExtra("map_type", "remote");
+//				startActivity(intent);
+//			}
+//    		
+//    	});
     	  	
     	quitButton.setOnClickListener(new OnClickListener(){
 

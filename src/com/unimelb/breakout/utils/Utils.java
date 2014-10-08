@@ -1,5 +1,14 @@
 package com.unimelb.breakout.utils;
 
+import com.unimelb.breakout.R;
+
+import android.app.Dialog;
+import android.content.Context;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.TextView;
+
 public class Utils {
 
 	/*
@@ -32,4 +41,57 @@ public class Utils {
 		
 		return null;
 	}
+	
+	/**
+     * Creates a loading dialog. When loading is complete, dismiss() should be called on the returned dialog.
+     * @param context
+     * @param text
+     * @return the loading dialog.
+     */
+    public static Dialog showLoadingDialog(Context context, String text) {
+        final Dialog dialog = new Dialog(context, R.style.dialog_no_decoration);
+        dialog.setContentView(R.layout.dialog_loading);
+
+        // TODO: uncomment when loading dialog functionality is fully implemented
+        //dialog.setCancelable(false);
+        //dialog.setCanceledOnTouchOutside(false);
+
+        TextView title = (TextView) dialog.findViewById(R.id.dialog_loading_title);
+        title.setText(text);
+
+        dialog.show();
+        return dialog;
+    }
+    
+    /**
+     * Shows a simple okay dialog in the centre of the screen.
+     *
+     * @param context Context to display on.
+     * @param titleText Title of the dialog.
+     * @param detailText Detail text of the dialog.
+     * @return the ok dialog.
+     */
+    public static Dialog showOkDialog(Context context, String titleText, String detailText) {
+        final Dialog dialog = new Dialog(context, R.style.dialog_no_decoration);
+        dialog.setContentView(R.layout.dialog_ok);
+
+        TextView title = (TextView) dialog.findViewById(R.id.dialog_ok_title);
+        TextView detail = (TextView) dialog.findViewById(R.id.dialog_ok_detail);
+        Button ok = (Button) dialog.findViewById(R.id.dialog_ok_button);
+
+        title.setText(titleText);
+        detail.setText(detailText);
+
+        ok.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+        return dialog;
+    }
+    
+    
 }

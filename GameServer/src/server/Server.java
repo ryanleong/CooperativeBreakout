@@ -1,4 +1,4 @@
-
+package server;
 /*
  * 
  * Map and Highscore server for Cooperative breakout game
@@ -12,7 +12,7 @@
  */
 
 
-package server;
+
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -36,7 +36,7 @@ public class Server {
 
 	public static void main(String args[]) throws Exception {
 
-		DatagramSocket serverSocket = new DatagramSocket(9876);
+		DatagramSocket serverSocket = new DatagramSocket(6789);
 		byte[] receiveData = new byte[1024];
 		byte[] sendData = new byte[1024];
 
@@ -73,9 +73,11 @@ public class Server {
 			if (requestObject.get("request_type").equals("get_map"))
 				sendData = readFromFile(requestObject.get("map_name").toString())
 						.getBytes();
-			else if (requestObject.get("request_type").equals("get_map_list"))
-				sendData = readFromFile("maplist").getBytes();
-			else if (requestObject.get("request_type").equals("write_score")) {
+			else if (requestObject.get("request_type").equals("get_map_list")){
+				sendData = readFromFile("maplist").getBytes();				
+				System.out.println("Requesting for map list.");
+
+			}else if (requestObject.get("request_type").equals("write_score")) {
 				if (writeScore(requestObject)) {
 					sendData = ("{\"response\" : \"success\", \"score\" :"
 							+ requestObject.get("score") + ", \"name\": \""

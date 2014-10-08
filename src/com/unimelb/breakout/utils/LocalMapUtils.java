@@ -1,7 +1,14 @@
 package com.unimelb.breakout.utils;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 
 import android.content.Context;
 import android.util.Log;
@@ -34,48 +41,102 @@ public class LocalMapUtils {
 
 
     public static Map getMap(String name, Context context){
+    	MapList maps = getMaps(context);
+    	MapMeta meta = findMapMeta(name, maps);
     	Map map = null;
-    	try {
-    		InputStream inputStream = context.getAssets().open(MAPS_PATH+name);
+    	if(meta.getType().equals("local")){
+
+	    	try {
+	    		InputStream inputStream = context.getAssets().open(MAPS_PATH+name);
+	    		
+	    		int fileLen = inputStream.available();
+	    		// Read the entire resource into a local byte buffer.
+	    		byte[] fileBuffer = new byte[fileLen];
+	    		inputStream.read(fileBuffer);
+	    		inputStream.close();
+	    		String text = new String(fileBuffer);
+	    		map = JsonUtils.fromJson(text, Map.class);
+	    		
+	    	} catch (IOException e) {
+	    		e.printStackTrace();
+	    		Log.e("FILE SYSTEM", "Error occurs when trying to open the map file. Map: " + name);
+	    	}
+    	}else{
     		
-    		int fileLen = inputStream.available();
-    		// Read the entire resource into a local byte buffer.
-    		byte[] fileBuffer = new byte[fileLen];
-    		inputStream.read(fileBuffer);
-    		inputStream.close();
-    		String text = new String(fileBuffer);
-    		map = JsonUtils.fromJson(text, Map.class);
-    		
-    	} catch (IOException e) {
-    		Log.e("FILE SYSTEM", "Error occurs when trying to open the map file. Map: " + name);
+    		try{
+	    		FileInputStream fis = context.openFileInput(name);
+			    InputStreamReader isr = new InputStreamReader(fis);
+			    BufferedReader bufferedReader = new BufferedReader(isr);
+			    StringBuilder sb = new StringBuilder();
+			    String line;
+			    while ((line = bufferedReader.readLine()) != null) {
+			       sb.append(line);
+			    }
+			    
+			    map = JsonUtils.fromJson(sb.toString().trim(), Map.class);
+		    }catch(FileNotFoundException e){
+		    	e.printStackTrace();
+	    		Log.e("FILE SYSTEM", "Error occurs when trying to open the remote map file. Map: " + name);
+		    } catch(IOException e){
+		    	e.printStackTrace();
+	    		Log.e("FILE SYSTEM", "Error occurs when trying to read the remote map file. Map: " + name);
+		    }
     	}
-    	
     	return map;
     }
     
-    public static String getNextLevel(String current, Context context){
-    	
-    	MapList maps = getMaps(context);
+    public static MapMeta findMapMeta(String current, MapList maps){
     	for(MapMeta map : maps.getMaps()){
     		if(map.getName().equals(current)){
-    			String nextLevel = map.getNext();
-    			if(hasMap(nextLevel, maps)){
-        			return nextLevel;
-    			}
+        		return map;
     		}
-    	}
-    	
+    	}  	
     	return null;
     }
     
-    public static boolean hasMap(String name, MapList maps){
+    public static MapMeta getNextLevel(String current, Context context){
     	
-    	for(MapMeta map : maps.getMaps()){
-    		if(map.getName().equals(name)){
-    			return true;
-    		}
+    	MapList maps = getMaps(context);
+    	MapMeta currentMap = findMapMeta(current, maps);
+    	MapMeta nextMap = findMapMeta(currentMap.getNext(), maps);
+    	
+    	return nextMap;
+    }
+    
+//    public static boolean hasMap(String name, Context context){
+//    	MapList maps = getMaps(context);
+//    	for(MapMeta map : maps.getMaps()){
+//    		if(map.getName().equals(name)){
+//    			return true;
+//    		}
+//    	}
+//    	
+//    	return hasDownloaded(name, context);
+//    }
+    
+    public static boolean hasDownloaded(String name, Context context){
+    	 File file = context.getFileStreamPath(name);
+    	 return file.exists();
+    }
+    
+    public static void saveDownloadedMap(Map map, Context context){
+    	
+    	String filename = map.getName();
+    	String string = JsonUtils.toJson(map);
+    	FileOutputStream outputStream;
+
+    	try {
+    	  outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+    	  outputStream.write(string.getBytes());
+    	  outputStream.close();
+    	} catch (FileNotFoundException e) {
+    	  Log.e("Save downloaded map", "Failed to save the downloaded map. Failed to open.");
+    	  e.printStackTrace();
+    	} catch (IOException e){
+    	  Log.e("Save downloaded map", "Failed to save the downloaded map. Failed to write.");
+      	  e.printStackTrace();
     	}
     	
-    	return false;
     }
+
 }

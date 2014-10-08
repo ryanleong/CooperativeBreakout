@@ -2,25 +2,22 @@ package com.unimelb.breakout.object;
 
 import java.util.ArrayList;
 
-public class MapList {
+public class ScoreBoard {
 
 	private String name;
-	ArrayList<MapMeta> maps;
+	private ArrayList<Rank> ranks;
 	
 	public String getName() {
 		return name;
 	}
-	
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	public ArrayList<MapMeta> getMaps() {
-		return maps;
+	public ArrayList<Rank> getRanks() {
+		return ranks;
 	}
-	
-	public void setMaps(ArrayList<MapMeta> maps) {
-		this.maps = maps;
+	public void setRanks(ArrayList<Rank> ranks) {
+		this.ranks = ranks;
 	}
 	
 }
