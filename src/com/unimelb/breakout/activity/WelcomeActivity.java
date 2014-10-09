@@ -52,7 +52,6 @@ public class WelcomeActivity extends Activity {
     	final Button spButton  = (Button) this.findViewById(R.id.button_single_player);
     	final Button mpButton  = (Button) this.findViewById(R.id.button_multi_player);
     	final Button scoreButton  = (Button) this.findViewById(R.id.button_score);
-    	final Button downloadButton  = (Button) this.findViewById(R.id.button_download);
     	final Button quitButton  = (Button) this.findViewById(R.id.button_quit);
 
     	spButton.setOnClickListener(new OnClickListener(){
@@ -84,7 +83,7 @@ public class WelcomeActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent intent = new Intent(WelcomeActivity.this, ScoreActivity.class);
+				Intent intent = new Intent(WelcomeActivity.this, ScoreBoardActivity.class);
 				startActivity(intent);
 			}
     		

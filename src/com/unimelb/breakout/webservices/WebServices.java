@@ -31,7 +31,7 @@ import com.unimelb.breakout.utils.JsonUtils;
  */
 public class WebServices {
 	
-	public static String SERVER_IP = "192.168.0.3";
+	public static String SERVER_IP = "10.9.149.190";
 	public static int SERVER_PORT = 6789;
 
     

@@ -15,5 +15,8 @@
     <string name="list_text_score">Score</string>
     <string name="list_text_level">Level</string>
     <string name="list_text_time">Time</string>
+    <string name="title_activity_score_board">ScoreBoardActivity</string>
+    <string name="local_scoreboard">Local Scoreboard</string>
+    <string name="global_scoreboard">Global Scoreboard</string>
 
 </resources>

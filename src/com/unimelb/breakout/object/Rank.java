@@ -4,7 +4,7 @@ public class Rank {
 
 	private String name;
 	private int score;
-	private String rank;
+	private int rank;
 	
 	public String getName() {
 		return name;
@@ -18,10 +18,10 @@ public class Rank {
 	public void setScore(int score) {
 		this.score = score;
 	}
-	public String getRank() {
+	public int getRank() {
 		return rank;
 	}
-	public void setRank(String rank) {
+	public void setRank(int rank) {
 		this.rank = rank;
 	}
 }

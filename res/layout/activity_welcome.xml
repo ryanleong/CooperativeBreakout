@@ -44,20 +44,10 @@
 	        android:text="@string/menu_text_score" />
 	
 	    <Button
-	        android:id="@+id/button_download"
-	        android:layout_width="@dimen/menu_button_width"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@id/button_score"
-	        android:layout_centerHorizontal="true"
-	        android:layout_marginTop="20dp"
-	        android:gravity="center"
-	        android:text="@string/menu_text_download" />
-	
-	    <Button
 	        android:id="@+id/button_quit"
 	        android:layout_width="@dimen/menu_button_width"
 	        android:layout_height="wrap_content"
-	        android:layout_below="@id/button_download"
+	        android:layout_below="@id/button_score"
 	        android:layout_centerHorizontal="true"
 	        android:layout_marginTop="20dp"
 	        android:gravity="center"

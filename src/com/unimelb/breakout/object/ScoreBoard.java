@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class ScoreBoard {
 
 	private String name;
-	private ArrayList<Rank> ranks;
+	private ArrayList<Rank> scores;
 	
 	public String getName() {
 		return name;
@@ -13,11 +13,11 @@ public class ScoreBoard {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public ArrayList<Rank> getRanks() {
-		return ranks;
+	public ArrayList<Rank> getScores() {
+		return scores;
 	}
-	public void setRanks(ArrayList<Rank> ranks) {
-		this.ranks = ranks;
+	public void setRanks(ArrayList<Rank> scores) {
+		this.scores = scores;
 	}
 	
 }
