@@ -26,7 +26,6 @@ import android.widget.TextView;
 
 public class MapSelectionActivity extends Activity{
 
-	boolean isRemote = false;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -38,45 +37,7 @@ public class MapSelectionActivity extends Activity{
 		addGameButtons(mapList);
 	}
 	
-	public void chooseScreenOrientation(final String mapName){
-    	
-		final Dialog dialog = new Dialog(this, R.style.dialog_no_decoration);
-        dialog.setContentView(R.layout.dialog_screenorientation);
 
-        TextView title = (TextView) dialog.findViewById(R.id.dialog_screenorientation_title);
-        TextView detail = (TextView) dialog.findViewById(R.id.dialog_screenorientation_detail);
-        
-        Button portrait = (Button) dialog.findViewById(R.id.dialog_portrait_button);
-        Button landscape = (Button) dialog.findViewById(R.id.dialog_landscape_button);
-
-        title.setText("Choose the screen mode");
-
-        detail.setText("Please choose the screen mode you would like to play with.");
-
-		final Intent intent = new Intent(MapSelectionActivity.this, MainActivity.class);
-		
-        portrait.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                intent.putExtra("screenOrientation", ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                intent.putExtra("map", mapName);
-                startActivity(intent);
-            }
-        });
-
-        landscape.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            	dialog.dismiss();
-                intent.putExtra("screenOrientation", ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                intent.putExtra("map", mapName);
-                startActivity(intent);
-            }
-        });
-        
-        dialog.show();
-    }
 	
 	public void addGameButtons(MapList mapList){
 		for(final MapMeta map: mapList.getMaps()){
@@ -115,7 +76,7 @@ public class MapSelectionActivity extends Activity{
                 		showDownloadDialog(map);
 
                 	}else{
-                		chooseScreenOrientation(name);
+                		Utils.chooseScreenOrientation(MapSelectionActivity.this, name);
                 	}
                 	
                 }
@@ -206,5 +167,12 @@ public class MapSelectionActivity extends Activity{
                 Log.e("MAPLISTFUTURE", "Throwable during getmaplist:" + throwable);
             }
         });
+	}
+	
+	
+	@Override
+	public void onBackPressed() {       
+	    finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);        
 	}
 }

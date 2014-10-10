@@ -1,12 +1,18 @@
 package com.unimelb.breakout.utils;
 
 import com.unimelb.breakout.R;
+import com.unimelb.breakout.activity.MainActivity;
+import com.unimelb.breakout.activity.MapSelectionActivity;
+import com.unimelb.breakout.preference.AccountPreference;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class Utils {
@@ -93,5 +99,75 @@ public class Utils {
         return dialog;
     }
     
+    public static Dialog showPlayerName(Context context, String titleText){
+    	final Dialog dialog = new Dialog(context, R.style.dialog_no_decoration);
+        dialog.setContentView(R.layout.dialog_playername);
+
+        final TextView title = (TextView) dialog.findViewById(R.id.dialog_playername_title);
+        final EditText playername = (EditText) dialog.findViewById(R.id.dialog_playername_edit);
+        
+        Button ok = (Button) dialog.findViewById(R.id.dialog_ok_button);
+        
+        title.setText(titleText);
+
+        
+        ok.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = playername.getText().toString();
+                if(name == null || name.isEmpty()){
+                	playername.setError("The name cannot be empty.");
+                }else{
+                	AccountPreference.rememberPlayerName(name);
+                    dialog.dismiss();
+                }             
+            }
+        });
+        
+        dialog.show();
+        
+        return dialog;
+    }
     
+	public static Dialog chooseScreenOrientation(final Context context, final String mapName){
+    	
+		final Dialog dialog = new Dialog(context, R.style.dialog_no_decoration);
+        dialog.setContentView(R.layout.dialog_screenorientation);
+
+        TextView title = (TextView) dialog.findViewById(R.id.dialog_screenorientation_title);
+        TextView detail = (TextView) dialog.findViewById(R.id.dialog_screenorientation_detail);
+        
+        Button portrait = (Button) dialog.findViewById(R.id.dialog_portrait_button);
+        Button landscape = (Button) dialog.findViewById(R.id.dialog_landscape_button);
+
+        title.setText("Choose the screen mode");
+
+        detail.setText("Please choose the screen mode you would like to play with.");
+
+		final Intent intent = new Intent(context, MainActivity.class);
+		
+        portrait.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                intent.putExtra("screenOrientation", ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                intent.putExtra("map", mapName);
+                context.startActivity(intent);
+            }
+        });
+
+        landscape.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            	dialog.dismiss();
+                intent.putExtra("screenOrientation", ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                intent.putExtra("map", mapName);
+                context.startActivity(intent);
+            }
+        });
+        
+        dialog.show();
+        
+        return dialog;
+    }
 }

@@ -13,10 +13,15 @@
     </style>
 
     <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
+    <style name="AppTheme" parent="android:Theme.Holo.Light.NoActionBar.Fullscreen">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+    <style name="ActionBarTheme" parent="AppBaseTheme">
+    	<item name="android:windowFullscreen">true</item>        
+    </style>
+        
+        
     <style name="dialog_no_decoration" parent="android:Theme.Holo.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@color/transparent</item>

@@ -3,41 +3,52 @@
     android:orientation="vertical"  
     android:layout_width="fill_parent"  
     android:layout_height="fill_parent"  
-    >  
+    >
 
- <LinearLayout  
-  android:orientation="horizontal"  
-  android:layout_width="fill_parent"  
-  android:layout_height="wrap_content">  
-    
-  <TextView  
-	   android:layout_width="wrap_content"  
-	   android:layout_height="wrap_content"  
-	   android:text="@string/list_text_level"
-	   android:gravity="center"
-	   android:layout_weight=".1"
-  	/>  
-   
-   <TextView
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_weight=".2"
-       android:gravity="center"
-       android:text="@string/list_text_score" />
-    
-  <TextView  
-	   android:layout_width="wrap_content"  
-	   android:layout_height="wrap_content"  
-       android:text="@string/list_text_time"
-       android:gravity="center"
-	   android:layout_weight=".4" 
-  />  
-     
-</LinearLayout>  
+    <TextView
+        android:id="@+id/list_player_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight=".05"
+        android:gravity="center_horizontal"
+		android:layout_gravity="center_horizontal"
+        android:text="@string/list_text_level"
+        android:textSize="30sp" />
+	
+	<LinearLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_weight="0.02"
+	    android:orientation="horizontal" >
+	    
+	  <TextView  
+		   android:layout_width="wrap_content"  
+		   android:layout_height="wrap_content"  
+		   android:text="@string/list_text_level"
+		   android:layout_weight=".1"
+	  	/>  
+	   
+	   <TextView
+	       android:layout_width="wrap_content"
+	       android:layout_height="wrap_content"
+	       android:layout_weight=".2"
+	       android:gravity="center"
+	       android:text="@string/list_text_score" />
+	    
+	  <TextView  
+		   android:layout_width="wrap_content"  
+		   android:layout_height="wrap_content"  
+	       android:text="@string/list_text_time"
+	       android:gravity="center"
+		   android:layout_weight=".4" 
+	  />  
+	     
+	</LinearLayout>  
 
-<ListView    
-    android:layout_width="fill_parent"   
-    android:layout_height="fill_parent"   
-    android:id="@+id/scorelist"  
+	<ListView    
+	    android:layout_width="fill_parent"   
+	    android:layout_height="0dip"  
+	    android:layout_weight=".8" 
+	    android:id="@+id/scorelist"  
     />  
 </LinearLayout>

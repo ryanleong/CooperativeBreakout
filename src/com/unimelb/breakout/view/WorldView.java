@@ -58,6 +58,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	public int ballRadius = 30;
 	public int initial_x;
 	public int initial_y;
+	
 	public int lives = 3;
 	
 	private onBlockRemoveListener blockRemoveListener;

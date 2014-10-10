@@ -1,7 +1,9 @@
 package com.unimelb.breakout.fragment;
 
 import com.unimelb.breakout.R;
+import com.unimelb.breakout.preference.AccountPreference;
 import com.unimelb.breakout.utils.DBHelper;
+import com.unimelb.breakout.utils.Utils;
 
 import android.app.Fragment;
 import android.database.Cursor;
@@ -9,8 +11,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 public class LocalScoreBoardFragment extends Fragment {
 
@@ -46,6 +50,25 @@ public class LocalScoreBoardFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_score_board, container, false);
     	
+        TextView playername = (TextView) view.findViewById(R.id.list_player_name);
+       
+        if(AccountPreference.hasPlayerName()){
+        	String name = AccountPreference.getPlayerName();
+        	playername.setText(name);
+        }else{
+        	playername.setText("Touch to set a player name.");
+        }
+        
+        playername.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+	            Utils.showPlayerName(getActivity(), "What's your name?");
+			}
+    		
+    	});
+        
     	//this.deleteDatabase(DBHelper.dbName);
     	dbHelper = new DBHelper(getActivity());  
 

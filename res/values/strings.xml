@@ -9,6 +9,8 @@
     <string name="menu_text_score">My Score</string>
     <string name="menu_text_download">Download New Maps</string>
     <string name="menu_text_quit">Quit The Game</string>
+    <string name="menu_text_challenge">CHALLENGE</string>
+    <string name="menu_text_arcade">ARCADE</string>
     <string name="title_activity_main">Breakout</string>
     <string name="title_activity_score">My Score</string>
     <string name="title_activity_mapselection">Select a map</string>
@@ -18,5 +20,8 @@
     <string name="title_activity_score_board">ScoreBoardActivity</string>
     <string name="local_scoreboard">Local Scoreboard</string>
     <string name="global_scoreboard">Global Scoreboard</string>
+    <string name="title_activity_mode_selection">ModeSelectionActivity</string>
+    <string name="text_playername_hint">Player Name</string>
+    <string name="text_ok">OK</string>
 
 </resources>

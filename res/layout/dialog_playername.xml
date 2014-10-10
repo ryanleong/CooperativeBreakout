@@ -11,7 +11,7 @@
     android:padding="10dp" >
 
     <TextView
-        android:id="@+id/dialog_ok_title"
+        android:id="@+id/dialog_playername_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -24,17 +24,16 @@
         android:textSize="@dimen/large_text"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/dialog_ok_detail"
+    <EditText 
+        android:id="@+id/dialog_playername_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="center_horizontal"
         android:layout_gravity="center_horizontal"
-        android:padding="15dp"
-        android:text=""
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:textColor="@color/white"
-        android:textSize="@dimen/medium_text" />
+        android:inputType="text"
+        android:hint="@string/text_playername_hint"
+        />
 
     <Button
         android:id="@+id/dialog_ok_button"

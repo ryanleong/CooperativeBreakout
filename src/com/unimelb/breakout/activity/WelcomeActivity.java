@@ -2,8 +2,10 @@ package com.unimelb.breakout.activity;
 
 import com.unimelb.breakout.R;
 import com.unimelb.breakout.object.MapList;
+import com.unimelb.breakout.preference.AccountPreference;
 import com.unimelb.breakout.utils.JsonUtils;
 import com.unimelb.breakout.utils.LocalMapUtils;
+import com.unimelb.breakout.utils.Utils;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -16,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 
@@ -25,7 +28,11 @@ public class WelcomeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-        this.setButtonListner();
+        setButtonListner();
+        if(!AccountPreference.hasPlayerName()){
+            Utils.showPlayerName(this, "What's your name?");
+        }      
+        
     }
 
 
@@ -59,11 +66,17 @@ public class WelcomeActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				
-				final Intent intent = new Intent(WelcomeActivity.this, MapSelectionActivity.class);
-				//intent.putExtra("map_type", "local");
-				startActivity(intent);
 
+
+				try{           
+					Log.d("TOUCH", "start modeSelectionActivity");
+					final Intent intent = new Intent(WelcomeActivity.this, ModeSelectionActivity.class);
+					//intent.putExtra("map_type", "local");
+					startActivity(intent); 
+			        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);        
+			    } catch(Exception ex) {
+			    	ex.printStackTrace();
+			    }
 			}
     		
     	});
@@ -82,24 +95,21 @@ public class WelcomeActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Intent intent = new Intent(WelcomeActivity.this, ScoreBoardActivity.class);
-				startActivity(intent);
+
+				
+				try{           
+					Log.d("TOUCH", "start scoreActivity");
+					// TODO Auto-generated method stub
+					Intent intent = new Intent(WelcomeActivity.this, ScoreBoardActivity.class);
+					startActivity(intent);
+			        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);        
+			    } catch(Exception ex) {
+			    	ex.printStackTrace();
+			    }
 			}
     		
     	});
-    	
-//    	downloadButton.setOnClickListener(new OnClickListener(){
-//
-//			@Override
-//			public void onClick(View v) {
-//				// TODO Auto-generated method stub
-//				final Intent intent = new Intent(WelcomeActivity.this, MapSelectionActivity.class);
-//				//intent.putExtra("map_type", "remote");
-//				startActivity(intent);
-//			}
-//    		
-//    	});
+
     	  	
     	quitButton.setOnClickListener(new OnClickListener(){
 
@@ -112,7 +122,4 @@ public class WelcomeActivity extends Activity {
     		
     	});
     }
-    
-    
-    
 }
