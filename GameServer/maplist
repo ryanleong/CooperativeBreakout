@@ -1,0 +1,21 @@
+{
+	"name": "Map List",
+	"maps": [
+		{
+			"name": "2-1",
+			"type": "remote",
+			"next": "2-2"
+			
+		},
+		{
+			"name": "2-2",
+			"type": "remote",
+			"next": "2-3"
+		},
+		{
+			"name": "2-3",
+			"type": "remote",
+			"next": "clear"
+		}
+	]
+}

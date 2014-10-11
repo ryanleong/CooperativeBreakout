@@ -20,6 +20,7 @@ public class Process extends Thread {
 	String requestString = "";
 	DatagramSocket serverSocket;
 	DatagramPacket receivePacket;
+	static int newRank = 0;
 
 	public Process(String requestString, DatagramSocket serverSocket, DatagramPacket receivePacket) {
 		this.requestString = requestString;
@@ -54,7 +55,10 @@ public class Process extends Thread {
 			if (writeScore(requestObject)) {
 				sendData = ("{\"response\" : \"success\", \"score\" :"
 						+ requestObject.get("score") + ", \"name\": \""
-						+ requestObject.get("name") + "\"}").getBytes();
+						+ requestObject.get("name") + ", \"rank\": \""
+						+ newRank + " }").getBytes();
+				
+				newRank = 0;
 			} else
 				sendData = "{\"error\": \"Failed to save highscore.\"}"
 						.getBytes();
@@ -112,30 +116,53 @@ public class Process extends Thread {
 		boolean isWritten = false;
 		JSONArray scores = (JSONArray) Server.highscores.get("scores");
 		JSONArray sortedScores = new JSONArray();
-		boolean isLargest = true;
+		boolean isSmallest = true;
+		int counter = 0;
+		
+		JSONArray tempList = new JSONArray();
+		// Remove duplicate
+		for (int i = 0; i < scores.size(); i++) {
+			JSONObject temp = (JSONObject) scores.get(i);
+			String currentName = temp.get("name").toString().trim();
+			String newName = newScore.get("name").toString().trim();
+			
+			if (!currentName.equals(newName)) {
+				tempList.add(temp);
+			}
+		}
+		scores = tempList;
 
 		// Store new score into list of scores
 		for (int i = 0; i < scores.size(); i++) {
 			JSONObject temp = (JSONObject) scores.get(i);
+			
+			if (isSmallest)
+				if ((long) newScore.get("score") > (long) temp.get("score")) {
+					JSONObject newScoreObject = new JSONObject();
+					newScoreObject.put("name", newScore.get("name"));
+					newScoreObject.put("score", newScore.get("score"));
+					newScoreObject.put("rank", counter+1);
+					newRank = counter+1;
+					counter++;
+	
+					sortedScores.add(newScoreObject);
+					isSmallest = false;
+				}
 
-			if ((long) newScore.get("score") < (long) temp.get("score")) {
-				JSONObject newScoreObject = new JSONObject();
-				newScoreObject.put("name", newScore.get("name"));
-				newScoreObject.put("score", newScore.get("score"));
-
-				sortedScores.add(newScoreObject);
-				isLargest = false;
-			}
-
-			if (!temp.get("name").equals(newScore.get("name")))
-				sortedScores.add(scores.get(i));
+			// Prevents duplicates
+			//if (!temp.get("name").equals(newScore.get("name")))
+			temp.put("rank", counter+1);
+			sortedScores.add(temp);
+			counter++;
 		}
 
 		// If new score is the largest
-		if (isLargest) {
+		if (isSmallest) {
 			JSONObject newScoreObject = new JSONObject();
 			newScoreObject.put("name", newScore.get("name"));
 			newScoreObject.put("score", newScore.get("score"));
+			newScoreObject.put("rank", counter+1);
+			newRank = counter+1;
 
 			sortedScores.add(newScoreObject);
 		}
