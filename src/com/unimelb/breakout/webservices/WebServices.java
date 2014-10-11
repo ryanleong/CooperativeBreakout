@@ -6,15 +6,19 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.util.Log;
 
+import com.google.gson.JsonSyntaxException;
 import com.unimelb.breakout.object.Map;
 import com.unimelb.breakout.object.MapList;
 import com.unimelb.breakout.object.ScoreBoard;
@@ -32,7 +36,7 @@ import com.unimelb.breakout.utils.JsonUtils;
 public class WebServices {
 	
 	public static String SERVER_IP = "192.168.0.3";
-	public static int SERVER_PORT = 9876;
+	public static int SERVER_PORT = 6789;
 	
 	public final static int timeout = 500;
 
@@ -44,47 +48,49 @@ public class WebServices {
 	 * @param map
 	 * @return
 	 */
-	public static MapList getMapList(){
+	public static MapList getMapList() 
+			throws SocketException, SocketTimeoutException, IOException, JsonSyntaxException{
 		
-		HashMap<String, String> hashmap = new HashMap<String, String>();
-		hashmap.put("request_type", "get_map_list");
+		JSONObject object = new JSONObject();
 		
-		String json = JsonUtils.toJson(hashmap);
+		try {
+			object.put("request_type", "get_map_list");
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String json = object.toString();
 		
 		DatagramSocket aSocket = null;
-	    try {
-	      aSocket = new DatagramSocket();
-	      byte [] m = json.getBytes();
-	      InetAddress aHost = InetAddress.getByName(SERVER_IP);
-	      DatagramPacket request =
-	      new DatagramPacket(m,  json.length(), aHost, SERVER_PORT);
-	      aSocket.send(request);
-	      Log.d("WebService", "Requesting for map list from server");
-	      byte[] buffer = new byte[1000];
+		
+	    aSocket = new DatagramSocket();
+	    byte [] m = json.getBytes();
+	    InetAddress aHost = InetAddress.getByName(SERVER_IP);
+	    DatagramPacket request =
+	    new DatagramPacket(m,  json.length(), aHost, SERVER_PORT);
+	    aSocket.send(request);
+	    Log.d("WebService", "Requesting for map list from server");
+	    byte[] buffer = new byte[1000];
 	      
-	      DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
-	      Log.d("WebService", "Waiting for map list from server");
+	    DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+	    Log.d("WebService", "Waiting for map list from server");
 	      
-	      aSocket.setSoTimeout(timeout);
-	      aSocket.receive(reply);
+	    aSocket.setSoTimeout(timeout);
+	    aSocket.receive(reply);
 	      
-	      String newMap = new String(reply.getData());
-	      MapList maps = JsonUtils.fromJson(newMap.trim(), MapList.class);
+	    String newMap = new String(reply.getData());
 
-	      return maps;
-	      
-	    }catch (SocketException e){
-	    	Log.e("WebService", "socket: " + e.getMessage());
-	    }catch (IOException e){
-	    	Log.e("WebService", "socket: " + e.getMessage());
-	    }catch(Exception e){
-	    	Log.e("WebService", "socket: " + e.getMessage());
-	    }finally {
-	    	if(aSocket != null) 
-	    		aSocket.close();
-	    }
-	    
-	    return null;
+	    if(aSocket != null) 
+	    	aSocket.close();
+			
+	    MapList maps = JsonUtils.fromJson(newMap.trim(), MapList.class);
+			  
+	    if(maps != null)
+	    	return maps;
+
+		return null;
 	}
 	
 	/**
@@ -94,43 +100,48 @@ public class WebServices {
 	 * @param map
 	 * @return
 	 */
-	public static Map downloadNewMap(String map){
+	public static Map downloadNewMap(String map) 
+			throws SocketException, SocketTimeoutException, IOException, JsonSyntaxException {
 		
-		HashMap<String, String> hashmap = new HashMap<String, String>();
-		hashmap.put("request_type", "get_map");
-		hashmap.put("map_name", map);
+		JSONObject object = new JSONObject();
 		
-		String json = JsonUtils.toJson(hashmap);
+		try {
+			object.put("request_type", "get_map");
+			object.put("map_name", map);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String json = object.toString();
 		
 		DatagramSocket aSocket = null;
-	    try {
-	      aSocket = new DatagramSocket();
-	      byte [] m = json.getBytes();
-	      InetAddress aHost = InetAddress.getByName(SERVER_IP);
-	      DatagramPacket request =
-	      new DatagramPacket(m,  json.length(), aHost, SERVER_PORT);
-	      aSocket.send(request);
-	      Log.d("WebService", "Requesting for new map from server");
-	      byte[] buffer = new byte[1000];
-	      
-	      DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
-	      Log.d("WebService", "Waiting for new map from server");
-	      
-	      aSocket.setSoTimeout(timeout);
-	      aSocket.receive(reply);
-	      
-	      String newMap = new String(reply.getData());
-	      return JsonUtils.fromJson(newMap.trim(), Map.class);
 
-	    }catch (SocketException e){
-	    	Log.e("WebService", "socket: " + e.getMessage());
-	    }catch (IOException e){
-	    	Log.e("WebService", "socket: " + e.getMessage());
-	    }finally {
-	    	if(aSocket != null) 
-	    		aSocket.close();
-	    }
-	    
+		aSocket = new DatagramSocket();
+		byte [] m = json.getBytes();
+		InetAddress aHost = InetAddress.getByName(SERVER_IP);
+		DatagramPacket request =
+				new DatagramPacket(m,  json.length(), aHost, SERVER_PORT);
+		aSocket.send(request);
+		Log.d("WebService", "Requesting for new map from server");
+		byte[] buffer = new byte[1000];
+  
+		DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+		Log.d("WebService", "Waiting for new map from server");
+  
+		aSocket.setSoTimeout(timeout);
+		aSocket.receive(reply);
+  
+		String newMap = new String(reply.getData());
+
+		if(aSocket != null) 
+	    	aSocket.close();
+		
+		Map mMap =  JsonUtils.fromJson(newMap.trim(), Map.class);
+		  
+		if(mMap != null)
+			return mMap;
+
 	    return null;
 	}
 
@@ -140,43 +151,48 @@ public class WebServices {
 	 * 
 	 * @return
 	 */
-	public static ScoreBoard getScoreBoard(){
+	public static ScoreBoard getScoreBoard() 
+			throws SocketException, SocketTimeoutException, IOException, JsonSyntaxException{
 		
-		HashMap<String, String> hashmap = new HashMap<String, String>();
-		hashmap.put("request_type", "get_score");
+		JSONObject object = new JSONObject();
 		
-		String json = JsonUtils.toJson(hashmap);
+		try {
+			object.put("request_type", "get_score");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String json = object.toString();
 		
 		DatagramSocket aSocket = null;
-	    try {
-	      aSocket = new DatagramSocket();
-	      byte [] m = json.getBytes();
-	      InetAddress aHost = InetAddress.getByName(SERVER_IP);
-	      DatagramPacket request =
-	      new DatagramPacket(m,  json.length(), aHost, SERVER_PORT);
-	      aSocket.send(request);
-	      Log.d("WebService", "Requesting for score board from server");
-	      byte[] buffer = new byte[1000];
-	      
-	      DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
-	      Log.d("WebService", "Waiting for score board from server");
-	      
-	      aSocket.setSoTimeout(timeout);
-	      aSocket.receive(reply);
-	      
-	      String scoreboard = new String(reply.getData());
-	      
-	      return JsonUtils.fromJson(scoreboard.trim(), ScoreBoard.class);
 
-	    }catch (SocketException e){
-	    	Log.e("WebService", "socket: " + e.getMessage());
-	    }catch (IOException e){
-	    	Log.e("WebService", "socket: " + e.getMessage());
-	    }finally {
-	    	if(aSocket != null) 
-	    		aSocket.close();
-	    }
-	    
+		aSocket = new DatagramSocket();
+		byte [] m = json.getBytes();
+		InetAddress aHost = InetAddress.getByName(SERVER_IP);
+		DatagramPacket request =
+		new DatagramPacket(m,  json.length(), aHost, SERVER_PORT);
+		aSocket.send(request);
+	    Log.d("WebService", "Requesting for score board from server");
+	    byte[] buffer = new byte[1000];
+		  
+	    DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+	    Log.d("WebService", "Waiting for score board from server");
+		  
+	    aSocket.setSoTimeout(timeout);
+	    aSocket.receive(reply);
+		  
+	    String scoreboard = new String(reply.getData());
+		  
+		
+	    if(aSocket != null) 
+	    	aSocket.close();
+		
+		ScoreBoard sboard =  JsonUtils.fromJson(scoreboard.trim(), ScoreBoard.class);
+		  
+		if(sboard != null)
+			return sboard;
+
 	    return null;
 	}
 	
@@ -188,44 +204,48 @@ public class WebServices {
 	 * @param score
 	 * @return
 	 */
-	public static UploadResponse uploadNewScore(String name, String score){
+	public static UploadResponse uploadNewScore(String name, int score)
+			throws SocketException, SocketTimeoutException, IOException, JsonSyntaxException{
 		
-		HashMap<String, String> hashmap = new HashMap<String, String>();
-		hashmap.put("request_type", "write_score");
-		hashmap.put("player_name", name);
-		hashmap.put("score", score);
+		JSONObject object = new JSONObject();
 		
-		String json = JsonUtils.toJson(hashmap);
+		try {
+			object.put("request_type", "write_score");
+			object.put("name", name);
+			object.put("score", score);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String json = object.toString();
 		
 		DatagramSocket aSocket = null;
-	    try {
-	      aSocket = new DatagramSocket();
-	      byte [] m = json.getBytes();
-	      InetAddress aHost = InetAddress.getByName(SERVER_IP);
-	      DatagramPacket request =
-	      new DatagramPacket(m,  json.length(), aHost, SERVER_PORT);
-	      aSocket.send(request);
-	      Log.d("WebService", "Unloading new score to the server");
-	      byte[] buffer = new byte[1000];
-	      
-	      DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
-	      Log.d("WebService", "Waiting for upload result from server");
-	      
-	      aSocket.setSoTimeout(timeout);
-	      aSocket.receive(reply);
-	      
-	      String response = new String(reply.getData());
-	      
-	      return JsonUtils.fromJson(response.trim(), UploadResponse.class);
 
-	    }catch (SocketException e){
-	    	Log.e("WebService", "socket: " + e.getMessage());
-	    }catch (IOException e){
-	    	Log.e("WebService", "socket: " + e.getMessage());
-	    }finally {
-	    	if(aSocket != null) 
-	    		aSocket.close();
-	    }
+	    aSocket = new DatagramSocket();
+	    byte [] m = json.getBytes();
+	    InetAddress aHost = InetAddress.getByName(SERVER_IP);
+	    DatagramPacket request =
+	    new DatagramPacket(m,  json.length(), aHost, SERVER_PORT);
+	    aSocket.send(request);
+	    Log.d("WebService", "Unloading new score to the server");
+	    byte[] buffer = new byte[1000];
+	      
+	    DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+	    Log.d("WebService", "Waiting for upload result from server");
+	      
+	    aSocket.setSoTimeout(timeout);
+	    aSocket.receive(reply);
+	      
+	    String response = new String(reply.getData());
+	      
+	    if(aSocket != null) 
+	    	aSocket.close();
+		
+	    UploadResponse uploadResponse =  JsonUtils.fromJson(response.trim(), UploadResponse.class);
+		  
+		if(uploadResponse != null)
+			return uploadResponse;
 	    
 	    return null;
 	}

@@ -40,7 +40,7 @@ import android.widget.Toast;
 public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Runnable{
 	
 	protected SurfaceHolder surfaceHolder;
-	public Activity weakReference;
+	public Activity activity;
 	
 	//Game Control flags
 	protected boolean isRunning = false;
@@ -59,6 +59,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 
 	//Game Configurations
 	public int padding = 10;
+	public int reward = 5;
 	public int width;
 	public int height;
 	public int wallWidth = 0;
@@ -272,7 +273,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	public ArrayList<Block> generateBlocks(int screenWidth, int screenHeight){
 		ArrayList<Block> blocks = new ArrayList<Block>();
 		
-		Map mMap = LocalMapUtils.getMap(((MainActivity) weakReference).getMap(), weakReference);
+		Map mMap = LocalMapUtils.getMap(((MainActivity) activity).getMap(), activity);
 		int map[][] = mMap.getMap();
 		
 
@@ -402,7 +403,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	
 	public void setActivity(Activity activity) {
 		// TODO Auto-generated method stub
-		this.weakReference = activity;
+		this.activity = activity;
 	}
 	
 	/**
@@ -427,7 +428,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	
 	public void blockRemoved(){
 		if(blockRemoveListener != null){
-			blockRemoveListener.onBlockRemoved(5);
+			blockRemoveListener.onBlockRemoved(reward);
 		}
 	}
 	

@@ -75,7 +75,7 @@ public class DataManager {
 	 * @param score
 	 * @return
 	 */
-	public static ListenableFuture<UploadResponse> uploadNewScore(final String name, final String score) {
+	public static ListenableFuture<UploadResponse> uploadNewScore(final String name, final int score) {
 		
         return AsyncUtils.run(new Callable<UploadResponse>() {
             @Override

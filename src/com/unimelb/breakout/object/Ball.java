@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import com.unimelb.breakout.enums.GameState;
@@ -44,6 +45,7 @@ public class Ball {
 	private int screenWidth;
 	private int screenHeight;
 	private Paint ballPaint;
+	Drawable d;
 	
 	public Ball(WorldView worldView, Bitmap bitmap){
 		
@@ -58,6 +60,7 @@ public class Ball {
 		this.MAX_Y = screenHeight - MIN_Y;
 		
 		this.ballPaint = getPaint(Color.RED);
+		
 		
 		this.dx = 0;
 		this.dy = 0;

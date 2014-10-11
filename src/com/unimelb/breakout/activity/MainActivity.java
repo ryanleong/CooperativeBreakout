@@ -2,6 +2,7 @@ package com.unimelb.breakout.activity;
 
 import com.unimelb.breakout.R;
 import com.unimelb.breakout.object.MapMeta;
+import com.unimelb.breakout.preference.AccountPreference;
 import com.unimelb.breakout.utils.DBHelper;
 import com.unimelb.breakout.utils.LocalMapUtils;
 import com.unimelb.breakout.utils.Utils;
@@ -40,12 +41,15 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 	private int level = 0;
 	private int next = 2000;
 	
-	private TextView myLives;
-	private TextView myScore;
-	private TextView myLevel;
+	private TextView mLives;
+	private TextView mScore;
+	private TextView mLevel;
+	private TextView mPlayer;
 
 
 	//private int lives = 3;
+	
+	private boolean isArcade = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,26 +80,32 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 			//arcade mode
 			setContentView(R.layout.activity_main_arcade);
 			worldView = (ArcadeWorldView) this.findViewById(R.id.main_worldView);
-
+			isArcade = true;
 
 		}else{
 			//challenge mode
 			setContentView(R.layout.activity_main);
 			
 			worldView = (WorldView) this.findViewById(R.id.main_worldView);
-
+			isArcade = false;
 
 		}
 		
 		
 		worldView.setActivity(this);
 
-		myScore = (TextView) this.findViewById(R.id.main_text_myscore);
-		myLives = (TextView) this.findViewById(R.id.main_text_lives);
-		myLevel = (TextView) this.findViewById(R.id.main_text_level);
+		mScore = (TextView) this.findViewById(R.id.main_text_myscore);
+		mLives = (TextView) this.findViewById(R.id.main_text_lives);
+		mLevel = (TextView) this.findViewById(R.id.main_text_level);
+		mPlayer = (TextView) this.findViewById(R.id.main_text_player);
 		
-		myLevel.setText(currentMap);
+		mLevel.setText(currentMap);
 		//myScore.setText(score);
+		
+		if(AccountPreference.hasPlayerName()){
+			String name = AccountPreference.getPlayerName();
+			mPlayer.setText(name);
+		}
 		
 		worldView.setOnBlockRemoveListener(this);
 		worldView.setOnLifeLostListener(this);
@@ -104,25 +114,6 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		
 		dbHelper = new DBHelper(this);
 		
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override
@@ -146,7 +137,7 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 	
 	public void addScore(int s){
 		this.score+=s;
-		this.myScore.setText(Integer.toString(score));
+		this.mScore.setText(Integer.toString(score));
 	}
 	
 	@Override
@@ -166,7 +157,7 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 	
 	public void lostLife(int lives){
 		
-		this.myLives.setText(Integer.toString(lives));
+		this.mLives.setText(Integer.toString(lives));
 		
 		Log.i("MAIN ACTIVITY 2", "Lives: " + lives);
 		if(lives > 0){
@@ -190,58 +181,111 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 
 		    }
 		});
-
 	}
 
 	
 	public void gameover(){
-		
+
 		final Dialog dialog = new Dialog(this, R.style.dialog_no_decoration);
-        dialog.setContentView(R.layout.dialog_gameover);
+		
+		
+		if(isArcade){
+			//Arcade game is over
+			dialog.setContentView(R.layout.dialog_gameover_arcade);
 
-        TextView title = (TextView) dialog.findViewById(R.id.dialog_gameover_title);
-        TextView score = (TextView) dialog.findViewById(R.id.dialog_gameover_score);
-        TextView next = (TextView) dialog.findViewById(R.id.dialog_gameover_next);
+	        TextView title = (TextView) dialog.findViewById(R.id.dialog_gameover_arcade_title);
+	        TextView player = (TextView) dialog.findViewById(R.id.dialog_gameover_arcade_player);
+	        TextView score = (TextView) dialog.findViewById(R.id.dialog_gameover_arcade_score);
+	        TextView rank = (TextView) dialog.findViewById(R.id.dialog_gameover_arcade_rank);
+	        TextView detail = (TextView) dialog.findViewById(R.id.dialog_gameover_arcade_detail);
+	        
+	        Button upload = (Button) dialog.findViewById(R.id.dialog_upload_button);
+	        Button cancel = (Button) dialog.findViewById(R.id.dialog_cancel_button);
 
-        
-        Button home = (Button) dialog.findViewById(R.id.dialog_home_button);
-        Button restart = (Button) dialog.findViewById(R.id.dialog_restart_button);
+	        title.setText("GAME OVER");
+	        player.setText(mPlayer.getText().toString());
+	        score.setText(mScore.getText().toString());
+	        rank.setText(mLevel.getText().toString());
+	        detail.setText("You have a high score! Would you like to upload to the server to get ranked?");
+	        
+	        upload.setOnClickListener(new OnClickListener() {
+	            @Override
+	            public void onClick(View v) {
+	                dialog.dismiss();
+	                saveScoreInDB();
+	                saveUploadedScoreinDB();
+	                finish();
+	            }
+	        });
 
-        title.setText("title");
-
-        score.setText("You got " + this.score + " in level " + this.level +" game. Congratulations!..");
-        next.setText("Your highest score is " + this.score);
-
-        
-        home.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                recordScore();
-                finish();
-            }
-        });
-
-        restart.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            	Log.i("MainActivity", "Game starts again");
-            	dialog.dismiss();
-            	recordScore();
-            	
-				worldView.restart();
-            }
-        });
-        
+	        cancel.setOnClickListener(new OnClickListener() {
+	            @Override
+	            public void onClick(View v) {
+	            	dialog.dismiss();
+	            	saveScoreInDB();
+	            	finish();
+	            }
+	        });
+	        
+	        
+		}else{
+			//Challenge game is over
+	        dialog.setContentView(R.layout.dialog_gameover);
+	
+	        TextView title = (TextView) dialog.findViewById(R.id.dialog_gameover_title);
+	        TextView player = (TextView) dialog.findViewById(R.id.dialog_gameover_player);
+	        TextView score = (TextView) dialog.findViewById(R.id.dialog_gameover_score);
+	        TextView level = (TextView) dialog.findViewById(R.id.dialog_gameover_level);
+	
+	        
+	        Button home = (Button) dialog.findViewById(R.id.dialog_home_button);
+	        Button restart = (Button) dialog.findViewById(R.id.dialog_restart_button);
+	
+	        title.setText("GAME OVER");
+	        player.setText(mPlayer.getText().toString());
+	        score.setText(mScore.getText().toString());
+	        level.setText(mLevel.getText().toString());
+	        
+	        home.setOnClickListener(new OnClickListener() {
+	            @Override
+	            public void onClick(View v) {
+	                dialog.dismiss();
+	                finish();
+	            }
+	        });
+	
+	        restart.setOnClickListener(new OnClickListener() {
+	            @Override
+	            public void onClick(View v) {
+	            	Log.i("MainActivity", "Game starts again");
+	            	dialog.dismiss();
+	            	
+					worldView.restart();
+	            }
+	        });
+		}
         dialog.show();
 	}
 	
 	
-	public void recordScore(){
+	public void saveScoreInDB(){
 		
         dbHelper.insertScoreRecord(this.level, this.score);
-
 	}
+	
+	public void saveUploadedScoreinDB(){
+        if(AccountPreference.hasScore()){
+        	int s =  AccountPreference.getScore();
+        	if(s < score){
+        		 AccountPreference.rememberScore(this.score);
+        	}
+        }else{
+            AccountPreference.rememberScore(this.score);
+        }
+        
+	}
+	
+	
 	
 	public String getMap(){
 		return currentMap;
@@ -285,7 +329,6 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                recordScore();
                 finish();
             }
         });
@@ -294,7 +337,6 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
             @Override
             public void onClick(View v) {
             	dialog.dismiss();
-            	recordScore();
             	MapMeta nextLevel = LocalMapUtils.getNextLevel(currentMap, MainActivity.this);
             	
             	if(nextLevel != null){
@@ -317,7 +359,7 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
             		
 		            	Log.d("MAINACTIVITY", "Next Level is " + nextLevel);
 		            	currentMap = nextLevel.getName();
-		        		myLevel.setText(currentMap);
+		        		mLevel.setText(currentMap);
 						worldView.restart();
 						Log.d("MAINACTIVITY", "Next Level game starts");
 					}

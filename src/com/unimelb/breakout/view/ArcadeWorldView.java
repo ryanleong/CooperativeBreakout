@@ -14,20 +14,12 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 
-import com.unimelb.breakout.activity.MainActivity;
 import com.unimelb.breakout.object.Ball;
 import com.unimelb.breakout.object.Block;
-import com.unimelb.breakout.object.Map;
 import com.unimelb.breakout.object.Paddle;
-import com.unimelb.breakout.utils.LocalMapUtils;
-import com.unimelb.breakout.view.WorldView.onBlockRemoveListener;
-import com.unimelb.breakout.view.WorldView.onGameClearListener;
-import com.unimelb.breakout.view.WorldView.onGameOverListener;
-import com.unimelb.breakout.view.WorldView.onLifeLostListener;
+import com.unimelb.breakout.utils.Utils;
 
 /**
  * This class implements the game screen of arcade mode.
@@ -41,7 +33,8 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 
 	private Paint dashLinePaint;
 	private float dashLinePos;
-	private int threshold;
+	private int collisionCount;
+	private int threshold = 5;
 	
 	public ArcadeWorldView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -77,7 +70,7 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 
 						if(!ball.isEnd()){
 							
-							if(threshold < 5){
+							if(collisionCount < threshold){
 								//stage not clear
 								Iterator<Block> list = blocks.iterator();
 								//iterate each block
@@ -117,15 +110,14 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 							if(lives > 0){
 								this.start();	
 							}else{
-								this.gameover();
+								this.increaseDifficulty();								
 							}			
 						}
 						//enable collision detection after the ball is launched
 						if(isBallLaunched){
 							if(this.hasCollision(ball, paddle)){
 								ball.bouncePaddle(paddle);
-								threshold ++;
-
+								collisionCount ++;
 							}
 						}
 						
@@ -138,11 +130,6 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 					surfaceHolder.unlockCanvasAndPost(canvas);
 				}
 			}
-//			try{
-//				Thread.sleep(10);
-//			}catch(Exception e){
-//				e.printStackTrace();
-//			}
 		}		
 	}
 	
@@ -151,10 +138,22 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 		dashLinePaint = getDashLinePaint();
 		dashLinePos = initial_y - height/10;
 		this.blocks = this.generateBlocks(width, height);
-		this.threshold = 0;
+		this.collisionCount = 0;
 		this.paddle = new Paddle(this, null);
 		this.ball = new Ball(this, null);
 		start();
+	}
+	
+	
+	public void increaseDifficulty(){
+		this.blocks = this.generateBlocks(width, height);
+		//increase the frequency of adding new blocks
+		this.threshold --;
+		this.collisionCount = 0;
+		//increase the reward of removing block
+		this.reward = 10;		
+		start();
+		Utils.showOkDialog(activity, "Congratulation", "You have cleared all blocks. Now, the difficulty has increased.");
 	}
 	
 	public Paint getDashLinePaint(){
@@ -185,7 +184,7 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 	    		blocks.add(new Block(this, null, padding+blockWidth/2+i*blockWidth, padding+blockHeight/2, blockWidth, blockHeight, i));
 	    }
 	    
-	    this.threshold = 0;
+	    this.collisionCount = 0;
 	}	
 }
 

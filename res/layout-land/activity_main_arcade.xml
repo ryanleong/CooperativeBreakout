@@ -2,28 +2,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context="com.unimelb.breakout.activity.MainActivity"
-    android:orientation="vertical" > 
+    android:orientation="horizontal"
+    > 
     
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:baselineAligned="false"
-        android:background="@color/white"
+    
+    <FrameLayout
+        android:id="@+id/game_board"
+        android:layout_width="0dip"
+        android:layout_height="match_parent"
+        android:layout_weight=".8"
+        >
+       
+        <com.unimelb.breakout.view.ArcadeWorldView
+            android:id="@+id/main_worldView"
+        	android:layout_width="match_parent"
+        	android:layout_height="match_parent"
+	 	/>
+        
+        
+    </FrameLayout>
+    
+    <RelativeLayout
+        android:id="@+id/score_board"
+        android:layout_width="0dip"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight=".2"
         >
         
 		<RelativeLayout
-		    android:layout_width="match_parent"
-		    android:layout_weight="1"
+		    android:id="@+id/board_one"
+		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:orientation="vertical"
 		    android:padding="10dp"
-		    android:background="@color/white">
+		    android:background="@color/white"
+		    android:layout_alignParentTop="true"
+		    android:layout_alignParentLeft="true"
+		    >
 		   
 			<TextView
 	            android:id="@+id/main_text_myscore_label"
-	            android:layout_width="50dp"
+	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:text="Score:"
 	            android:textSize="@dimen/normal_text_size"
@@ -34,7 +56,7 @@
 	        
 	        <TextView
 	            android:id="@+id/main_text_nextscore_label"
-	            android:layout_width="50dp"
+	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:text="Next:"
 	            android:layout_marginBottom="10dp"
@@ -45,7 +67,7 @@
 	        
 	        <TextView
 	            android:id="@+id/main_text_rank_label"
-	            android:layout_width="50dp"
+	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:text="Rank:"
 	            android:textSize="@dimen/normal_text_size"
@@ -57,7 +79,7 @@
 	            android:id="@+id/main_text_myscore"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:text="-"
+	            android:text="0"
 	            android:paddingLeft="10dp"
 	            android:textSize="@dimen/normal_text_size"
 				android:layout_toRightOf="@id/main_text_myscore_label"
@@ -69,7 +91,7 @@
 	            android:id="@+id/main_text_nextscore"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:text="-"
+	            android:text="2000"
 	            android:paddingLeft="10dp"
 	            android:textSize="@dimen/normal_text_size"
 				android:layout_toRightOf="@id/main_text_nextscore_label"
@@ -95,16 +117,17 @@
 		</RelativeLayout>
 		
 		<RelativeLayout
-		    android:layout_width="match_parent"
+		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-		    android:layout_weight="1"
 		    android:background="@color/white"
 		    android:orientation="vertical"
+		    android:layout_alignParentLeft="true"
+		    android:layout_alignParentBottom="true"
 		    android:padding="10dp" >
 		    
 			<TextView
 	            android:id="@+id/main_text_level_label"
-	            android:layout_width="50dp"
+	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:text="Level:"
 	            android:textSize="@dimen/normal_text_size"
@@ -115,7 +138,7 @@
 	        
 	        <TextView
 	            android:id="@+id/main_text_lives_label"
-	            android:layout_width="50dp"
+	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:text="Lives:"
 	            android:layout_marginBottom="10dp"
@@ -125,8 +148,8 @@
 	            android:textColor="@color/black" />
 	        
 	        <TextView
-	            android:id="@+id/main_text_player_label"
-	            android:layout_width="50dp"
+	            android:id="@+id/main_text_playernumber_label"
+	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:text="Player:"
 	            android:layout_below="@id/main_text_lives_label"
@@ -160,32 +183,21 @@
 	            android:textColor="@color/black" />
 	        
 	        <TextView
-	            android:id="@+id/main_text_player"
+	            android:id="@+id/main_text_playernumber"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:text="Single"
 	            android:paddingLeft="10dp"
 	            android:textSize="@dimen/normal_text_size"
-				android:layout_toRightOf="@id/main_text_player_label"
-				android:layout_alignTop="@id/main_text_player_label"
+				android:layout_toRightOf="@id/main_text_playernumber_label"
+				android:layout_alignTop="@id/main_text_playernumber_label"
 				android:layout_alignParentRight="true"
 	            android:layout_marginBottom="10dp"
 	            android:textColor="@color/black" />
 		</RelativeLayout>
 
-    </LinearLayout> 
+    </RelativeLayout> 
     
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-       
-        <com.unimelb.breakout.view.ArcadeWorldView
-            android:id="@+id/main_worldView"
-        	android:layout_width="match_parent"
-        	android:layout_height="match_parent"
-	 	/>
-        
-        
-    </FrameLayout>
+
 
 </LinearLayout>

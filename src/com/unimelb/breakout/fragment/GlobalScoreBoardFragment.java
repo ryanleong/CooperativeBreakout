@@ -1,15 +1,18 @@
 package com.unimelb.breakout.fragment;
 
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.gson.JsonSyntaxException;
 import com.unimelb.breakout.R;
 import com.unimelb.breakout.activity.MapSelectionActivity;
 import com.unimelb.breakout.adapter.ScoreboardAdapter;
 import com.unimelb.breakout.object.Map;
 import com.unimelb.breakout.object.MapMeta;
 import com.unimelb.breakout.object.ScoreBoard;
+import com.unimelb.breakout.object.UploadResponse;
 import com.unimelb.breakout.preference.AccountPreference;
 import com.unimelb.breakout.utils.AsyncUtils;
 import com.unimelb.breakout.utils.LocalMapUtils;
@@ -81,7 +84,6 @@ public class GlobalScoreBoardFragment extends Fragment{
     	});
         
         listView = (ListView) view.findViewById(R.id.scorelist);  
-        downloadGlobalScoreboard();        
         return view;
     }
     
@@ -94,6 +96,39 @@ public class GlobalScoreBoardFragment extends Fragment{
     public void downloadGlobalScoreboard(){
 		final Dialog loadingDialog = Utils.showLoadingDialog(getActivity(), "Downloading the selected map..");
 		final ListenableFuture<ScoreBoard> scoreboard = DataManager.getScoreBoard();
+//		
+//		AsyncUtils.addCallback(response, new FutureCallback<UploadResponse>() {
+//            @Override
+//            public void onSuccess(UploadResponse sb) {
+//            	Log.d("MAPLISTFUTURE", "Download succeeds");
+//            	
+//                loadingDialog.dismiss();
+//                //loadData(sb);
+//            }
+//
+//            @Override
+//            public void onFailure(Throwable throwable) {
+//            	loadingDialog.dismiss();
+//            	if(throwable instanceof SocketException){
+//            		Utils.showOkDialog(getActivity(), 
+//                			"Socket Exception", 
+//                			"Fail to build connection. Please try it late.");
+//            	}else if(throwable instanceof SocketTimeoutException){
+//            		Utils.showOkDialog(getActivity(), 
+//                			"Socket Timeout", 
+//                			"Connection is timeout. Please try it late.");
+//            	}else if(throwable instanceof JsonSyntaxException){
+//            		Utils.showOkDialog(getActivity(), 
+//                			"Query Failed", 
+//                			"Unexpected response from the server. Please try it later. ");
+//            	}else{
+//            		Utils.showOkDialog(getActivity(), 
+//                			"Query Failed", 
+//                			"Unknown error. Please try it later. ");
+//            	}
+//                Log.e("MAPLISTFUTURE", "Throwable during getscore:" + throwable);
+//            }
+//        });
         AsyncUtils.addCallback(scoreboard, new FutureCallback<ScoreBoard>() {
             @Override
             public void onSuccess(ScoreBoard sb) {
@@ -108,12 +143,20 @@ public class GlobalScoreBoardFragment extends Fragment{
             	loadingDialog.dismiss();
             	if(throwable instanceof SocketException){
             		Utils.showOkDialog(getActivity(), 
+                			"Socket Exception", 
+                			"Fail to build connection. Please try it late.");
+            	}else if(throwable instanceof SocketTimeoutException){
+            		Utils.showOkDialog(getActivity(), 
                 			"Socket Timeout", 
-                			"Sorry, the connection timeout. Please try it late.");
+                			"Connection is timeout. Please try it late.");
+            	}else if(throwable instanceof JsonSyntaxException){
+            		Utils.showOkDialog(getActivity(), 
+                			"Query Failed", 
+                			"Unexpected response from the server. Please try it later. ");
             	}else{
             		Utils.showOkDialog(getActivity(), 
-            			"Query failed", 
-            			"Sorry, query global scoreboard failed. Please try it later. ");
+                			"Query Failed", 
+                			"Unknown error. Please try it later. ");
             	}
                 Log.e("MAPLISTFUTURE", "Throwable during getscore:" + throwable);
             }

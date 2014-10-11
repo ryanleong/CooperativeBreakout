@@ -1,7 +1,11 @@
 package com.unimelb.breakout.activity;
 
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.gson.JsonSyntaxException;
 import com.unimelb.breakout.R;
 import com.unimelb.breakout.object.Map;
 import com.unimelb.breakout.object.MapList;
@@ -160,11 +164,28 @@ public class MapSelectionActivity extends Activity{
 
             @Override
             public void onFailure(Throwable throwable) {
+            	
+            	if(throwable instanceof SocketException){
+                	Utils.showOkDialog(MapSelectionActivity.this, 
+                			"Download Failed", 
+                			"Fail to build connection. Please try it later. ");
+                    Log.e("MAPLISTFUTURE", "Throwable during getmaplist:" + throwable);
+            	}else if(throwable instanceof SocketTimeoutException){
+            		Utils.showOkDialog(MapSelectionActivity.this, 
+                			"Socket Timeout", 
+                			"Connection is timeout. Please try it late.");
+            	}else if(throwable instanceof JsonSyntaxException){
+            		Utils.showOkDialog(MapSelectionActivity.this, 
+                			"Download Failed", 
+                			"Unexpected response from the server. Please try it later. ");
+            	}else{
+            		Utils.showOkDialog(MapSelectionActivity.this, 
+                			"Download Failed", 
+                			"Unknown Error. Please try it later. ");
+                    Log.e("MAPLISTFUTURE", "Throwable during getmaplist:" + throwable);
+            	}
             	loadingDialog.dismiss();
-            	Utils.showOkDialog(MapSelectionActivity.this, 
-            			"Downloading failed", 
-            			"Sorry, download of new map failed. Please try it later. ");
-                Log.e("MAPLISTFUTURE", "Throwable during getmaplist:" + throwable);
+
             }
         });
 	}

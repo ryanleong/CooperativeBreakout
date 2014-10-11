@@ -4,7 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 
+import com.unimelb.breakout.R;
 import com.unimelb.breakout.utils.Point;
 import com.unimelb.breakout.view.WorldView;
 
@@ -24,6 +26,7 @@ public class Block {
 	float bottom_edge;
 	
 	Paint paint;
+	Drawable d;
 	int i;
 	
 	public Block(WorldView worldView, Bitmap bitmap, float x, float y, float width, float height, int i) {
@@ -46,6 +49,7 @@ public class Block {
 		
 		int colors[] = {Color.RED, Color.MAGENTA, Color.YELLOW, Color.DKGRAY, Color.CYAN};
 		
+		d = worldView.getResources().getDrawable(R.drawable.brick);
 		paint.setColor(colors[i%5]);
 	}
 
@@ -69,7 +73,9 @@ public class Block {
 				
 		if(worldView.getOnScreen()){
 			
-			canvas.drawRect(this.left_edge, this.top_edge, this.right_edge, this.bottom_edge, paint);
+			//canvas.drawRect(this.left_edge, this.top_edge, this.right_edge, this.bottom_edge, paint);
+			d.setBounds((int)(this.left_edge), (int)(this.top_edge), (int)(this.right_edge), (int)(this.bottom_edge));
+			d.draw(canvas);
 		}
 	}
 	
