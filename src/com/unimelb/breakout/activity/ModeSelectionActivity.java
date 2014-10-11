@@ -4,6 +4,7 @@ import com.unimelb.breakout.R;
 import com.unimelb.breakout.R.id;
 import com.unimelb.breakout.R.layout;
 import com.unimelb.breakout.R.menu;
+import com.unimelb.breakout.utils.Utils;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -45,10 +46,7 @@ public class ModeSelectionActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				
-				final Intent intent = new Intent(ModeSelectionActivity.this, MainActivity.class);
-				//intent.putExtra("map_type", "local");
-				startActivity(intent);
-		        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);        
+				Utils.chooseScreenOrientation(ModeSelectionActivity.this, "1-0");      
 
 			}
     		

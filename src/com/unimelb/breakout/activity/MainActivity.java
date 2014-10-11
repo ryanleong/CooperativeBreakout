@@ -5,6 +5,7 @@ import com.unimelb.breakout.object.MapMeta;
 import com.unimelb.breakout.utils.DBHelper;
 import com.unimelb.breakout.utils.LocalMapUtils;
 import com.unimelb.breakout.utils.Utils;
+import com.unimelb.breakout.view.ArcadeWorldView;
 import com.unimelb.breakout.view.WorldView;
 
 import android.app.Activity;
@@ -51,7 +52,7 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		super.onCreate(savedInstanceState);
 
 		Bundle bundle = this.getIntent().getExtras();
-		if(!bundle.isEmpty() && bundle != null){
+		if(bundle != null){
 			int screenOrientation = bundle.getInt("screenOrientation");
 			
 			switch(screenOrientation){
@@ -65,11 +66,27 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 			}	
 			
 			currentMap = bundle.getString("map");
+			
+
+			
+		}else{
+			Utils.showOkDialog(this, "Error", "Unknown error occurs.");
+		}
+		if(currentMap.equals("1-0")){
+			//arcade mode
+			setContentView(R.layout.activity_main_arcade);
+			worldView = (ArcadeWorldView) this.findViewById(R.id.main_worldView);
+
+
+		}else{
+			//challenge mode
+			setContentView(R.layout.activity_main);
+			
+			worldView = (WorldView) this.findViewById(R.id.main_worldView);
+
+
 		}
 		
-		setContentView(R.layout.activity_main);
-		
-		worldView = (WorldView) this.findViewById(R.id.main_worldView);
 		
 		worldView.setActivity(this);
 

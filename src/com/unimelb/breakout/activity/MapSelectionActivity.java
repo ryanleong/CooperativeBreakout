@@ -169,7 +169,6 @@ public class MapSelectionActivity extends Activity{
         });
 	}
 	
-	
 	@Override
 	public void onBackPressed() {       
 	    finish();

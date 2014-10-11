@@ -2,12 +2,6 @@
 	"name": "Map List",
 	"maps": [
 		{
-			"name": "1-0",
-			"type": "local",
-			"next": "1-1"
-			
-		},
-		{
 			"name": "1-1",
 			"type": "local",
 			"next": "1-2"

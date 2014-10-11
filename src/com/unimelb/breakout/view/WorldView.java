@@ -19,6 +19,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.support.v4.view.VelocityTrackerCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -29,17 +32,20 @@ import android.view.VelocityTracker;
 import android.widget.Toast;
 
 /**
- * TODO: document your custom view class.
+ * This class implements the game screen of challenge mode.
+ * For challenge mode, the rank and next fields are not available. 
+ * However, the player can enter the next level if the current level is clear.
+ * 
  */
 public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Runnable{
 	
-	private SurfaceHolder surfaceHolder;
-	private Activity weakReference;
+	protected SurfaceHolder surfaceHolder;
+	public Activity weakReference;
 	
 	//Game Control flags
-	private boolean isRunning = false;
-	private boolean onScreen = true;
-	private boolean isBallLaunched = false;
+	protected boolean isRunning = false;
+	protected boolean onScreen = true;
+	protected boolean isBallLaunched = false;
 	//private boolean connected = false;
 	//private OutputStream outputStream;
 	
@@ -52,6 +58,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	public int paddle_h = 50;
 
 	//Game Configurations
+	public int padding = 10;
 	public int width;
 	public int height;
 	public int wallWidth = 0;
@@ -121,7 +128,6 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 		// TODO Auto-generated method stub
 		while(isRunning){
 			Canvas canvas = null;
-			boolean ballReacted = false;
 
 			try{
 				
@@ -130,7 +136,8 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 
 					synchronized(surfaceHolder){
 						onDraw(canvas);
-					
+						boolean ballReacted = false;
+
 						if(!ball.isEnd()){
 							if(!blocks.isEmpty()){
 								//stage not clear
@@ -190,6 +197,10 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 		
 	}
 	
+	public void chanllengeModeLogic(){
+		
+	}
+	
 	@Override
 	protected void onDraw(Canvas canvas){
 		canvas.drawColor(Color.BLUE);
@@ -206,7 +217,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	}
 	
 	public void initialise(){
-		this.blocks = this.generateBlocks(width, height, 1);
+		this.blocks = this.generateBlocks(width, height);
 		this.paddle = new Paddle(this, null);
 		this.ball = new Ball(this, null);
 		start();
@@ -222,7 +233,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	private void launchBall(){
 		this.isBallLaunched = true;
 		this.ball.activate();
-		this.ball.dy = 5;
+		this.ball.dy = 20;
 	}
 	
 	/**
@@ -241,6 +252,15 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 		this.initialise();
 	}
 	
+	public Paint getDashLinePaint(){
+		Paint paint = new Paint();
+		paint.setARGB(255, 255, 255 , 255);
+		paint.setStyle(Style.STROKE);
+		paint.setStrokeWidth(10);
+		paint.setPathEffect(new DashPathEffect(new float[] {30,50}, 0));
+		return paint;
+	}
+	
 	/**
 	 * Generate the blocks according to the given map.
 	 * 
@@ -249,22 +269,23 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	 * @param level
 	 * @return
 	 */
-	public ArrayList<Block> generateBlocks(int screenWidth, int screenHeight, int level){
+	public ArrayList<Block> generateBlocks(int screenWidth, int screenHeight){
 		ArrayList<Block> blocks = new ArrayList<Block>();
+		
 		Map mMap = LocalMapUtils.getMap(((MainActivity) weakReference).getMap(), weakReference);
 		int map[][] = mMap.getMap();
 		
-		int padding = 10;
-		float blockWidth = (float)(screenWidth-2*padding)/8;
-		float blockHeight = (float)(screenHeight-2*padding)/10;
+
+		float blockWidth = (screenWidth-2*padding)*((float)mMap.getBlockWidth()/100);
+		float blockHeight = (screenHeight-2*padding)*((float)mMap.getBlockHeight()/100);
 		
 		for(int i = 0; i < map.length; i++){
-			for(int j = 0; j < map[0].length; j++){
+			for(int j = 0; j < map[i].length; j++){
 			
 				if(map[i][j]==1){
 					//blocks.add(new Block(this, null, padding+(i%8)*blockWidth, padding+(i%5)*blockHeight, blockWidth/2, blockHeight/2, i));
 	
-					blocks.add(new Block(this, null, padding+blockWidth/2+((i+j)%8)*blockWidth, padding+blockHeight/2+ ((i+j)%5)*+blockHeight, blockWidth, blockHeight, i));
+					blocks.add(new Block(this, null, padding+blockWidth/2+j*blockWidth, padding+blockHeight/2+ i*+blockHeight, blockWidth, blockHeight, i));
 				}
 			}
 		}

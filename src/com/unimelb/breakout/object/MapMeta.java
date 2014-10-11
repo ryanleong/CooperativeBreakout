@@ -5,6 +5,12 @@ public 	class MapMeta{
 	private String type;
 	private String next;
 	
+	public MapMeta(String name, String type, String next){
+		this.name = name;
+		this.type = type;
+		this.next = next;
+	}
+	
 	public String getNext() {
 		return next;
 	}

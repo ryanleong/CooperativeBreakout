@@ -5,6 +5,7 @@ import com.unimelb.breakout.activity.MainActivity;
 import com.unimelb.breakout.activity.MapSelectionActivity;
 import com.unimelb.breakout.preference.AccountPreference;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -153,6 +154,8 @@ public class Utils {
                 intent.putExtra("screenOrientation", ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 intent.putExtra("map", mapName);
                 context.startActivity(intent);
+                ((Activity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);        
+
             }
         });
 
@@ -163,6 +166,8 @@ public class Utils {
                 intent.putExtra("screenOrientation", ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 intent.putExtra("map", mapName);
                 context.startActivity(intent);
+                ((Activity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);        
+
             }
         });
         

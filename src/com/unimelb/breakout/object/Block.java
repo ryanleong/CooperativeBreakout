@@ -104,6 +104,12 @@ public class Block {
 //		
 //}
 //	
+	
+	public void moveDown(){
+		this.y += this.height;
+		this.top_edge = y - height/2;
+		this.bottom_edge = y + height/2;
+	}
 	public Point[] getBoxPoints(){
 		return new Point[]
 				{

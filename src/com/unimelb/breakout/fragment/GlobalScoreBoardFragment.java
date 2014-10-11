@@ -1,5 +1,7 @@
 package com.unimelb.breakout.fragment;
 
+import java.net.SocketException;
+
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.unimelb.breakout.R;
@@ -104,9 +106,15 @@ public class GlobalScoreBoardFragment extends Fragment{
             @Override
             public void onFailure(Throwable throwable) {
             	loadingDialog.dismiss();
-            	Utils.showOkDialog(getActivity(), 
+            	if(throwable instanceof SocketException){
+            		Utils.showOkDialog(getActivity(), 
+                			"Socket Timeout", 
+                			"Sorry, the connection timeout. Please try it late.");
+            	}else{
+            		Utils.showOkDialog(getActivity(), 
             			"Query failed", 
             			"Sorry, query global scoreboard failed. Please try it later. ");
+            	}
                 Log.e("MAPLISTFUTURE", "Throwable during getscore:" + throwable);
             }
         });

@@ -33,6 +33,8 @@ public class WebServices {
 	
 	public static String SERVER_IP = "192.168.0.3";
 	public static int SERVER_PORT = 9876;
+	
+	public final static int timeout = 500;
 
     
 	/**
@@ -62,6 +64,8 @@ public class WebServices {
 	      
 	      DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 	      Log.d("WebService", "Waiting for map list from server");
+	      
+	      aSocket.setSoTimeout(timeout);
 	      aSocket.receive(reply);
 	      
 	      String newMap = new String(reply.getData());
@@ -111,6 +115,8 @@ public class WebServices {
 	      
 	      DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 	      Log.d("WebService", "Waiting for new map from server");
+	      
+	      aSocket.setSoTimeout(timeout);
 	      aSocket.receive(reply);
 	      
 	      String newMap = new String(reply.getData());
@@ -154,6 +160,8 @@ public class WebServices {
 	      
 	      DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 	      Log.d("WebService", "Waiting for score board from server");
+	      
+	      aSocket.setSoTimeout(timeout);
 	      aSocket.receive(reply);
 	      
 	      String scoreboard = new String(reply.getData());
@@ -202,6 +210,8 @@ public class WebServices {
 	      
 	      DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 	      Log.d("WebService", "Waiting for upload result from server");
+	      
+	      aSocket.setSoTimeout(timeout);
 	      aSocket.receive(reply);
 	      
 	      String response = new String(reply.getData());

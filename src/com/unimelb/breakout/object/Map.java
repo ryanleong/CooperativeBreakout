@@ -4,9 +4,27 @@ public class Map {
 
 	private String name;
 	private int[][] map;
+	private float blockWidth;
+	private float blockHeight;
 
 	public String getName() {
 		return name;
+	}
+
+	public float getBlockWidth() {
+		return blockWidth;
+	}
+
+	public void setBlockWidth(float blockWidth) {
+		this.blockWidth = blockWidth;
+	}
+
+	public float getBlockHeight() {
+		return blockHeight;
+	}
+
+	public void setBlockHeight(float blockHeight) {
+		this.blockHeight = blockHeight;
 	}
 
 	public void setName(String name) {

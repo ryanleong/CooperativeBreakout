@@ -86,11 +86,15 @@ public class LocalMapUtils {
     }
     
     public static MapMeta findMapMeta(String current, MapList maps){
-    	for(MapMeta map : maps.getMaps()){
-    		if(map.getName().equals(current)){
-        		return map;
-    		}
-    	}  	
+    	if(current.equals("1-0")){
+    		return new MapMeta(current, "local", current);
+    	}else{
+	    	for(MapMeta map : maps.getMaps()){
+	    		if(map.getName().equals(current)){
+	        		return map;
+	    		}
+	    	}  	
+    	}
     	return null;
     }
     

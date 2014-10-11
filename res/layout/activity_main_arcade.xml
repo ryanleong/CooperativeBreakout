@@ -1,0 +1,191 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.unimelb.breakout.activity.MainActivity"
+    android:orientation="vertical" > 
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:baselineAligned="false"
+        android:background="@color/white"
+        >
+        
+		<RelativeLayout
+		    android:layout_width="match_parent"
+		    android:layout_weight="1"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical"
+		    android:padding="10dp"
+		    android:background="@color/white">
+		   
+			<TextView
+	            android:id="@+id/main_text_myscore_label"
+	            android:layout_width="50dp"
+	            android:layout_height="wrap_content"
+	            android:text="Score:"
+	            android:textSize="@dimen/normal_text_size"
+	            android:layout_alignParentLeft="true"
+	            android:layout_alignParentTop="true"
+	            android:layout_marginBottom="10dp"
+	            android:textColor="@color/black" />
+	        
+	        <TextView
+	            android:id="@+id/main_text_nextscore_label"
+	            android:layout_width="50dp"
+	            android:layout_height="wrap_content"
+	            android:text="Next:"
+	            android:layout_marginBottom="10dp"
+	            android:layout_below="@id/main_text_myscore_label"
+	            android:layout_alignLeft="@id/main_text_myscore_label"
+	            android:textSize="@dimen/normal_text_size"
+	            android:textColor="@color/black" />
+	        
+	        <TextView
+	            android:id="@+id/main_text_rank_label"
+	            android:layout_width="50dp"
+	            android:layout_height="wrap_content"
+	            android:text="Rank:"
+	            android:textSize="@dimen/normal_text_size"
+	            android:layout_below="@id/main_text_nextscore_label"
+	            android:layout_alignLeft="@id/main_text_nextscore_label"
+	            android:textColor="@color/black" />
+	        
+	        <TextView
+	            android:id="@+id/main_text_myscore"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="-"
+	            android:paddingLeft="10dp"
+	            android:textSize="@dimen/normal_text_size"
+				android:layout_toRightOf="@id/main_text_myscore_label"
+				android:layout_alignParentRight="true"
+	            android:layout_marginBottom="10dp"
+	            android:textColor="@color/black" />
+	        
+	        <TextView
+	            android:id="@+id/main_text_nextscore"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="-"
+	            android:paddingLeft="10dp"
+	            android:textSize="@dimen/normal_text_size"
+				android:layout_toRightOf="@id/main_text_nextscore_label"
+				android:layout_alignParentRight="true"
+				android:layout_alignTop="@id/main_text_nextscore_label"
+	            android:layout_marginBottom="10dp"
+	            android:textColor="@color/black" />
+	        
+	        <TextView
+	            android:id="@+id/main_text_rank"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="-"
+	            android:paddingLeft="10dp"
+	            android:textSize="@dimen/normal_text_size"
+				android:layout_toRightOf="@id/main_text_rank_label"
+				android:layout_alignTop="@id/main_text_rank_label"
+				android:layout_alignParentRight="true"
+	            android:layout_marginBottom="10dp"
+	            android:textColor="@color/black" />
+	        
+	        
+		</RelativeLayout>
+		
+		<RelativeLayout
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="1"
+		    android:background="@color/white"
+		    android:orientation="vertical"
+		    android:padding="10dp" >
+		    
+			<TextView
+	            android:id="@+id/main_text_level_label"
+	            android:layout_width="50dp"
+	            android:layout_height="wrap_content"
+	            android:text="Level:"
+	            android:textSize="@dimen/normal_text_size"
+	            android:layout_alignParentLeft="true"
+	            android:layout_alignParentTop="true"
+	            android:layout_marginBottom="10dp"
+	            android:textColor="@color/black" />
+	        
+	        <TextView
+	            android:id="@+id/main_text_lives_label"
+	            android:layout_width="50dp"
+	            android:layout_height="wrap_content"
+	            android:text="Lives:"
+	            android:layout_marginBottom="10dp"
+	            android:layout_below="@id/main_text_level_label"
+	            android:layout_alignLeft="@id/main_text_level_label"
+	            android:textSize="@dimen/normal_text_size"
+	            android:textColor="@color/black" />
+	        
+	        <TextView
+	            android:id="@+id/main_text_playernumber_label"
+	            android:layout_width="50dp"
+	            android:layout_height="wrap_content"
+	            android:text="Player:"
+	            android:layout_below="@id/main_text_lives_label"
+	            android:layout_alignLeft="@id/main_text_lives_label"
+	            android:textSize="@dimen/normal_text_size"
+	            android:textColor="@color/black" />
+	        
+	        <TextView
+	            android:id="@+id/main_text_level"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="0"
+	            android:paddingLeft="10dp"
+	            android:textSize="@dimen/normal_text_size"
+				android:layout_toRightOf="@id/main_text_level_label"
+				android:layout_alignParentRight="true"
+	            android:layout_marginBottom="10dp"
+	            android:textColor="@color/black" />
+	        
+	        <TextView
+	            android:id="@+id/main_text_lives"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="3"
+	            android:paddingLeft="10dp"
+	            android:textSize="@dimen/normal_text_size"
+				android:layout_toRightOf="@id/main_text_lives_label"
+				android:layout_alignTop="@id/main_text_lives_label"			
+				android:layout_alignParentRight="true"
+	            android:layout_marginBottom="10dp"
+	            android:textColor="@color/black" />
+	        
+	        <TextView
+	            android:id="@+id/main_text_playernumber"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="Single"
+	            android:paddingLeft="10dp"
+	            android:textSize="@dimen/normal_text_size"
+				android:layout_toRightOf="@id/main_text_playernumber_label"
+				android:layout_alignTop="@id/main_text_playernumber_label"
+				android:layout_alignParentRight="true"
+	            android:layout_marginBottom="10dp"
+	            android:textColor="@color/black" />
+		</RelativeLayout>
+
+    </LinearLayout> 
+    
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+       
+        <com.unimelb.breakout.view.ArcadeWorldView
+            android:id="@+id/main_worldView"
+        	android:layout_width="match_parent"
+        	android:layout_height="match_parent"
+	 	/>
+        
+        
+    </FrameLayout>
+
+</LinearLayout>
