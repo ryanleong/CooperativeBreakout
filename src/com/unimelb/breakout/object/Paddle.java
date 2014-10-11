@@ -14,7 +14,7 @@ import com.unimelb.breakout.view.WorldView;
 public class Paddle extends Block{
 	
 
-	private volatile float dx;
+	public volatile float dx;
 	private float dy;
 	
 	private int screenWidth;

@@ -78,7 +78,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	private onGameClearListener gameClearListener;
 	
 	//listener of motion velocity
-	//private VelocityTracker mVelocityTracker = null;
+	private VelocityTracker mVelocityTracker = null;
 	
 	Thread thread;
 
@@ -341,8 +341,8 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	@SuppressLint("ClickableViewAccessibility") @Override
 	public boolean onTouchEvent (MotionEvent event){
 		int index = event.getActionIndex();
-//        int action = event.getActionMasked();
-//        int pointerId = event.getPointerId(index);
+        int action = event.getActionMasked();
+        int pointerId = event.getPointerId(index);
         
 		float px = 0;
 		float py = 0;
@@ -351,13 +351,13 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 		switch(event.getAction()){
 			case MotionEvent.ACTION_DOWN:
 				
-//				if(mVelocityTracker == null) {
-//                    mVelocityTracker = VelocityTracker.obtain();
-//                }
-//                else {
-//                    mVelocityTracker.clear();
-//                }
-//                mVelocityTracker.addMovement(event);
+				if(mVelocityTracker == null) {
+                    mVelocityTracker = VelocityTracker.obtain();
+                }
+                else {
+                    mVelocityTracker.clear();
+                }
+                mVelocityTracker.addMovement(event);
                 
 				px = event.getX();
 				//py = event.getY();
@@ -372,8 +372,16 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 			case MotionEvent.ACTION_MOVE:
 				px = event.getX();
 				
+				 mVelocityTracker.addMovement(event);
+	             mVelocityTracker.computeCurrentVelocity(1000);
+	             
+	             this.paddle.dx = VelocityTrackerCompat.getXVelocity(mVelocityTracker, pointerId);
+				
+	             Log.d("", "X velocity: " + 
+	                        VelocityTrackerCompat.getXVelocity(mVelocityTracker, 
+	                        pointerId));
+	             
 				if(this.paddle.isXCovered(px)){
-
 					
 					this.paddle.x = px + x_diff;
 
@@ -385,7 +393,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 				
 				break;
 			case MotionEvent.ACTION_UP:
-				//mVelocityTracker = null;
+				mVelocityTracker = null;
 				
 				if(!isBallLaunched){
 					this.launchBall();
@@ -393,7 +401,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 				
 				break;
 			case MotionEvent.ACTION_CANCEL:
-				//mVelocityTracker = null;
+				mVelocityTracker = null;
 				break;
 			
 		}

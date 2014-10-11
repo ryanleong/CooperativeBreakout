@@ -243,7 +243,10 @@ public class Ball {
 		
 		float speed = (float) Math.sqrt(Math.pow(dy, 2)+Math.pow(dx, 2));
 		
-		dx =  (2* (this.x - paddle.x)/ paddle.width) * (speed);
+		dx =  (2* (this.x - paddle.x)/ paddle.width) * (speed) + paddle.dx/100;
+		
+//		dy = -dy;
+//		dx = -dx + paddle.dx/100;
 		
 	}
 	
