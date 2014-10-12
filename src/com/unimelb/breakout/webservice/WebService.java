@@ -1,4 +1,4 @@
-package com.unimelb.breakout.webservices;
+package com.unimelb.breakout.webservice;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -33,7 +33,7 @@ import com.unimelb.breakout.utils.JsonUtils;
  * @author Siyuan Zhang
  *
  */
-public class WebServices {
+public class WebService {
 	
 	public static String SERVER_IP = "192.168.0.3";
 	public static int SERVER_PORT = 6789;

@@ -15,8 +15,8 @@ Four different request types:
 3. Get score (Format):      {"request_type": "get_score"}
 		Response: {"name":"highscores", "scores":[{"score":3,"name":"lily"}]}
 
- 4. Get map (Format):        {"request_type": "write_score", "name": "PLAYER_NAME", "score": 50}
- 		Response: {"response" : "success", "score" :13, "name": "rick"}
+ 4. Write score (Format):        {"request_type": "write_score", "name": "PLAYER_NAME", "score": 50}
+ 		Response: {"response" : "success", "score" :13, "name": "rick”, rank: 1}
  		
  		
  		

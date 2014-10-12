@@ -1,4 +1,4 @@
-package com.unimelb.breakout.webservices;
+package com.unimelb.breakout.webservice;
 
 import java.util.concurrent.Callable;
 
@@ -30,7 +30,7 @@ public class DataManager {
             @Override
             public MapList call() throws Exception {
             	
-                return WebServices.getMapList();
+                return WebService.getMapList();
             }
         });
     }
@@ -47,7 +47,7 @@ public class DataManager {
             @Override
             public Map call() throws Exception {
             	
-                return WebServices.downloadNewMap(map);
+                return WebService.downloadNewMap(map);
             }
         });
     }
@@ -63,7 +63,7 @@ public class DataManager {
             @Override
             public ScoreBoard call() throws Exception {
             	
-                return WebServices.getScoreBoard();
+                return WebService.getScoreBoard();
             }
         });
     }
@@ -81,7 +81,7 @@ public class DataManager {
             @Override
             public UploadResponse call() throws Exception {
             	
-                return WebServices.uploadNewScore(name, score);
+                return WebService.uploadNewScore(name, score);
             }
         });
     }

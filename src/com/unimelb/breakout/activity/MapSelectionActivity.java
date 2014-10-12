@@ -13,7 +13,7 @@ import com.unimelb.breakout.object.MapMeta;
 import com.unimelb.breakout.utils.AsyncUtils;
 import com.unimelb.breakout.utils.LocalMapUtils;
 import com.unimelb.breakout.utils.Utils;
-import com.unimelb.breakout.webservices.DataManager;
+import com.unimelb.breakout.webservice.DataManager;
 
 import android.app.Activity;
 import android.app.Dialog;

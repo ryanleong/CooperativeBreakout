@@ -17,7 +17,7 @@ import com.unimelb.breakout.preference.AccountPreference;
 import com.unimelb.breakout.utils.AsyncUtils;
 import com.unimelb.breakout.utils.LocalMapUtils;
 import com.unimelb.breakout.utils.Utils;
-import com.unimelb.breakout.webservices.DataManager;
+import com.unimelb.breakout.webservice.DataManager;
 
 import android.app.Dialog;
 import android.app.Fragment;
@@ -96,7 +96,9 @@ public class GlobalScoreBoardFragment extends Fragment{
     public void downloadGlobalScoreboard(){
 		final Dialog loadingDialog = Utils.showLoadingDialog(getActivity(), "Downloading the selected map..");
 		final ListenableFuture<ScoreBoard> scoreboard = DataManager.getScoreBoard();
-//		
+		
+		
+//		final ListenableFuture<UploadResponse> response = DataManager.uploadNewScore("lucy", 500);
 //		AsyncUtils.addCallback(response, new FutureCallback<UploadResponse>() {
 //            @Override
 //            public void onSuccess(UploadResponse sb) {
@@ -129,6 +131,8 @@ public class GlobalScoreBoardFragment extends Fragment{
 //                Log.e("MAPLISTFUTURE", "Throwable during getscore:" + throwable);
 //            }
 //        });
+		
+		
         AsyncUtils.addCallback(scoreboard, new FutureCallback<ScoreBoard>() {
             @Override
             public void onSuccess(ScoreBoard sb) {
@@ -161,6 +165,7 @@ public class GlobalScoreBoardFragment extends Fragment{
                 Log.e("MAPLISTFUTURE", "Throwable during getscore:" + throwable);
             }
         });
+		
 	}
     
     public void loadData(ScoreBoard sb){

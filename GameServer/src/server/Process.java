@@ -55,10 +55,11 @@ public class Process extends Thread {
 			if (writeScore(requestObject)) {
 				sendData = ("{\"response\" : \"success\", \"score\" :"
 						+ requestObject.get("score") + ", \"name\": \""
-						+ requestObject.get("name") + ", \"rank\": \""
+						+ requestObject.get("name") + "\", \"rank\": "
 						+ newRank + " }").getBytes();
 				
 				newRank = 0;
+				
 			} else
 				sendData = "{\"error\": \"Failed to save highscore.\"}"
 						.getBytes();
@@ -75,6 +76,8 @@ public class Process extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		System.out.println("response: " + new String(sendData));
 
 		System.out.println("Served " + receivePacket.getAddress() + " with "
 				+ requestObject.get("request_type"));

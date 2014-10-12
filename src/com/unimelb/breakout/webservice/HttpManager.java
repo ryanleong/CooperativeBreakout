@@ -1,4 +1,4 @@
-package com.unimelb.breakout.webservices;
+package com.unimelb.breakout.webservice;
 
 import java.io.Closeable;
 import java.io.IOException;
