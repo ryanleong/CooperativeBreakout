@@ -3,5 +3,14 @@
 	"map": [[1]], 
 			
 	"blockWidth" : 12.5,
-	"blockHeight" : 3
+	"blockHeight" : 6,
+	
+	"row": 1,
+	"column": 1,
+	
+	"paddleWidth": 30,
+	"paddleHeight": 4,
+	"initialX" : 50,
+	"initialY" : 80
+	
 }

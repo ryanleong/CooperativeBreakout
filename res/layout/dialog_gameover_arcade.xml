@@ -111,19 +111,6 @@
         android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/dialog_upload_button"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@id/dialog_home_button"
-            android:background="@drawable/back"
-            android:paddingBottom="15dp"
-            android:paddingTop="15dp"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
-
-        <Button
             android:id="@+id/dialog_cancel_button"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -135,6 +122,21 @@
             android:paddingTop="15dp"
             android:textColor="@color/white"
             android:textStyle="bold" />
+                
+        <Button
+            android:id="@+id/dialog_upload_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/dialog_cancel_button"
+            android:background="@drawable/up"
+            android:paddingBottom="15dp"
+            android:paddingTop="15dp"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+
     </RelativeLayout>
 
 </LinearLayout>

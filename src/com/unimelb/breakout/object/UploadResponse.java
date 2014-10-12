@@ -35,7 +35,7 @@ public class UploadResponse {
 	}
 	
 	public boolean isSuccess(){
-		if(response.equals("Success")){
+		if(response.equals("success")){
 			return true;
 		}
 		

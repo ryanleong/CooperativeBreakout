@@ -91,7 +91,7 @@
 	            android:id="@+id/main_text_nextscore"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:text="2000"
+	            android:text="-"
 	            android:paddingLeft="10dp"
 	            android:textSize="@dimen/normal_text_size"
 				android:layout_toRightOf="@id/main_text_nextscore_label"
@@ -148,7 +148,7 @@
 	            android:textColor="@color/black" />
 	        
 	        <TextView
-	            android:id="@+id/main_text_playernumber_label"
+	            android:id="@+id/main_text_player_label"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:text="Player:"
@@ -183,14 +183,14 @@
 	            android:textColor="@color/black" />
 	        
 	        <TextView
-	            android:id="@+id/main_text_playernumber"
+	            android:id="@+id/main_text_player"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:text="Single"
 	            android:paddingLeft="10dp"
 	            android:textSize="@dimen/normal_text_size"
-				android:layout_toRightOf="@id/main_text_playernumber_label"
-				android:layout_alignTop="@id/main_text_playernumber_label"
+				android:layout_toRightOf="@id/main_text_player_label"
+				android:layout_alignTop="@id/main_text_player_label"
 				android:layout_alignParentRight="true"
 	            android:layout_marginBottom="10dp"
 	            android:textColor="@color/black" />

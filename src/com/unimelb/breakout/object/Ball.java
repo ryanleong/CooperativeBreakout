@@ -1,5 +1,8 @@
 package com.unimelb.breakout.object;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -7,8 +10,10 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import com.unimelb.breakout.R;
 import com.unimelb.breakout.enums.GameState;
 import com.unimelb.breakout.utils.Point;
+import com.unimelb.breakout.utils.Utils;
 import com.unimelb.breakout.view.WorldView;
 
 public class Ball {
@@ -60,7 +65,8 @@ public class Ball {
 		this.MAX_Y = screenHeight - MIN_Y;
 		
 		this.ballPaint = getPaint(Color.RED);
-		
+		d = worldView.getResources().getDrawable(R.drawable.ball_blue);
+
 		
 		this.dx = 0;
 		this.dy = 0;
@@ -198,7 +204,9 @@ public class Ball {
 			
 		if(worldView.getOnScreen()){
 			
-			canvas.drawCircle(x, y, r, this.ballPaint);
+			//canvas.drawCircle(x, y, r, this.ballPaint);
+			d.setBounds((int)(x-r), (int)(y-r), (int)(x+r), (int)(y+r));
+			d.draw(canvas);
 		}
 	}
 	
@@ -326,5 +334,39 @@ public class Ball {
 //		
 //		return collide;
 //		
+//	}
+//	
+//	public void handleBlockCollision(ArrayList<Block> blocks){
+//		Iterator<Block> list = blocks.iterator();
+//		//iterate each block
+//		ArrayList<Block> collideBlocks = new ArrayList<Block>();
+//		
+//		while(list.hasNext()){
+//			Block b = list.next();
+//			//if collide then remove the block
+//			Point left_top = new Point(b.left_edge, b.top_edge);
+//			Point left_bot = new Point(b.left_edge, b.bottom_edge);
+//			Point right_top = new Point(b.right_edge, b.top_edge);
+//			Point right_bot = new Point(b.right_edge, b.bottom_edge);
+//			
+//			Point from = new Point(x,y);
+//			update(1);
+//			Point to = new Point(x,y);
+//			
+//			if()
+//			
+//			Point intersect = Utils.intersect(x, y, b1, b2)
+//			if(this.hasCollision(ball, b)){
+//			//if(ball.handleCollision(b)){
+//				list.remove();
+//				if(!ballReacted){
+//					ball.bounceBlock(b);
+//					ballReacted = true;
+//				}
+//				this.blockRemoved();
+//			}else{
+//				b.onDraw(canvas);
+//			}
+//		}	
 //	}
 }

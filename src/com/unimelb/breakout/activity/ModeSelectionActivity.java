@@ -4,6 +4,7 @@ import com.unimelb.breakout.R;
 import com.unimelb.breakout.R.id;
 import com.unimelb.breakout.R.layout;
 import com.unimelb.breakout.R.menu;
+import com.unimelb.breakout.preference.AccountPreference;
 import com.unimelb.breakout.utils.Utils;
 
 import android.app.Activity;
@@ -30,7 +31,7 @@ public class ModeSelectionActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				
+		        
 				final Intent intent = new Intent(ModeSelectionActivity.this, MapSelectionActivity.class);
 				//intent.putExtra("map_type", "local");
 				startActivity(intent);

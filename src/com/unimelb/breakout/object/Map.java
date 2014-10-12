@@ -6,6 +6,61 @@ public class Map {
 	private int[][] map;
 	private float blockWidth;
 	private float blockHeight;
+	private int row;
+	private int column;
+	private int initialX;
+	private int initialY;
+	private int paddleWidth;
+	private int paddleHeight;
+
+
+	public int getRow() {
+		return row;
+	}
+
+	public void setRow(int row) {
+		this.row = row;
+	}
+
+	public int getColumn() {
+		return column;
+	}
+
+	public void setColumn(int column) {
+		this.column = column;
+	}
+
+	public int getInitialX() {
+		return initialX;
+	}
+
+	public void setInitialX(int initialX) {
+		this.initialX = initialX;
+	}
+
+	public int getInitialY() {
+		return initialY;
+	}
+
+	public void setInitialY(int initialY) {
+		this.initialY = initialY;
+	}
+
+	public int getPaddleWidth() {
+		return paddleWidth;
+	}
+
+	public void setPaddleWidth(int paddleWidth) {
+		this.paddleWidth = paddleWidth;
+	}
+
+	public int getPaddleHeight() {
+		return paddleHeight;
+	}
+
+	public void setPaddleHeight(int paddleHeight) {
+		this.paddleHeight = paddleHeight;
+	}
 
 	public String getName() {
 		return name;

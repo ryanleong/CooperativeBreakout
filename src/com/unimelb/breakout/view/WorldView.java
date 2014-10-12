@@ -54,8 +54,10 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	public int ball_r = 30;
 	public ArrayList<Block> blocks = null;
 	public Paddle paddle;
-	public int paddle_w = 300;
-	public int paddle_h = 50;
+	public float paddle_w = 300;
+	public float paddle_h = 50;
+	float blockWidth;
+	float blockHeight;
 
 	//Game Configurations
 	public int padding = 10;
@@ -64,8 +66,8 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	public int height;
 	public int wallWidth = 0;
 	public int ballRadius = 30;
-	public int initial_x;
-	public int initial_y;
+	public float initial_x;
+	public float initial_y;
 	
 	public int lives = 3;
 	
@@ -81,6 +83,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	private VelocityTracker mVelocityTracker = null;
 	
 	Thread thread;
+	Map mMap;
 
 	public WorldView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -99,8 +102,6 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 		
 		this.width = getWidth();
 		this.height = getHeight();
-		this.initial_x = width/2;
-		this.initial_y = height/6*5;
 		
 		this.initialise();
 		
@@ -218,7 +219,14 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	}
 	
 	public void initialise(){
-		this.blocks = this.generateBlocks(width, height);
+		mMap = LocalMapUtils.getMap(((MainActivity) activity).getMap(), activity);
+//		this.initial_x = width/2;
+//		this.initial_y = height/6*5;
+		this.initial_x = ((float)mMap.getInitialX()/100)*width;
+		this.initial_y = ((float)mMap.getInitialY()/100)*height;
+		this.paddle_w = ((float)mMap.getPaddleWidth()/100)*width;
+		this.paddle_h = ((float)mMap.getPaddleHeight()/100)*height;
+		this.blocks = this.generateBlocks(mMap, width, height);
 		this.paddle = new Paddle(this, null);
 		this.ball = new Ball(this, null);
 		start();
@@ -270,18 +278,17 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	 * @param level
 	 * @return
 	 */
-	public ArrayList<Block> generateBlocks(int screenWidth, int screenHeight){
+	public ArrayList<Block> generateBlocks(Map mMap, int screenWidth, int screenHeight){
 		ArrayList<Block> blocks = new ArrayList<Block>();
 		
-		Map mMap = LocalMapUtils.getMap(((MainActivity) activity).getMap(), activity);
 		int map[][] = mMap.getMap();
 		
 
-		float blockWidth = (screenWidth-2*padding)*((float)mMap.getBlockWidth()/100);
-		float blockHeight = (screenHeight-2*padding)*((float)mMap.getBlockHeight()/100);
+		blockWidth = (screenWidth-2*padding)*((float)mMap.getBlockWidth()/100);
+		blockHeight = (screenHeight-2*padding)*((float)mMap.getBlockHeight()/100);
 		
-		for(int i = 0; i < map.length; i++){
-			for(int j = 0; j < map[i].length; j++){
+		for(int i = 0; i < mMap.getColumn(); i++){
+			for(int j = 0; j < mMap.getRow(); j++){
 			
 				if(map[i][j]==1){
 					//blocks.add(new Block(this, null, padding+(i%8)*blockWidth, padding+(i%5)*blockHeight, blockWidth/2, blockHeight/2, i));
@@ -377,9 +384,9 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	             
 	             this.paddle.dx = VelocityTrackerCompat.getXVelocity(mVelocityTracker, pointerId);
 				
-	             Log.d("", "X velocity: " + 
-	                        VelocityTrackerCompat.getXVelocity(mVelocityTracker, 
-	                        pointerId));
+//	             Log.d("", "X velocity: " + 
+//	                        VelocityTrackerCompat.getXVelocity(mVelocityTracker, 
+//	                        pointerId));
 	             
 				if(this.paddle.isXCovered(px)){
 					

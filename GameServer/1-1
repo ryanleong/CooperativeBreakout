@@ -1,5 +1,14 @@
 {
 	"name": "1-1",
 	"map": [[0,0,1,1,1,1,0,0],[1,0,0,1,0,0,1,0],[0,1,0,0,1,1,1,1],[0,1,1,0,0,1,1,0],[0,1,0,1,0,1,0,0]],
-	"block_width": 12.5
+	"blockWidth" : 12.5,
+	"blockHeight" : 6,
+	
+	"row": 8,
+	"column": 5,
+	
+	"paddleWidth": 30,
+	"paddleHeight": 4,
+	"initialX" : 50,
+	"initialY" : 80
 }

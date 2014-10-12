@@ -20,6 +20,7 @@ import com.unimelb.breakout.object.Ball;
 import com.unimelb.breakout.object.Block;
 import com.unimelb.breakout.object.Paddle;
 import com.unimelb.breakout.utils.Utils;
+import com.unimelb.breakout.view.WorldView.onGameClearListener;
 
 /**
  * This class implements the game screen of arcade mode.
@@ -35,6 +36,9 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 	private float dashLinePos;
 	private int collisionCount;
 	private int threshold = 5;
+	private boolean isPause = false;
+	
+	private onDifficultyIncreaseListener difficultyIncreaseListener;
 	
 	public ArcadeWorldView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -56,78 +60,84 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 	public void run() {
 		// TODO Auto-generated method stub
 		while(isRunning){
-			Canvas canvas = null;
-
-			try{
-				
-				canvas = surfaceHolder.lockCanvas(null);
-				if(canvas!= null){
-
-					synchronized(surfaceHolder){
-						
-						onDraw(canvas);
-						boolean ballReacted = false;
-
-						if(!ball.isEnd()){
+			while(!isPause){
+				Canvas canvas = null;
+	
+				try{
+					
+					canvas = surfaceHolder.lockCanvas(null);
+					if(canvas!= null){
+	
+						synchronized(surfaceHolder){
 							
-							if(collisionCount < threshold){
-								//stage not clear
-								Iterator<Block> list = blocks.iterator();
-								//iterate each block
-								while(list.hasNext()){
-									Block b = list.next();
-									
-									if(b.y < dashLinePos){
-										//if collide then remove the block
-										if(this.hasCollision(ball, b)){
-										//if(ball.handleCollision(b)){
-											list.remove();
-											if(!ballReacted){
-												ball.bounceBlock(b);
-												ballReacted = true;
-											}
-											this.blockRemoved();
-										}else{
-											b.onDraw(canvas);
+							onDraw(canvas);
+							boolean ballReacted = false;
+	
+							if(!ball.isEnd()){
+								if(!blocks.isEmpty()){
+									if(collisionCount < threshold){
+										//stage not clear
+										Iterator<Block> list = blocks.iterator();
+										//iterate each block
+										while(list.hasNext()){
+											Block b = list.next();
+											
+											if(b.y < dashLinePos){
+												//if collide then remove the block
+												if(this.hasCollision(ball, b)){
+												//if(ball.handleCollision(b)){
+													list.remove();
+													if(!ballReacted){
+														ball.bounceBlock(b);
+														ballReacted = true;
+													}
+													this.blockRemoved();
+												}else{
+													b.onDraw(canvas);
+												}
+											}else{
+												//if any blocks reach dash line, the game terminates immediately
+												gameover();
+											}									
 										}
 									}else{
-										//if any blocks reach dash line, the game terminates immediately
-										gameover();
-									}									
+										/*
+										 * number of blocks reaches threshold, then move all blocks down a row and
+										 * then add a new row of blocks
+										 */
+										moveDownAndAddBlocks();
+										
+									}
+								}else{
+									this.difficultyIncrease();
 								}
-							}else{
-								/*
-								 * number of blocks reaches threshold, then move all blocks down a row and
-								 * then add a new row of blocks
-								 */
-								moveDownAndAddBlocks();
 								
-							}
-						}else{
-							
-							Log.i("BLOCKS", "size: " + blocks.size());
-							this.lifeLost();
-							if(lives > 0){
-								this.start();	
 							}else{
-								this.increaseDifficulty();								
-							}			
-						}
-						//enable collision detection after the ball is launched
-						if(isBallLaunched){
-							if(this.hasCollision(ball, paddle)){
-								ball.bouncePaddle(paddle);
-								collisionCount ++;
+								
+								Log.i("BLOCKS", "size: " + blocks.size());
+								this.lifeLost();
+								if(lives > 0){
+									this.start();	
+								}else{
+									this.gameover();								
+								}			
 							}
+							//enable collision detection after the ball is launched
+							if(isBallLaunched){
+								if(this.hasCollision(ball, paddle)){
+									ball.bouncePaddle(paddle);
+									collisionCount ++;
+								}
+							}
+							
+							ball.onDraw(canvas);
+							paddle.onDraw(canvas);
 						}
-						
-						ball.onDraw(canvas);
-						paddle.onDraw(canvas);
 					}
-				}
-			}finally{
-				if(canvas!=null){
-					surfaceHolder.unlockCanvasAndPost(canvas);
+				}finally{
+					if(canvas!=null){
+						surfaceHolder.unlockCanvasAndPost(canvas);
+					}
 				}
 			}
 		}		
@@ -137,7 +147,7 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 	public void initialise(){
 		dashLinePaint = getDashLinePaint();
 		dashLinePos = initial_y - height/10;
-		this.blocks = this.generateBlocks(width, height);
+		this.blocks = this.generateBlocks(mMap, width, height);
 		this.collisionCount = 0;
 		this.paddle = new Paddle(this, null);
 		this.ball = new Ball(this, null);
@@ -145,16 +155,7 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 	}
 	
 	
-	public void increaseDifficulty(){
-		this.blocks = this.generateBlocks(width, height);
-		//increase the frequency of adding new blocks
-		this.threshold --;
-		this.collisionCount = 0;
-		//increase the reward of removing block
-		this.reward = 10;		
-		start();
-		Utils.showOkDialog(activity, "Congratulation", "You have cleared all blocks. Now, the difficulty has increased.");
-	}
+
 	
 	public Paint getDashLinePaint(){
 		Paint paint = new Paint();
@@ -175,16 +176,46 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 
 		}
 		
-		float blockWidth = blocks.get(0).width;
-		float blockHeight = blocks.get(0).height;
-
-		
-	    
-	    for(int i = 0; i < 8; i++){	    
+	    for(int i = 0; i < mMap.getColumn(); i++){	    
 	    		blocks.add(new Block(this, null, padding+blockWidth/2+i*blockWidth, padding+blockHeight/2, blockWidth, blockHeight, i));
 	    }
 	    
 	    this.collisionCount = 0;
 	}	
+	
+	/**
+	 * This interface must be implemented by the activity that contains
+	 * this view to enable the communication between this view and its
+	 * host activity.
+	 *
+	 * This listener notifies the activity that the stage is clear.
+	 * 
+	 */
+	public interface onDifficultyIncreaseListener{
+		void onDifficultyIncrease();
+	}
+	
+	public void setOnDifficultyIncreaseListener(onDifficultyIncreaseListener l) {
+		difficultyIncreaseListener = l;
+	}
+	
+	public void difficultyIncrease(){
+		isPause = true;
+		if(difficultyIncreaseListener != null){
+			difficultyIncreaseListener.onDifficultyIncrease();
+		}
+	}
+	
+	public void increaseDiff(){
+		this.blocks = this.generateBlocks(mMap,width, height);
+		//increase the frequency of adding new blocks
+		this.threshold --;
+		this.collisionCount = 0;
+		//increase the reward of removing block
+		this.reward = 10;
+		this.isPause = false;
+		start();
+	}
+	
 }
 

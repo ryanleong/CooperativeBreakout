@@ -17,6 +17,7 @@ import com.unimelb.breakout.preference.AccountPreference;
 import com.unimelb.breakout.utils.AsyncUtils;
 import com.unimelb.breakout.utils.LocalMapUtils;
 import com.unimelb.breakout.utils.Utils;
+import com.unimelb.breakout.view.BreakoutGame;
 import com.unimelb.breakout.webservice.DataManager;
 
 import android.app.Dialog;
@@ -94,49 +95,17 @@ public class GlobalScoreBoardFragment extends Fragment{
     }
     
     public void downloadGlobalScoreboard(){
-		final Dialog loadingDialog = Utils.showLoadingDialog(getActivity(), "Downloading the selected map..");
+		final Dialog loadingDialog = Utils.showLoadingDialog(getActivity(), "Querying high scores..");
 		final ListenableFuture<ScoreBoard> scoreboard = DataManager.getScoreBoard();
 		
 		
-//		final ListenableFuture<UploadResponse> response = DataManager.uploadNewScore("lucy", 500);
-//		AsyncUtils.addCallback(response, new FutureCallback<UploadResponse>() {
-//            @Override
-//            public void onSuccess(UploadResponse sb) {
-//            	Log.d("MAPLISTFUTURE", "Download succeeds");
-//            	
-//                loadingDialog.dismiss();
-//                //loadData(sb);
-//            }
-//
-//            @Override
-//            public void onFailure(Throwable throwable) {
-//            	loadingDialog.dismiss();
-//            	if(throwable instanceof SocketException){
-//            		Utils.showOkDialog(getActivity(), 
-//                			"Socket Exception", 
-//                			"Fail to build connection. Please try it late.");
-//            	}else if(throwable instanceof SocketTimeoutException){
-//            		Utils.showOkDialog(getActivity(), 
-//                			"Socket Timeout", 
-//                			"Connection is timeout. Please try it late.");
-//            	}else if(throwable instanceof JsonSyntaxException){
-//            		Utils.showOkDialog(getActivity(), 
-//                			"Query Failed", 
-//                			"Unexpected response from the server. Please try it later. ");
-//            	}else{
-//            		Utils.showOkDialog(getActivity(), 
-//                			"Query Failed", 
-//                			"Unknown error. Please try it later. ");
-//            	}
-//                Log.e("MAPLISTFUTURE", "Throwable during getscore:" + throwable);
-//            }
-//        });
+
 		
 		
         AsyncUtils.addCallback(scoreboard, new FutureCallback<ScoreBoard>() {
             @Override
             public void onSuccess(ScoreBoard sb) {
-            	Log.d("MAPLISTFUTURE", "Download succeeds");
+            	Log.d("MAPLISTFUTURE", "Query succeeds");
             	
                 loadingDialog.dismiss();
                 loadData(sb);
@@ -172,6 +141,7 @@ public class GlobalScoreBoardFragment extends Fragment{
     	if(sb.getScores()!=null && !sb.getScores().isEmpty()){
     		ScoreboardAdapter adapter = new ScoreboardAdapter(getActivity(), R.layout.scorelist_item, sb.getScores());
             listView.setAdapter(adapter); 
+            BreakoutGame.getInstance().setScoreboard(sb);
     	}   	 
     }
 }

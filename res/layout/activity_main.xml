@@ -57,7 +57,7 @@
 	            android:id="@+id/main_text_myscore"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:text="-"
+	            android:text="0"
 	            android:paddingLeft="10dp"
 	            android:textSize="@dimen/normal_text_size"
 				android:layout_toRightOf="@id/main_text_myscore_label"

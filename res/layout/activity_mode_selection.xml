@@ -34,6 +34,8 @@
 		        android:layout_height="wrap_content"
 		        android:layout_alignParentTop="true"
 		        android:layout_centerHorizontal="true"
+		        android:background="@drawable/btn"
+		        android:textColor="@color/white"
 		        android:gravity="center"
 		        android:text="@string/menu_text_challenge" />
 		    
@@ -43,6 +45,8 @@
 		        android:layout_height="wrap_content"
 		        android:layout_below="@id/button_challenge"
 		        android:layout_centerHorizontal="true"
+		        android:background="@drawable/btn"
+		        android:textColor="@color/white"
 		        android:layout_marginTop="20dp"
 		        android:gravity="center"
 		        android:text="@string/menu_text_arcade" />

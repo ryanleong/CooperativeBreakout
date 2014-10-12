@@ -30,7 +30,8 @@ public class WelcomeActivity extends Activity {
         setContentView(R.layout.activity_welcome);
         setButtonListner();
         if(!AccountPreference.hasPlayerName()){
-            Utils.showPlayerName(this, "What's your name?");
+            Dialog dialog = Utils.showPlayerName(this, "Please have a name before you start.");
+            dialog.setCancelable(false);
         }      
         
     }

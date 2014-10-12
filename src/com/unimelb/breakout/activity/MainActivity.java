@@ -1,13 +1,28 @@
 package com.unimelb.breakout.activity;
 
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.gson.JsonSyntaxException;
 import com.unimelb.breakout.R;
 import com.unimelb.breakout.object.MapMeta;
+import com.unimelb.breakout.object.Rank;
+import com.unimelb.breakout.object.ScoreBoard;
+import com.unimelb.breakout.object.UploadResponse;
 import com.unimelb.breakout.preference.AccountPreference;
+import com.unimelb.breakout.utils.AsyncUtils;
 import com.unimelb.breakout.utils.DBHelper;
 import com.unimelb.breakout.utils.LocalMapUtils;
 import com.unimelb.breakout.utils.Utils;
 import com.unimelb.breakout.view.ArcadeWorldView;
+import com.unimelb.breakout.view.BreakoutGame;
 import com.unimelb.breakout.view.WorldView;
+import com.unimelb.breakout.webservice.DataManager;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -15,6 +30,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.pm.ActivityInfo;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -31,7 +47,8 @@ import android.widget.Toast;
 public class MainActivity extends Activity implements WorldView.onBlockRemoveListener, 
 													  WorldView.onLifeLostListener,
 													  WorldView.onGameOverListener,
-													  WorldView.onGameClearListener{
+													  WorldView.onGameClearListener,
+													  ArcadeWorldView.onDifficultyIncreaseListener{
 	private DBHelper dbHelper;
 	private WorldView worldView;
 	
@@ -45,11 +62,17 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 	private TextView mScore;
 	private TextView mLevel;
 	private TextView mPlayer;
+	private TextView mRank;
+	private TextView mNext;
 
 
 	//private int lives = 3;
 	
 	private boolean isArcade = false;
+	private ScoreBoard  scoreboard = null;
+	private int rank = 10;
+	private String name;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +99,7 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		}else{
 			Utils.showOkDialog(this, "Error", "Unknown error occurs.");
 		}
+		
 		if(currentMap.equals("1-0")){
 			//arcade mode
 			setContentView(R.layout.activity_main_arcade);
@@ -91,19 +115,33 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 
 		}
 		
-		
-		worldView.setActivity(this);
-
 		mScore = (TextView) this.findViewById(R.id.main_text_myscore);
 		mLives = (TextView) this.findViewById(R.id.main_text_lives);
 		mLevel = (TextView) this.findViewById(R.id.main_text_level);
 		mPlayer = (TextView) this.findViewById(R.id.main_text_player);
+		mRank = (TextView) this.findViewById(R.id.main_text_rank);
+		mNext = (TextView) this.findViewById(R.id.main_text_nextscore);
 		
 		mLevel.setText(currentMap);
+		
+		if(isArcade){
+			getScoreboard();
+			displayRank();
+			((ArcadeWorldView) worldView).setOnDifficultyIncreaseListener(this);
+ 		}
+		
+		worldView.setActivity(this);
+
 		//myScore.setText(score);
 		
 		if(AccountPreference.hasPlayerName()){
 			String name = AccountPreference.getPlayerName();
+			this.name = name;
+			mPlayer.setText(name);
+		}else{
+			Utils.showPlayerName(this, "Please have a name before you start.");
+			String name = AccountPreference.getPlayerName();
+			this.name = name;
 			mPlayer.setText(name);
 		}
 		
@@ -111,6 +149,7 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		worldView.setOnLifeLostListener(this);
 		worldView.setOnGameOverListener(this);
 		worldView.setOnGameClearListener(this);
+		
 		
 		dbHelper = new DBHelper(this);
 		
@@ -138,6 +177,9 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 	public void addScore(int s){
 		this.score+=s;
 		this.mScore.setText(Integer.toString(score));
+		if(isArcade){
+			displayRank();
+		}
 	}
 	
 	@Override
@@ -193,30 +235,40 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 			//Arcade game is over
 			dialog.setContentView(R.layout.dialog_gameover_arcade);
 
-	        TextView title = (TextView) dialog.findViewById(R.id.dialog_gameover_arcade_title);
-	        TextView player = (TextView) dialog.findViewById(R.id.dialog_gameover_arcade_player);
-	        TextView score = (TextView) dialog.findViewById(R.id.dialog_gameover_arcade_score);
-	        TextView rank = (TextView) dialog.findViewById(R.id.dialog_gameover_arcade_rank);
-	        TextView detail = (TextView) dialog.findViewById(R.id.dialog_gameover_arcade_detail);
+	        TextView titleView = (TextView) dialog.findViewById(R.id.dialog_gameover_arcade_title);
+	        TextView playerView = (TextView) dialog.findViewById(R.id.dialog_gameover_arcade_player);
+	        TextView scoreView = (TextView) dialog.findViewById(R.id.dialog_gameover_arcade_score);
+	        TextView rankView = (TextView) dialog.findViewById(R.id.dialog_gameover_arcade_rank);
+	        TextView detailView = (TextView) dialog.findViewById(R.id.dialog_gameover_arcade_detail);
 	        
 	        Button upload = (Button) dialog.findViewById(R.id.dialog_upload_button);
 	        Button cancel = (Button) dialog.findViewById(R.id.dialog_cancel_button);
 
-	        title.setText("GAME OVER");
-	        player.setText(mPlayer.getText().toString());
-	        score.setText(mScore.getText().toString());
-	        rank.setText(mLevel.getText().toString());
-	        detail.setText("You have a high score! Would you like to upload to the server to get ranked?");
+	        titleView.setText("GAME OVER");
+	        playerView.setText(mPlayer.getText().toString());
+	        scoreView.setText(mScore.getText().toString());
+	        rankView.setText(mLevel.getText().toString());
 	        
-	        upload.setOnClickListener(new OnClickListener() {
-	            @Override
-	            public void onClick(View v) {
-	                dialog.dismiss();
-	                saveScoreInDB();
-	                saveUploadedScoreinDB();
-	                finish();
-	            }
-	        });
+	        if(!mRank.getText().equals("-")){
+		        detailView.setText("You have a high score! Would you like to upload to the server to get ranked?");
+		        
+		        upload.setOnClickListener(new OnClickListener() {
+		            @Override
+		            public void onClick(View v) {
+		                dialog.dismiss();
+		                saveScoreInDB();
+		                finish();
+		                uploadScore(name, score);
+		            }
+		        });
+	        }else{
+	        	detailView.setVisibility(View.GONE);
+	        	detailView.setClickable(false);
+	        	
+	        	upload.setVisibility(View.GONE);
+	        	upload.setClickable(false);	        	
+	        }
+
 
 	        cancel.setOnClickListener(new OnClickListener() {
 	            @Override
@@ -232,19 +284,19 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 			//Challenge game is over
 	        dialog.setContentView(R.layout.dialog_gameover);
 	
-	        TextView title = (TextView) dialog.findViewById(R.id.dialog_gameover_title);
-	        TextView player = (TextView) dialog.findViewById(R.id.dialog_gameover_player);
-	        TextView score = (TextView) dialog.findViewById(R.id.dialog_gameover_score);
-	        TextView level = (TextView) dialog.findViewById(R.id.dialog_gameover_level);
+	        TextView titleView = (TextView) dialog.findViewById(R.id.dialog_gameover_title);
+	        TextView playerView = (TextView) dialog.findViewById(R.id.dialog_gameover_player);
+	        TextView scoreView = (TextView) dialog.findViewById(R.id.dialog_gameover_score);
+	        TextView levelView = (TextView) dialog.findViewById(R.id.dialog_gameover_level);
 	
 	        
 	        Button home = (Button) dialog.findViewById(R.id.dialog_home_button);
 	        Button restart = (Button) dialog.findViewById(R.id.dialog_restart_button);
 	
-	        title.setText("GAME OVER");
-	        player.setText(mPlayer.getText().toString());
-	        score.setText(mScore.getText().toString());
-	        level.setText(mLevel.getText().toString());
+	        titleView.setText("GAME OVER");
+	        playerView.setText(mPlayer.getText().toString());
+	        scoreView.setText(mScore.getText().toString());
+	        levelView.setText(mLevel.getText().toString());
 	        
 	        home.setOnClickListener(new OnClickListener() {
 	            @Override
@@ -267,6 +319,122 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
         dialog.show();
 	}
 	
+	public void uploadScore(String name, int score){
+		final Dialog loadingDialog = Utils.showLoadingDialog(this, "Uploading Score..");
+
+		final ListenableFuture<UploadResponse> response = DataManager.uploadNewScore(name, score);
+		AsyncUtils.addCallback(response, new FutureCallback<UploadResponse>() {
+            @Override
+            public void onSuccess(UploadResponse sb) {
+            	Log.d("MAPLISTFUTURE", "Download succeeds");
+            	
+                loadingDialog.dismiss();
+
+            	if(sb.isSuccess()){
+                    saveUploadedScoreinDB();
+            	}else{
+            		Utils.showOkDialog(MainActivity.this, 
+                			"Upload Failed", 
+                			"Server error. Please try it late.");
+            	}
+
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+            	loadingDialog.dismiss();
+            	if(throwable instanceof SocketException){
+            		Utils.showOkDialog(MainActivity.this, 
+                			"Socket Exception", 
+                			"Fail to build connection. Please try it late.");
+            	}else if(throwable instanceof SocketTimeoutException){
+            		Utils.showOkDialog(MainActivity.this, 
+                			"Socket Timeout", 
+                			"Connection is timeout. Please try it late.");
+            	}else if(throwable instanceof JsonSyntaxException){
+            		Utils.showOkDialog(MainActivity.this, 
+                			"Upload Failed", 
+                			"Unexpected response from the server. Please try it later. ");
+            	}else{
+            		Utils.showOkDialog(MainActivity.this, 
+                			"Upload Failed", 
+                			"Unknown error. Please try it later. ");
+            	}
+                Log.e("MAPLISTFUTURE", "Throwable during getscore:" + throwable);
+            }
+        });
+	}
+	
+	public void getScoreboard(){
+		ScoreBoard sb = BreakoutGame.getInstance().getScoreboard();
+		
+		if(sb == null){
+			final Dialog loadingDialog = Utils.showLoadingDialog(this, "Querying high scores..");
+			final ListenableFuture<ScoreBoard> listenablescoreboard = DataManager.getScoreBoard();
+			
+	        AsyncUtils.addCallback(listenablescoreboard, new FutureCallback<ScoreBoard>() {
+	            @Override
+	            public void onSuccess(ScoreBoard sboard) {
+	            	Log.d("MAPLISTFUTURE", "Query succeeds");
+	            	scoreboard = sboard;
+	            	rank = scoreboard.getScores().size();
+	                loadingDialog.dismiss();
+	                BreakoutGame.getInstance().setScoreboard(sboard);
+	                displayRank();
+	            }
+
+	            @Override
+	            public void onFailure(Throwable throwable) {
+	            	loadingDialog.dismiss();
+	            	if(throwable instanceof SocketException){
+	            		Utils.showOkDialog(MainActivity.this, 
+	                			"Socket Exception", 
+	                			"Fail to build connection. Please try it late.");
+	            	}else if(throwable instanceof SocketTimeoutException){
+	            		Utils.showOkDialog(MainActivity.this, 
+	                			"Socket Timeout", 
+	                			"Connection is timeout. Please try it late.");
+	            	}else if(throwable instanceof JsonSyntaxException){
+	            		Utils.showOkDialog(MainActivity.this, 
+	                			"Query Failed", 
+	                			"Unexpected response from the server. Please try it later. ");
+	            	}else{
+	            		Utils.showOkDialog(MainActivity.this, 
+	                			"Query Failed", 
+	                			"Unknown error. Please try it later. ");
+	            	}
+	                Log.e("MAPLISTFUTURE", "Throwable during getscore:" + throwable);
+	            }
+	        });
+		}else{
+			scoreboard = sb;
+        	rank = scoreboard.getScores().size();
+		}
+		
+	}
+	
+	public void displayRank(){
+		if(scoreboard != null){
+			ArrayList<Rank> ranks = scoreboard.getScores();
+			Rank r = ranks.get(ranks.size()-1);
+			int rank = Integer.MAX_VALUE;
+			Log.d("RANK", ""+this.rank);
+			while((r = ranks.get(this.rank - 1)).getScore() < this.score){
+				rank = r.getRank();
+				this.rank--;				
+			}
+			
+			if(rank <= 10){
+				mRank.setText(Integer.toString(rank));
+			}
+			
+			mNext.setText(Integer.toString(r.getScore() - this.score));		
+		}
+	}
+	
+	public void setScoreBoard(ScoreBoard sb){
+		
+	}
 	
 	public void saveScoreInDB(){
 		
@@ -302,6 +470,30 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 
 		 		gameclear();
 
+		    }
+		});
+	}
+	
+
+	@Override
+	public void onDifficultyIncrease() {
+		// TODO Auto-generated method stub
+		runOnUiThread(new Runnable() {
+		     @Override
+		     public void run() {
+		    	 
+		 		Log.i("MAIN ACTIVITY", "Arcade Game Clear");
+
+				Dialog dialog = Utils.showOkDialog(MainActivity.this, "Congratulation", "You have cleared all blocks. Now, the difficulty has increased.");
+				dialog.setOnDismissListener(new OnDismissListener(){
+
+					@Override
+					public void onDismiss(DialogInterface dialog) {
+						// TODO Auto-generated method stub
+						((ArcadeWorldView) worldView).increaseDiff();
+					}
+					
+				});
 		    }
 		});
 	}
@@ -371,4 +563,5 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
         
         dialog.show();
 	}
+
 }
