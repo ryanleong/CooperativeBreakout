@@ -2,6 +2,7 @@ package com.unimelb.breakout.object;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.ListIterator;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -219,30 +220,47 @@ public class Ball {
 
 
 	public void bounceBlock(Block block){
+		Log.d("BALL", "BOUNCE CALLED");
 		
-		float WIDTH = 2*r + block.width;
-		float HEIGHT = 2*this.r + block.height;
-		
-		double angle = HEIGHT/WIDTH;
-		
-		double x = Math.abs(this.x - block.x);
-		double y = Math.abs(this.y - block.y);
-		
-		if(x == 0){
+		if(this.dx == 0){
 			this.yBounce();
-		}
-//		else if(angle == y/x ){
-//			//hit the corner
-//			this.xBounce(0);
-//			this.yBounce();
-//		}
-		else if(angle > y/x){
-			//hit left or right edge
+		}else if(this.dy == 0){
 			this.xBounce(0);
 		}else{
-			//hit top or bottom edge
-			this.yBounce();
+			float WIDTH = 2*r + block.width;
+			float HEIGHT = 2*this.r + block.height;
+			
+			double angle = HEIGHT/WIDTH;
+			
+			double x = Math.abs(this.x - block.x);
+			double y = Math.abs(this.y - block.y);
+			
+			if(x == 0){
+				this.yBounce();
+				Log.d("BALL SPEED", "X = 0, Y TURNED");
+			}
+	//		else if(angle == y/x ){
+	//			//hit the corner
+	//			this.xBounce(0);
+	//			this.yBounce();
+	//		}
+			else if(angle < y/x){
+				//hit top or bottom edge
+				this.yBounce();
+				Log.d("BALL SPEED", "topbot, Y TURNED");
+	
+			}else{
+				//hit left or right edge
+				this.xBounce(0);
+				Log.d("BALL SPEED", "leftright, X TURNED");
+	
+			}
 		}
+//		Point left_top = new Point(block.left_edge, block.top_edge);
+//		Point left_bot = new Point(block.left_edge, block.bottom_edge);
+//		Point right_top = new Point(block.right_edge, block.top_edge);
+//		Point right_bot = new Point(block.right_edge, block.bottom_edge);
+		
 	}
 	
 	public void bouncePaddle(Paddle paddle){
@@ -337,21 +355,23 @@ public class Ball {
 //	}
 //	
 //	public void handleBlockCollision(ArrayList<Block> blocks){
-//		Iterator<Block> list = blocks.iterator();
+//		
+//		Point from = new Point(x,y);
+//		update(1);
+//		Point to = new Point(x,y);
+//		
+//		ListIterator<Block> list = blocks.listIterator(blocks.size());
 //		//iterate each block
 //		ArrayList<Block> collideBlocks = new ArrayList<Block>();
 //		
-//		while(list.hasNext()){
-//			Block b = list.next();
+//		while(list.hasPrevious()){
+//			Block b = list.previous();
 //			//if collide then remove the block
 //			Point left_top = new Point(b.left_edge, b.top_edge);
 //			Point left_bot = new Point(b.left_edge, b.bottom_edge);
 //			Point right_top = new Point(b.right_edge, b.top_edge);
 //			Point right_bot = new Point(b.right_edge, b.bottom_edge);
 //			
-//			Point from = new Point(x,y);
-//			update(1);
-//			Point to = new Point(x,y);
 //			
 //			if()
 //			

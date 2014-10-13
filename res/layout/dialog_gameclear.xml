@@ -20,36 +20,78 @@
         android:textSize="@dimen/large_text"
         android:textStyle="bold" />
 
-    <LinearLayout 
+    <RelativeLayout
         android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_margin="20dp"
-    	android:gravity="center_vertical"
-    	android:orientation="vertical"
-        >
-    	<TextView
-	        android:id="@+id/dialog_gameclear_score"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_gravity="center_horizontal"
-	        android:text=""
-	        android:textColor="@color/white"
-	        android:layout_marginTop="10dp"
-	        android:layout_marginBottom="20dp"
-	        android:textSize="@dimen/medium_text" />
-    	
-    	<TextView
-	        android:id="@+id/dialog_gameclear_next"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_gravity="center_horizontal"
-	        android:text=""
-	        android:textColor="@color/white"
-	        android:layout_marginTop="10dp"
-	        android:layout_marginBottom="10dp"
-	        android:textSize="@dimen/medium_text" />
+        android:layout_height="wrap_content"
+        android:gravity="center"
+
+        android:layout_gravity="center" >
         
-    </LinearLayout>
+        <TextView
+	        android:id="@+id/dialog_gameclear_player_label"
+	        android:layout_width="40dp"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="10dp"
+	        android:text="@string/dialog_text_player"
+	        android:textColor="@color/white"
+	        android:textSize="@dimen/micro_text" />
+	    
+        <TextView
+            android:id="@+id/dialog_gameclear_player"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:layout_toRightOf="@id/dialog_gameclear_player_label"
+            android:layout_alignBaseline="@id/dialog_gameclear_player_label"
+            android:text="player"
+            android:textColor="@color/white"
+            android:textSize="@dimen/micro_text" />
+        
+	    <TextView
+	        android:id="@+id/dialog_gameclear_score_label"
+	        android:layout_width="40dp"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="10dp"
+	        android:layout_marginTop="10dp"
+	        android:layout_below="@id/dialog_gameclear_player_label"
+	        android:text="@string/dialog_text_score"
+	        android:textColor="@color/white"
+	        android:textSize="@dimen/micro_text" />
+	    
+        <TextView
+            android:id="@+id/dialog_gameclear_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_toRightOf="@id/dialog_gameclear_score_label"
+            android:layout_alignBaseline="@id/dialog_gameclear_score_label"
+            android:text="score"
+            android:textColor="@color/white"
+            android:textSize="@dimen/micro_text" />
+
+        
+       	<TextView
+	        android:id="@+id/dialog_gameclear_level_label"
+	        android:layout_width="40dp"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="20dp"
+	        android:text="@string/dialog_text_level"
+	        android:layout_below="@id/dialog_gameclear_score_label"
+	        android:textColor="@color/white"
+	        android:textSize="@dimen/micro_text" />
+        	    
+        <TextView
+            android:id="@+id/dialog_gameclear_level"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+			android:layout_alignBaseline="@id/dialog_gameclear_level_label"
+            android:layout_toRightOf="@id/dialog_gameclear_level_label"
+            android:text="level"
+            android:textColor="@color/white"
+            android:textSize="@dimen/micro_text" />
+    </RelativeLayout>
 
 
     <RelativeLayout
@@ -61,9 +103,9 @@
 	    
 	    <Button
 	        android:id="@+id/dialog_home_button"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="Home"
+	        android:layout_width="40dp"
+            android:layout_height="40dp"
+	        android:background="@drawable/house"
 	        android:layout_gravity="center"
 	        android:paddingBottom="15dp"
 	        android:paddingTop="15dp"
@@ -73,9 +115,9 @@
 	
 	    <Button
 	        android:id="@+id/dialog_next_button"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="Next"
+	        android:layout_width="50dp"
+            android:layout_height="50dp"
+	        android:background="@drawable/forward"
 	        android:layout_gravity="center"
 	        android:paddingBottom="15dp"
 	        android:layout_marginLeft="10dp"

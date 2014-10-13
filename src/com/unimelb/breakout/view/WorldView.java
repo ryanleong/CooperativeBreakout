@@ -2,6 +2,7 @@ package com.unimelb.breakout.view;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.ListIterator;
 
 import com.unimelb.breakout.activity.MainActivity;
 import com.unimelb.breakout.object.Ball;
@@ -10,6 +11,7 @@ import com.unimelb.breakout.object.Map;
 import com.unimelb.breakout.object.Paddle;
 import com.unimelb.breakout.utils.LocalMapUtils;
 import com.unimelb.breakout.utils.Point;
+import com.unimelb.breakout.utils.Utils;
 import com.unimelb.breakout.utils.Vector;
 
 import android.annotation.SuppressLint;
@@ -46,6 +48,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	protected boolean isRunning = false;
 	protected boolean onScreen = true;
 	protected boolean isBallLaunched = false;
+	protected boolean touchOnPaddle = false;
 	//private boolean connected = false;
 	//private OutputStream outputStream;
 	
@@ -71,13 +74,13 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	
 	public int lives = 3;
 	
-	private onBlockRemoveListener blockRemoveListener;
+	protected onBlockRemoveListener blockRemoveListener;
 	
-	private onLifeLostListener lifeLostListener;
+	protected onLifeLostListener lifeLostListener;
 
-	private onGameOverListener gameOverListener;
+	protected onGameOverListener gameOverListener;
 	
-	private onGameClearListener gameClearListener;
+	protected onGameClearListener gameClearListener;
 	
 	//listener of motion velocity
 	private VelocityTracker mVelocityTracker = null;
@@ -138,40 +141,42 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 
 					synchronized(surfaceHolder){
 						onDraw(canvas);
-						boolean ballReacted = false;
 
 						if(!ball.isEnd()){
 							if(!blocks.isEmpty()){
+								boolean hasCollided = false;
 								//stage not clear
-								Iterator<Block> list = blocks.iterator();
-								//iterate each block
-								while(list.hasNext()){
-									Block b = list.next();
+								ListIterator<Block> list = blocks.listIterator(blocks.size());
+								//iterate blocks in reverse order, that is, start with the bottom block first
+								while(list.hasPrevious()){
+									Block b = list.previous();
 									//if collide then remove the block
-									if(this.hasCollision(ball, b)){
+									if(!hasCollided && this.hasCollision(ball, b)){
 									//if(ball.handleCollision(b)){
 										list.remove();
-										if(!ballReacted){
-											ball.bounceBlock(b);
-											ballReacted = true;
-										}
+										ball.bounceBlock(b);
 										this.blockRemoved();
-									}else{
-										b.onDraw(canvas);
+										hasCollided = true;
+
 									}
+									b.onDraw(canvas);
 								}
+								
+								//this.handleBlockCollision(blocks, ball, canvas);
 							}else{
 								//notify that the stage is clear.
 								gameclear();
+								break;
 							}
 						}else{
 							
 							Log.i("BLOCKS", "size: " + blocks.size());
 							this.lifeLost();
 							if(lives > 0){
-								this.start();	
+								this.start();
 							}else{
 								this.gameover();
+								break;
 							}			
 						}
 						//enable collision detection after the ball is launched
@@ -255,10 +260,10 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	}
 	
 	public void restart(){
+		this.initialise();
 		this.isRunning = true;
 		this.thread = new Thread(this);
 		this.thread.start();
-		this.initialise();
 	}
 	
 	public Paint getDashLinePaint(){
@@ -342,6 +347,91 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 				&& block_top <= ball_bottom);
 	}
 
+//	@SuppressLint("WrongCall") public void handleBlockCollision(ArrayList<Block> blocks, Ball ball, Canvas canvas){
+//		Point ball_from = new Point(ball.x, ball.y);
+//		ball.update(1);
+//		Point ball_to = new Point(ball.x, ball.y);
+//		
+//		ListIterator<Block> list = blocks.listIterator(blocks.size());
+//		//iterate blocks in reverse order, that is, start with the bottom block first
+//		while(list.hasPrevious()){
+//			Block b = list.previous();
+//			//if collide then remove the block
+//			if(this.hasCollision(ball, b)){
+//			//if(ball.handleCollision(b)){
+//				list.remove();
+//				this.blockRemoved();
+//				
+////				Point left_top = new Point(b.left_edge, b.top_edge);
+////				Point left_bot = new Point(b.left_edge, b.bottom_edge);
+////				Point right_top = new Point(b.right_edge, b.top_edge);
+////				Point right_bot = new Point(b.right_edge, b.bottom_edge);
+//
+//				boolean collide = false;
+//				Point intersect = null;
+//				for(float i = ball_from.y; i<ball_to.y;i++){
+//					for(float j = ball_from.x; j<ball_to.y;j++){
+//						//left
+//						intersect = Utils.intersect(b.left_edge, b.top_edge, b.left_edge, b.bottom_edge,
+//								ball_from.x, ball_from.y, j, i);
+//						if(intersect != null){
+//							ball.xBounce(0);
+//							ball.x = b.left_edge - (ball.x - b.left_edge);
+//							collide = true;
+//							break;
+//						}
+//						
+//						//right
+//						intersect = Utils.intersect(b.right_edge, b.top_edge, b.right_edge, b.bottom_edge,
+//								ball_from.x, ball_from.y, j, i);
+//						if(intersect != null){
+//							ball.xBounce(0);
+//							ball.x = b.right_edge + (b.right_edge - ball.x);
+//							collide = true;
+//							break;
+//						}
+//						
+//						//top
+//						intersect = Utils.intersect(b.left_edge, b.top_edge, b.right_edge, b.top_edge,
+//								ball_from.x, ball_from.y, j, i);
+//						if(intersect != null){
+//							ball.yBounce();
+//							ball.y = b.top_edge - (ball.y - b.top_edge);
+//							collide = true;
+//							break;
+//						}
+//						
+//						//bot
+//						intersect = Utils.intersect(b.left_edge, b.bottom_edge, b.right_edge, b.bottom_edge,
+//								ball_from.x, ball_from.y, j, i);
+//						if(intersect != null){
+//							ball.yBounce();
+//							ball.y = b.bottom_edge + (b.bottom_edge - ball.y);
+//							collide = true;
+//							break;
+//						}					
+//					}
+//					if(collide){
+//						break;
+//					}
+//				}
+//			}
+//			b.onDraw(canvas);
+//		}
+//
+//	}
+	
+	public void handleBlockCollision(Block block, Ball ball){
+		if(this.hasCollision(ball, block)){
+			Point left_top = new Point(block.left_edge, block.top_edge);
+			Point left_bot = new Point(block.left_edge, block.bottom_edge);
+			Point right_top = new Point(block.right_edge, block.top_edge);
+			Point right_bot = new Point(block.right_edge, block.bottom_edge);
+			
+			
+		}
+	}
+	
 	/**
 	 * Monitor the finger motion and move paddle according to the motion event
 	 */
@@ -373,6 +463,9 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 						
 				if(this.paddle.isXCovered(px)){
 					x_diff = paddle.x - px;
+					touchOnPaddle = true;
+				}else{
+					touchOnPaddle = false;
 				}
                
 				break;
@@ -391,10 +484,12 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 				if(this.paddle.isXCovered(px)){
 					
 					this.paddle.x = px + x_diff;
-
+					touchOnPaddle = true;
+				}else{
+					touchOnPaddle = false;
 				}
 				
-				if(!isBallLaunched){
+				if(!isBallLaunched && touchOnPaddle){
 					ball.x = px + x_diff;
 				}
 				
@@ -402,7 +497,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 			case MotionEvent.ACTION_UP:
 				mVelocityTracker = null;
 				
-				if(!isBallLaunched){
+				if(!isBallLaunched && touchOnPaddle){
 					this.launchBall();
 				}
 				

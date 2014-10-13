@@ -30,7 +30,7 @@ public class Paddle extends Block{
 		screenHeight = worldView.height;
 		MIN_X =  worldView.paddle_w/2;
 		MAX_X = screenWidth - MIN_X;
-		d = worldView.getResources().getDrawable(R.drawable.paddle_green);
+		d = worldView.getResources().getDrawable(R.drawable.paddle_red);
 
 	}
 

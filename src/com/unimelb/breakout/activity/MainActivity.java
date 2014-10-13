@@ -316,6 +316,8 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 	            }
 	        });
 		}
+		dialog.setCancelable(false);
+		
         dialog.show();
 	}
 	
@@ -346,21 +348,22 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
             	if(throwable instanceof SocketException){
             		Utils.showOkDialog(MainActivity.this, 
                 			"Socket Exception", 
-                			"Fail to build connection. Please try it late.");
+                			"Cannot connect to the server. Upload failed.");
             	}else if(throwable instanceof SocketTimeoutException){
             		Utils.showOkDialog(MainActivity.this, 
                 			"Socket Timeout", 
-                			"Connection is timeout. Please try it late.");
+                			"Cannot connect to the server. Upload failed.");
             	}else if(throwable instanceof JsonSyntaxException){
             		Utils.showOkDialog(MainActivity.this, 
-                			"Upload Failed", 
-                			"Unexpected response from the server. Please try it later. ");
+                			"JSON Parse Exception", 
+                			"Unexpected response from the server. Upload failed.");
             	}else{
             		Utils.showOkDialog(MainActivity.this, 
-                			"Upload Failed", 
-                			"Unknown error. Please try it later. ");
+                			"Unknown error.", 
+                			"Upload failed due to unknown error.");
             	}
-                Log.e("MAPLISTFUTURE", "Throwable during getscore:" + throwable);
+            	
+                Log.e("MAPLISTFUTURE", "Throwable during write score:" + throwable);
             }
         });
 	}
@@ -369,7 +372,7 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		ScoreBoard sb = BreakoutGame.getInstance().getScoreboard();
 		
 		if(sb == null){
-			final Dialog loadingDialog = Utils.showLoadingDialog(this, "Querying high scores..");
+			//final Dialog loadingDialog = Utils.showLoadingDialog(this, "Querying high scores..");
 			final ListenableFuture<ScoreBoard> listenablescoreboard = DataManager.getScoreBoard();
 			
 	        AsyncUtils.addCallback(listenablescoreboard, new FutureCallback<ScoreBoard>() {
@@ -378,30 +381,31 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 	            	Log.d("MAPLISTFUTURE", "Query succeeds");
 	            	scoreboard = sboard;
 	            	rank = scoreboard.getScores().size();
-	                loadingDialog.dismiss();
+	                //loadingDialog.dismiss();
 	                BreakoutGame.getInstance().setScoreboard(sboard);
 	                displayRank();
 	            }
 
 	            @Override
 	            public void onFailure(Throwable throwable) {
-	            	loadingDialog.dismiss();
+//	            	if(loadingDialog != null)
+//	            		loadingDialog.dismiss();
 	            	if(throwable instanceof SocketException){
 	            		Utils.showOkDialog(MainActivity.this, 
 	                			"Socket Exception", 
-	                			"Fail to build connection. Please try it late.");
+	                			"Fail to connect the server. Your score will not be uploaded to the server.");
 	            	}else if(throwable instanceof SocketTimeoutException){
 	            		Utils.showOkDialog(MainActivity.this, 
 	                			"Socket Timeout", 
-	                			"Connection is timeout. Please try it late.");
+	                			"Connection is timeout. Your score will not be uploaded to the server.");
 	            	}else if(throwable instanceof JsonSyntaxException){
 	            		Utils.showOkDialog(MainActivity.this, 
 	                			"Query Failed", 
-	                			"Unexpected response from the server. Please try it later. ");
+	                			"Unexpected response from the server. Your score will not be uploaded to the server. ");
 	            	}else{
 	            		Utils.showOkDialog(MainActivity.this, 
 	                			"Query Failed", 
-	                			"Unknown error. Please try it later. ");
+	                			"Due to unknown error, your score will not be uploaded to the server.");
 	            	}
 	                Log.e("MAPLISTFUTURE", "Throwable during getscore:" + throwable);
 	            }
@@ -504,17 +508,19 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
         dialog.setContentView(R.layout.dialog_gameclear);
 
         TextView title = (TextView) dialog.findViewById(R.id.dialog_gameclear_title);
+        TextView name = (TextView) dialog.findViewById(R.id.dialog_gameclear_player);
         TextView score = (TextView) dialog.findViewById(R.id.dialog_gameclear_score);
-        TextView nex = (TextView) dialog.findViewById(R.id.dialog_gameclear_next);
+        TextView level = (TextView) dialog.findViewById(R.id.dialog_gameclear_level);
 
         
         Button home = (Button) dialog.findViewById(R.id.dialog_home_button);
         Button next = (Button) dialog.findViewById(R.id.dialog_next_button);
 
-        title.setText("title");
+        title.setText("Level Clear");
 
-        score.setText("You got " + this.score + " in level " + this.level +" game. Congratulations!..");
-        nex.setText("Your highest score is " + this.score);
+        name.setText(this.name);
+        score.setText(Integer.toString(this.score));
+        level.setText(this.currentMap);
 
         
         home.setOnClickListener(new OnClickListener() {

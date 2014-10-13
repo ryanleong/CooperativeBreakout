@@ -7,11 +7,13 @@ import com.unimelb.breakout.utils.Utils;
 
 import android.app.Fragment;
 import android.database.Cursor;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -73,6 +75,8 @@ public class LocalScoreBoardFragment extends Fragment {
     	dbHelper = new DBHelper(getActivity());  
 
         ListView listView = (ListView) view.findViewById(R.id.scorelist);  
+        LinearLayout labels = (LinearLayout) view.findViewById(R.id.labels);
+        TextView nodata = (TextView) view.findViewById(R.id.label_nodata);
           
         Cursor cursor = dbHelper.fetchBestTenRecords();
         
@@ -90,6 +94,11 @@ public class LocalScoreBoardFragment extends Fragment {
     		    0);
        
        listView.setAdapter(adapter);
+       
+       if(cursor.getCount() == 0){
+    	   labels.setVisibility(View.GONE);
+    	   nodata.setVisibility(View.VISIBLE);
+       }
        
        return view;
                

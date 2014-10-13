@@ -3,30 +3,41 @@
 <LinearLayout  
   xmlns:android="http://schemas.android.com/apk/res/android"  
   android:orientation="horizontal"  
-  android:layout_width="fill_parent"  
-  android:layout_height="fill_parent">  
+  android:layout_width="fill_parent"
+  android:background="@drawable/list"  
+  android:paddingLeft="20dp"
+  android:paddingRight="20dp"
+  android:gravity="center_vertical"
+  android:layout_height="40dp">  
   <!-- level -->  
-  <TextView  
-   android:layout_width="wrap_content"  
-   android:layout_height="wrap_content"  
-   android:id="@+id/item_level" 
-	android:gravity="right"
-   android:layout_weight=".1" 
+	<TextView  
+	   android:layout_width="fill_parent"  
+	   android:layout_height="wrap_content"  
+	   android:id="@+id/item_level" 
+	   android:gravity="center"
+	   android:layout_weight="1" 	   
+	   android:textSize="@dimen/large_text"
+	   android:text="level"
   />  
-  <!-- score -->  
-  <TextView  
-   android:layout_width="wrap_content"  
-   android:layout_height="wrap_content"  
-   android:id="@+id/item_score"  
-	android:gravity="right"
-   android:layout_weight=".2"
-  />  
-  <!-- time -->  
-  <TextView  
-   android:layout_width="wrap_content"  
-   android:layout_height="wrap_content"  
-   android:id="@+id/item_time"  
-	android:gravity="right"
-   android:layout_weight=".4"
+  <!-- score -->
+
+	<TextView
+	    android:id="@+id/item_score"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_weight="1"
+	    android:gravity="center"
+	    android:textSize="@dimen/large_text"
+	    android:text="score" />
+  
+  	<!-- time -->  
+  	<TextView  
+	   android:layout_width="fill_parent"  
+	   android:layout_height="wrap_content"  
+	   android:id="@+id/item_time"  
+	   android:gravity="center"
+	   android:text="time"	   
+	   android:textSize="@dimen/large_text"
+	   android:layout_weight="1"
   />  
 </LinearLayout> 

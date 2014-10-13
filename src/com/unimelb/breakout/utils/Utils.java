@@ -22,16 +22,20 @@ public class Utils {
 	 *Calculate the intersect point of two lines. 
 	 *One starts from a1 to a2 and another starts from b1 to b2.
 	 */
-	public static Point intersect(Point a1, Point a2, Point b1, Point b2){
-		
-		float x1 = a1.x;
-		float x2 = a2.x;
-		float x3 = b1.x;
-		float x4 = b2.x;
-		float y1 = a1.y;
-		float y2 = a2.y;
-		float y3 = b1.y;
-		float y4 = b2.y;
+	public static Point intersect(float x1, float y1,
+								float x2, float y2,
+								float x3, float y3,
+								float x4, float y4){
+//	public static Point intersect(Point a1, Point a2, Point b1, Point b2){
+//		
+//		float x1 = a1.x;
+//		float x2 = a2.x;
+//		float x3 = b1.x;
+//		float x4 = b2.x;
+//		float y1 = a1.y;
+//		float y2 = a2.y;
+//		float y3 = b1.y;
+//		float y4 = b2.y;
 		
 		float denom  = ((y4-y3) * (x2-x1)) - ((x4-x3) * (y2-y1));
 		  if (denom != 0) {

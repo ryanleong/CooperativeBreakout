@@ -20,10 +20,10 @@ public class Block {
 	public float x;
 	public float y;
 	
-	float left_edge;
-	float right_edge;
-	float top_edge;
-	float bottom_edge;
+	public float left_edge;
+	public float right_edge;
+	public float top_edge;
+	public float bottom_edge;
 	
 	Paint paint;
 	Drawable d;

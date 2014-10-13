@@ -28,6 +28,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -35,6 +36,9 @@ import android.widget.TextView;
 public class GlobalScoreBoardFragment extends Fragment{
 	
 	ListView listView;
+	LinearLayout labels;
+	TextView nodata ;
+	
 	
     /**
      * Use this factory method to create a new instance of
@@ -66,6 +70,17 @@ public class GlobalScoreBoardFragment extends Fragment{
         View view = inflater.inflate(R.layout.fragment_score_board, container, false);
         
         TextView playername = (TextView) view.findViewById(R.id.list_player_name);
+        
+        TextView label_one = (TextView) view.findViewById(R.id.list_label_one);
+        TextView label_two = (TextView) view.findViewById(R.id.list_label_two);
+        TextView label_three = (TextView) view.findViewById(R.id.list_label_three);
+        
+        label_one.setText("Name");
+        label_two.setText("Score");
+        label_three.setText("Rank");
+
+        labels = (LinearLayout) view.findViewById(R.id.labels);
+        nodata = (TextView) view.findViewById(R.id.label_nodata);
         
         if(AccountPreference.hasPlayerName()){
         	String name = AccountPreference.getPlayerName();
@@ -109,6 +124,10 @@ public class GlobalScoreBoardFragment extends Fragment{
             	
                 loadingDialog.dismiss();
                 loadData(sb);
+                if(sb.getScores().size() == 0){
+                	labels.setVisibility(View.GONE);
+             	   nodata.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
@@ -131,6 +150,10 @@ public class GlobalScoreBoardFragment extends Fragment{
                 			"Query Failed", 
                 			"Unknown error. Please try it later. ");
             	}
+            	
+            	labels.setVisibility(View.GONE);
+         	    nodata.setVisibility(View.VISIBLE);
+                
                 Log.e("MAPLISTFUTURE", "Throwable during getscore:" + throwable);
             }
         });

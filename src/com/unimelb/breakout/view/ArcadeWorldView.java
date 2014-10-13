@@ -2,6 +2,7 @@ package com.unimelb.breakout.view;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Random;
 
 import android.annotation.SuppressLint;
@@ -16,9 +17,11 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
+import com.unimelb.breakout.activity.MainActivity;
 import com.unimelb.breakout.object.Ball;
 import com.unimelb.breakout.object.Block;
 import com.unimelb.breakout.object.Paddle;
+import com.unimelb.breakout.utils.LocalMapUtils;
 import com.unimelb.breakout.utils.Utils;
 import com.unimelb.breakout.view.WorldView.onGameClearListener;
 
@@ -60,6 +63,7 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 	public void run() {
 		// TODO Auto-generated method stub
 		while(isRunning){
+			int i = 0;
 			while(!isPause){
 				Canvas canvas = null;
 	
@@ -71,34 +75,38 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 						synchronized(surfaceHolder){
 							
 							onDraw(canvas);
-							boolean ballReacted = false;
 	
 							if(!ball.isEnd()){
 								if(!blocks.isEmpty()){
 									if(collisionCount < threshold){
+										boolean hasCollided = false;
+										i++;
 										//stage not clear
-										Iterator<Block> list = blocks.iterator();
-										//iterate each block
-										while(list.hasNext()){
-											Block b = list.next();
-											
-											if(b.y < dashLinePos){
+										ListIterator<Block> list = blocks.listIterator(blocks.size());
+										//iterate blocks in reverse order, that is, start with the bottom block first
+										while(list.hasPrevious()){
+											Block b = list.previous();
+											if(b.bottom_edge < dashLinePos){
 												//if collide then remove the block
-												if(this.hasCollision(ball, b)){
+												if(!hasCollided && this.hasCollision(ball, b)){
 												//if(ball.handleCollision(b)){
 													list.remove();
-													if(!ballReacted){
-														ball.bounceBlock(b);
-														ballReacted = true;
-													}
-													this.blockRemoved();
-												}else{
-													b.onDraw(canvas);
+													ball.bounceBlock(b);												
+													Log.d("LOOP", "one block removed");
+													this.blockRemoved();	
+													hasCollided = true;
+													//Log.d("LOOP TURNED", hasCollided+"");
+													Log.d("BALL SPEED", ball.dy+"");
+													Log.d("BALL POS", ball.y+"");
+													Log.d("LOOPED", i+"");
 												}
 											}else{
 												//if any blocks reach dash line, the game terminates immediately
 												gameover();
-											}									
+												break;
+											}		
+											b.onDraw(canvas);
+											
 										}
 									}else{
 										/*
@@ -145,6 +153,11 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 	
 	@Override
 	public void initialise(){
+		mMap = LocalMapUtils.getMap(((MainActivity) activity).getMap(), activity);
+		this.initial_x = ((float)mMap.getInitialX()/100)*width;
+		this.initial_y = ((float)mMap.getInitialY()/100)*height;
+		this.paddle_w = ((float)mMap.getPaddleWidth()/100)*width;
+		this.paddle_h = ((float)mMap.getPaddleHeight()/100)*height;
 		dashLinePaint = getDashLinePaint();
 		dashLinePos = initial_y - height/10;
 		this.blocks = this.generateBlocks(mMap, width, height);
@@ -215,6 +228,17 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 		this.reward = 10;
 		this.isPause = false;
 		start();
+	}
+	
+	@Override
+	public void gameover(){
+		Log.i("STATUS", "Game over!");
+		isRunning = false;
+		isPause = true;
+		thread = null;
+		if(gameOverListener != null){
+			gameOverListener.onGameOver();
+		}
 	}
 	
 }
