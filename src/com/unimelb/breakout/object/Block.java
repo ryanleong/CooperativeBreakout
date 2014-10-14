@@ -56,13 +56,13 @@ public class Block {
 		
 		switch (i){
 			case 1:
-				d = worldView.getResources().getDrawable(R.drawable.brick);
+				d = worldView.getResources().getDrawable(R.drawable.btn_green);
 				break;
 			case 2:
-				d = worldView.getResources().getDrawable(R.drawable.brick_blue);
+				d = worldView.getResources().getDrawable(R.drawable.btn_green);
 				
 			case 3:
-				d = worldView.getResources().getDrawable(R.drawable.brick_pink);
+				d = worldView.getResources().getDrawable(R.drawable.btn_orange);
 		}
 		paint.setColor(colors[i%5]);
 	}

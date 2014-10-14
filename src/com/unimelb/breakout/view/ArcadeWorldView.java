@@ -48,7 +48,8 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 	
 	@Override
 	protected void onDraw(Canvas canvas){
-		canvas.drawColor(Color.BLUE);
+		d.setBounds(0, 0, width, height);
+		d.draw(canvas);
 		canvas.drawLine(0, dashLinePos, width, dashLinePos, dashLinePaint);
 	}
 	

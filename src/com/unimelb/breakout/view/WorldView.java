@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
+import com.unimelb.breakout.R;
 import com.unimelb.breakout.activity.MainActivity;
 import com.unimelb.breakout.object.Ball;
 import com.unimelb.breakout.object.Block;
@@ -20,6 +21,7 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.drawable.Drawable;
 import android.support.v4.view.VelocityTrackerCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -38,6 +40,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	
 	protected SurfaceHolder surfaceHolder;
 	public Activity activity;
+	Drawable d;
 	
 	//Game Control flags
 	protected boolean isRunning = false;
@@ -96,6 +99,8 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	//Called when the surfaceView first created
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
+		d = activity.getResources().getDrawable(R.drawable.game_bg);
+
 		// TODO Auto-generated method stub
 		this.surfaceHolder = holder;
 		this.isRunning = true;
@@ -209,7 +214,9 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	
 	@Override
 	protected void onDraw(Canvas canvas){
-		canvas.drawColor(Color.BLUE);
+		//canvas.drawColor(Color.BLUE);
+		d.setBounds(0, 0, width, height);
+		d.draw(canvas);
 	}
 	
 	public void start(){

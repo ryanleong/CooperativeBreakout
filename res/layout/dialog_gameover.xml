@@ -17,6 +17,7 @@
         android:layout_gravity="center_horizontal"
         android:text="title"
         android:textColor="@color/white"
+        android:layout_margin="10dp"
         android:textSize="@dimen/large_text"
         android:textStyle="bold" />
     
@@ -29,12 +30,12 @@
         
         <TextView
 	        android:id="@+id/dialog_gameover_player_label"
-	        android:layout_width="40dp"
+	        android:layout_width="50dp"
 	        android:layout_height="wrap_content"
 	        android:layout_marginTop="10dp"
 	        android:text="@string/dialog_text_player"
 	        android:textColor="@color/white"
-	        android:textSize="@dimen/micro_text" />
+	        android:textSize="@dimen/small_text" />
 	    
         <TextView
             android:id="@+id/dialog_gameover_player"
@@ -46,18 +47,18 @@
             android:layout_alignBaseline="@id/dialog_gameover_player_label"
             android:text="player"
             android:textColor="@color/white"
-            android:textSize="@dimen/micro_text" />
+            android:textSize="@dimen/small_text" />
         
 	    <TextView
 	        android:id="@+id/dialog_gameover_score_label"
-	        android:layout_width="40dp"
+	        android:layout_width="50dp"
 	        android:layout_height="wrap_content"
 	        android:layout_marginBottom="10dp"
 	        android:layout_marginTop="10dp"
 	        android:layout_below="@id/dialog_gameover_player_label"
 	        android:text="@string/dialog_text_score"
 	        android:textColor="@color/white"
-	        android:textSize="@dimen/micro_text" />
+	        android:textSize="@dimen/small_text" />
 	    
         <TextView
             android:id="@+id/dialog_gameover_score"
@@ -68,18 +69,18 @@
             android:layout_alignBaseline="@id/dialog_gameover_score_label"
             android:text="score"
             android:textColor="@color/white"
-            android:textSize="@dimen/micro_text" />
+            android:textSize="@dimen/small_text" />
 
         
        	<TextView
 	        android:id="@+id/dialog_gameover_level_label"
-	        android:layout_width="40dp"
+	        android:layout_width="50dp"
 	        android:layout_height="wrap_content"
 	        android:layout_marginBottom="20dp"
 	        android:text="@string/dialog_text_level"
 	        android:layout_below="@id/dialog_gameover_score_label"
 	        android:textColor="@color/white"
-	        android:textSize="@dimen/micro_text" />
+	        android:textSize="@dimen/small_text" />
         	    
         <TextView
             android:id="@+id/dialog_gameover_level"
@@ -90,7 +91,7 @@
             android:layout_toRightOf="@id/dialog_gameover_level_label"
             android:text="level"
             android:textColor="@color/white"
-            android:textSize="@dimen/micro_text" />
+            android:textSize="@dimen/small_text" />
     </RelativeLayout>
 
     <RelativeLayout

@@ -19,6 +19,6 @@
 	"initialY" : 80,
 	
 	"ballInitialXSpeed" : 0,
-	"ballInitialYSpeed" : 2
+	"ballInitialYSpeed" : 1
 	
 }

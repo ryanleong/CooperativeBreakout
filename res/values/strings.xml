@@ -30,5 +30,7 @@
     <string name="title_activity_help">HelpActivity</string>
     <string name="help_title">HELP</string>
     <string name="help_game_description">blah .. blah</string>
+    <string name="help_challenge_description">blah .. blah</string>
+    <string name="help_arcade_description">blah .. blah</string>
 
 </resources>

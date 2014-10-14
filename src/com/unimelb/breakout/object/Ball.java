@@ -61,7 +61,7 @@ public class Ball {
 		this.MIN_Y = worldView.wallWidth+r;
 		this.MAX_Y = screenHeight - MIN_Y;
 		
-		d = worldView.getResources().getDrawable(R.drawable.ball_blue);
+		d = worldView.getResources().getDrawable(R.drawable.ball_red);
 
 		
 		this.dx = 0;
