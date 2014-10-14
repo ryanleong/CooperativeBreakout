@@ -1,5 +1,11 @@
 package com.unimelb.breakout.object;
 
+/**
+ * JSON Object
+ * 
+ * @author Siyuan Zhang
+ *
+ */
 public class Map {
 
 	private String name;
@@ -12,7 +18,25 @@ public class Map {
 	private int initialY;
 	private int paddleWidth;
 	private int paddleHeight;
+	private int ballInitialXSpeed;
+	private int ballInitialYSpeed;
 
+
+	public int getBallInitialXSpeed() {
+		return ballInitialXSpeed;
+	}
+
+	public void setBallInitalXSpeed(int ballInitalXSpeed) {
+		this.ballInitialXSpeed = ballInitalXSpeed;
+	}
+
+	public int getBallInitialYSpeed() {
+		return ballInitialYSpeed;
+	}
+
+	public void setBallInitialYSpeed(int ballInitialYSpeed) {
+		this.ballInitialYSpeed = ballInitialYSpeed;
+	}
 
 	public int getRow() {
 		return row;
@@ -93,27 +117,5 @@ public class Map {
 	public void setMap(int[][] map){
 		this.map = map;
 	}
-
-//	private final static int map_one[] = {1,1,1,1,1,1,1,1,
-//								   1,1,1,1,1,1,1,1,
-//								   1,1,1,1,1,1,1,1,
-//								   1,1,1,1,1,1,1,1,
-//								   1,1,1,1,1,1,1,1};
-//	
-//	private final static int map_two[] = {1,1,1,1,1,1,1,1,
-//			   					   1,1,1,1,1,1,1,1,
-//			   					   0,0,0,0,0,0,0,0,
-//			   					   1,1,1,1,1,1,1,1,
-//			   					   1,1,1,1,1,1,1,1};
-//	
-//	public static int[] getMap(int number){
-//		switch(number){
-//		case 1:
-//			return map_one;
-//		case 2:
-//			return map_two;
-//		}
-//		return map_one;
-//	}
 	
 }

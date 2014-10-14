@@ -2,6 +2,12 @@ package com.unimelb.breakout.preference;
 
 import android.content.SharedPreferences;
 
+/**
+ * Utility class of using preference
+ * 
+ * @author Siyuan Zhang
+ *
+ */
 public class AccountPreference {
     private static final String ACCOUNT_PREFERENCE = "AccountPreference";
 

@@ -1,5 +1,7 @@
 package com.unimelb.breakout.activity;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
@@ -17,17 +19,20 @@ import com.unimelb.breakout.webservice.DataManager;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+/**
+ * Player can choose a game level to play in this activity.
+ * 
+ * @author Siyuan
+ *
+ */
 public class MapSelectionActivity extends Activity{
 
 	@Override
@@ -37,12 +42,27 @@ public class MapSelectionActivity extends Activity{
 		
 		//Bundle bundle = this.getIntent().getExtras();
 
-		MapList mapList = LocalMapUtils.getMaps(this);
-		addGameButtons(mapList);
+		MapList mapList;
+		try {
+			mapList = LocalMapUtils.getMaps(this);
+			addGameButtons(mapList);
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Utils.showOkDialog(this, "File Not Found", "Cannot find the map list file");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Utils.showOkDialog(this, "File Exception", "Cannot open the map list file");
+		}
 	}
 	
 
-	
+	/**
+	 * Load all game levels
+	 * @param mapList
+	 */
 	public void addGameButtons(MapList mapList){
 		for(final MapMeta map: mapList.getMaps()){
 			
@@ -123,32 +143,11 @@ public class MapSelectionActivity extends Activity{
         
         dialog.show();
 	}
-
-//	public void addMapDownloadButtons(MapList mapList){
-//		for(final MapMeta map: mapList.getMaps()){
-//			
-//			final String name = map.getName();
-//			LinearLayout layout = (LinearLayout) this.findViewById(R.id.maps_collection);
-//            Button button = (Button) getLayoutInflater().inflate(R.layout.button_mapselection, layout, false);
-//
-//            button.setTag(name);
-//            button.setText(name);
-//            
-//            button.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                	if(LocalMapUtils.hasDownloaded(name, MapSelectionActivity.this)){
-//                		Utils.showOkDialog(MapSelectionActivity.this, "Downloaded", "The map you choose has already been downloaded.");
-//                	}else{
-//                    	downloadNewMap(map);
-//                	}
-//                }
-//            });          
-//            layout.addView(button);
-//		}	
-//	}
-//	
 	
+	/**
+	 * Download a new level from the server.
+	 * @param m
+	 */
 	public void downloadNewMap(MapMeta m){
 		final Dialog loadingDialog = Utils.showLoadingDialog(this, "Downloading the selected map..");
 		final ListenableFuture<Map> map = DataManager.downloadNewMap(m.getName());
@@ -156,10 +155,21 @@ public class MapSelectionActivity extends Activity{
             @Override
             public void onSuccess(Map m) {
             	Log.d("MAPLISTFUTURE", "Download succeeds");
-            	LocalMapUtils.saveDownloadedMap(m, MapSelectionActivity.this);
-        		Utils.showOkDialog(MapSelectionActivity.this, "Congratulations!", "The map you choose has already been downloaded.");
-                loadingDialog.dismiss();
-                recreate();
+            	try {
+					LocalMapUtils.saveDownloadedMap(m, MapSelectionActivity.this);
+	        		Utils.showOkDialog(MapSelectionActivity.this, "Congratulations!", "The map you choose has already been downloaded.");
+	                loadingDialog.dismiss();
+	                recreate();
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+	        		Utils.showOkDialog(MapSelectionActivity.this, "File Exception", "The downloaded map cannot be saved");
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+	        		Utils.showOkDialog(MapSelectionActivity.this, "IO Exception", "Unknown error when saving map.");
+					e.printStackTrace();
+				}
+
             }
 
             @Override

@@ -1,21 +1,21 @@
 package com.unimelb.breakout.activity;
 
 import com.unimelb.breakout.R;
-import com.unimelb.breakout.R.id;
-import com.unimelb.breakout.R.layout;
-import com.unimelb.breakout.R.menu;
-import com.unimelb.breakout.preference.AccountPreference;
 import com.unimelb.breakout.utils.Utils;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+/**
+ * Player can either play the challenge mode or the arcade mode.
+ * 
+ * @author Siyuan Zhang
+ *
+ */
 public class ModeSelectionActivity extends Activity {
 
 	@Override

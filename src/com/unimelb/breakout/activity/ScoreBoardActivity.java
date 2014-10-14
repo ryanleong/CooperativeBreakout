@@ -3,10 +3,6 @@ package com.unimelb.breakout.activity;
 import java.util.Locale;
 
 import com.unimelb.breakout.R;
-import com.unimelb.breakout.R.id;
-import com.unimelb.breakout.R.layout;
-import com.unimelb.breakout.R.menu;
-import com.unimelb.breakout.R.string;
 import com.unimelb.breakout.fragment.GlobalScoreBoardFragment;
 import com.unimelb.breakout.fragment.LocalScoreBoardFragment;
 
@@ -19,15 +15,13 @@ import android.app.FragmentTransaction;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.TextView;
 
+/**
+ * Player can view both local score history and global score rank in this activity.
+ * 
+ * @author Siyuan Zhang
+ *
+ */
 public class ScoreBoardActivity extends Activity implements ActionBar.TabListener{
 
 	/**
@@ -93,25 +87,6 @@ public class ScoreBoardActivity extends Activity implements ActionBar.TabListene
         }
 
 	}
-//
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		// Inflate the menu; this adds items to the action bar if it is present.
-//		getMenuInflater().inflate(R.menu.score_board, menu);
-//		return true;
-//	}
-//
-//	@Override
-//	public boolean onOptionsItemSelected(MenuItem item) {
-//		// Handle action bar item clicks here. The action bar will
-//		// automatically handle clicks on the Home/Up button, so long
-//		// as you specify a parent activity in AndroidManifest.xml.
-//		int id = item.getItemId();
-//		if (id == R.id.action_settings) {
-//			return true;
-//		}
-//		return super.onOptionsItemSelected(item);
-//	}
 
 	/**
 	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to

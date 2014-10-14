@@ -5,6 +5,12 @@ import com.unimelb.breakout.view.BreakoutGame;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 
+/**
+ * Preference Operations
+ * 
+ * @author Siyuan Zhang
+ *
+ */
 public class PreferenceUtils {
     public static SharedPreferences get(String preference) {
         return BreakoutGame.getInstance()

@@ -7,7 +7,6 @@ import com.unimelb.breakout.utils.Utils;
 
 import android.app.Fragment;
 import android.database.Cursor;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -78,14 +77,17 @@ public class LocalScoreBoardFragment extends Fragment {
         LinearLayout labels = (LinearLayout) view.findViewById(R.id.labels);
         TextView nodata = (TextView) view.findViewById(R.id.label_nodata);
           
-        Cursor cursor = dbHelper.fetchBestTenRecords();
+        /**
+         * Fetch records from the database and load them into the listview
+         */
+        Cursor cursor = dbHelper.fetchRecords();
         
         String[] columns = {DBHelper.LEVEL, DBHelper.SCORE, DBHelper.TIME};
         
         int[] fields = {R.id.item_level, R.id.item_score, R.id.item_time};
         
         
-       SimpleCursorAdapter adapter = new SimpleCursorAdapter(
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(
     		    getActivity(), 
     		    R.layout.scorelist_item, 
     		    cursor, 
@@ -93,7 +95,7 @@ public class LocalScoreBoardFragment extends Fragment {
     		    fields,
     		    0);
        
-       listView.setAdapter(adapter);
+        listView.setAdapter(adapter);
        
        if(cursor.getCount() == 0){
     	   labels.setVisibility(View.GONE);

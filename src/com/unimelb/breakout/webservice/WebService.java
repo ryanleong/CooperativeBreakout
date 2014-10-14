@@ -4,15 +4,9 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,7 +29,7 @@ import com.unimelb.breakout.utils.JsonUtils;
  */
 public class WebService {
 	
-	public static String SERVER_IP = "10.9.145.109";
+	public static String SERVER_IP = "192.168.0.3";
 	public static int SERVER_PORT = 6789;
 	
 	public final static int timeout = 500;

@@ -7,7 +7,8 @@
 			[1,0,0,1,1,0,0,1],
 			[1,0,0,0,0,0,0,1],
 			[1,0,0,0,0,0,0,1],
-			[1,1,1,1,1,1,1,1]],
+			[1,1,1,3,2,1,1,1]],
+			
 	"blockWidth" : 12.5,
 	"blockHeight" : 6,
 	
@@ -17,5 +18,9 @@
 	"paddleWidth": 30,
 	"paddleHeight": 4,
 	"initialX" : 50,
-	"initialY" : 80
+	"initialY" : 80,
+	
+	"ballInitialXSpeed" : 0,
+	"ballInitialYSpeed" : 2
+	
 }

@@ -10,6 +10,11 @@ import com.unimelb.breakout.R;
 import com.unimelb.breakout.utils.Point;
 import com.unimelb.breakout.view.WorldView;
 
+/**
+ * The blocks in the game
+ * @author Siyuan Zhang
+ *
+ */
 public class Block {
 	public float width;
 	public float height;
@@ -49,25 +54,18 @@ public class Block {
 		
 		int colors[] = {Color.RED, Color.MAGENTA, Color.YELLOW, Color.DKGRAY, Color.CYAN};
 		
-		d = worldView.getResources().getDrawable(R.drawable.brick);
+		switch (i){
+			case 1:
+				d = worldView.getResources().getDrawable(R.drawable.brick);
+				break;
+			case 2:
+				d = worldView.getResources().getDrawable(R.drawable.brick_blue);
+				
+			case 3:
+				d = worldView.getResources().getDrawable(R.drawable.brick_pink);
+		}
 		paint.setColor(colors[i%5]);
 	}
-
-//	public float getX() {
-//		return x;
-//	}
-//
-//	public void setX(float x) {
-//		this.x = x;
-//	}
-//
-//	public float getY() {
-//		return y;
-//	}
-//
-//	public void setY(float y) {
-//		this.y = y;
-//	}
 	
 	public void onDraw(Canvas canvas){
 				
@@ -75,6 +73,7 @@ public class Block {
 			
 			//canvas.drawRect(this.left_edge, this.top_edge, this.right_edge, this.bottom_edge, paint);
 			d.setBounds((int)(this.left_edge), (int)(this.top_edge), (int)(this.right_edge), (int)(this.bottom_edge));
+			if(canvas != null)
 			d.draw(canvas);
 		}
 	}
@@ -87,35 +86,18 @@ public class Block {
 		return false;
 	}
 	
-//	public void bounce(Ball ball){
-//	float WIDTH = 2*ball.r + this.width;
-//	float HEIGHT = 2*ball.r + this.height;
-//	
-//	float angle = HEIGHT/WIDTH;
-//	
-//	float x = ball.x - (this.getX() + this.width/2);
-//	float y = ball.y - (this.getY() + this.height/2);
-//
-//	if(x == 0){
-//		ball.yBounce();
-//	}else if(angle == Math.abs(y/x)){
-//		ball.xBounce(0);
-//		ball.yBounce();
-//	}else if(angle > Math.abs(y/x)){
-//		ball.xBounce(0);
-//	}else{
-//		ball.yBounce();
-//	}
-//	
-//		
-//}
-//	
-	
 	public void moveDown(){
 		this.y += this.height;
+		update();
+	}
+	
+	public void update(){
 		this.top_edge = y - height/2;
 		this.bottom_edge = y + height/2;
+		this.left_edge = x - width/2;
+		this.right_edge = x + width/2;
 	}
+	
 	public Point[] getBoxPoints(){
 		return new Point[]
 				{
@@ -139,5 +121,9 @@ public class Block {
 		}
 		
 		return out;
+	}
+	
+	public int getType(){
+		return i;
 	}
 }

@@ -1,5 +1,12 @@
 package com.unimelb.breakout.utils;
 
+/**
+ * Simple point object.
+ * Used in specific method
+ * 
+ * @author Siyuan Zhang
+ *
+ */
 public class Point {
 
 	public float x; 

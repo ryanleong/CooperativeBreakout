@@ -2,15 +2,16 @@ package com.unimelb.breakout.object;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 
 import com.unimelb.breakout.R;
-import com.unimelb.breakout.utils.Point;
-import com.unimelb.breakout.utils.Utils;
 import com.unimelb.breakout.view.WorldView;
 
+/**
+ * The movable paddle
+ * 
+ * @author Siyuan Zhang
+ *
+ */
 public class Paddle extends Block{
 	
 
@@ -57,20 +58,11 @@ public class Paddle extends Block{
 		updatePhysics();
 		
 		if(worldView.getOnScreen()){
-			
-			//updatePosition(x,y);
-			//canvas.drawRect(x-width/2, y-height/2, x+width/2, y+height/2, getPaint(Color.GREEN));
+
 			d.setBounds((int)(x-width/2), (int)(y-height/2), (int)(x+width/2), (int)(y+height/2));
 			d.draw(canvas);
 			
 		}
-	}
-	
-	private Paint getPaint(int color){
-		Paint paint = new Paint();
-		paint.setAntiAlias(true);
-		paint.setColor(color);
-		return paint;
 	}
 
 	public boolean isXCovered(float x){

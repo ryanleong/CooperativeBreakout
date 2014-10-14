@@ -1,9 +1,5 @@
 package com.unimelb.breakout.object;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.ListIterator;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -13,14 +9,16 @@ import android.util.Log;
 
 import com.unimelb.breakout.R;
 import com.unimelb.breakout.enums.GameState;
-import com.unimelb.breakout.utils.Point;
-import com.unimelb.breakout.utils.Utils;
 import com.unimelb.breakout.view.WorldView;
 
+/**
+ * The moving ball in the game
+ * @author Siyuan Zhang
+ *
+ */
 public class Ball {
 	
 	private WorldView worldView;
-	private Bitmap bitmap;
 	
 	//x coordinate
 	public volatile float x;
@@ -50,13 +48,11 @@ public class Ball {
 	
 	private int screenWidth;
 	private int screenHeight;
-	private Paint ballPaint;
 	Drawable d;
 	
 	public Ball(WorldView worldView, Bitmap bitmap){
 		
 		this.worldView = worldView;
-		this.bitmap = bitmap;
 		this.screenWidth = worldView.width;
 		this.screenHeight = worldView.height;
 		this.r = worldView.ball_r;
@@ -65,7 +61,6 @@ public class Ball {
 		this.MIN_Y = worldView.wallWidth+r;
 		this.MAX_Y = screenHeight - MIN_Y;
 		
-		this.ballPaint = getPaint(Color.RED);
 		d = worldView.getResources().getDrawable(R.drawable.ball_blue);
 
 		
@@ -124,6 +119,7 @@ public class Ball {
 		}
 	}
 	
+	//update the postion of the ball
 	public void update(float dt){
 		if (y >= screenHeight){
 			end();
@@ -135,16 +131,9 @@ public class Ball {
 	        handleWallCollision();
 	        
 		}
-//	        if (position.Y > screenHeight) {
-//	            state = State.Dead;
-//	        } else {
-//	            HandleCollisions();
-//	        }
-//	    } else if (!isActive && 
-//	           Keyboard.GetState().IsKeyDown(Keys.Space)) {
-//	        LaunchBall();
-//	    }
 	}
+	
+	//handle collision with the wall
 	public void handleWallCollision(){
 	      
 		if(x > MAX_X && dx > 0){
@@ -159,12 +148,6 @@ public class Ball {
 			y = MIN_Y;
 			this.yBounce();
 		}
-//		else if(y > MAX_Y && dy > 0){
-//			y = MAX_Y;
-//			this.yBounce();
-//			
-//		}
-		
 	}
 
 	private void updatePosition(float dt) {
@@ -176,18 +159,14 @@ public class Ball {
 		this.dy = dy + (da * dt) * (dy > 0 ? 1 : -1);
 	}
 	
-//	public void accelerate(float x, float y, float dx, float dy, float accel, float dt){
-//		this.x = x + (dt * dx) + (accel * dt * dt * 0.5f);
-//		this.y  = y + (dt * dy) + (accel * dt * dt * 0.5f);
-//		this.dx = dx + (accel * dt) * (dx > 0 ? 1 : -1);
-//		this.dy = dy + (accel * dt) * (dy > 0 ? 1 : -1);
-//		
-//	}
-	
 	public void yBounce(){
 		dy = -dy;
 	}
 
+	/**
+	 * Slow down the ball if it moves too fast
+	 * @param acceleration
+	 */
 	public void xBounce(float acceleration){
 		if(Math.abs(dx) > INITIAL_SPEED_X){
 			if(dx >= 0){
@@ -210,14 +189,6 @@ public class Ball {
 			d.draw(canvas);
 		}
 	}
-	
-	private Paint getPaint(int color){
-		Paint paint = new Paint();
-		paint.setAntiAlias(true);
-		paint.setColor(color);
-		return paint;
-	}
-
 
 	public void bounceBlock(Block block){
 		Log.d("BALL", "BOUNCE CALLED");
@@ -239,11 +210,6 @@ public class Ball {
 				this.yBounce();
 				Log.d("BALL SPEED", "X = 0, Y TURNED");
 			}
-	//		else if(angle == y/x ){
-	//			//hit the corner
-	//			this.xBounce(0);
-	//			this.yBounce();
-	//		}
 			else if(angle < y/x){
 				//hit top or bottom edge
 				this.yBounce();
@@ -256,11 +222,6 @@ public class Ball {
 	
 			}
 		}
-//		Point left_top = new Point(block.left_edge, block.top_edge);
-//		Point left_bot = new Point(block.left_edge, block.bottom_edge);
-//		Point right_top = new Point(block.right_edge, block.top_edge);
-//		Point right_bot = new Point(block.right_edge, block.bottom_edge);
-		
 	}
 	
 	public void bouncePaddle(Paddle paddle){
@@ -271,122 +232,5 @@ public class Ball {
 		
 		dx =  (2* (this.x - paddle.x)/ paddle.width) * (speed) + paddle.dx/100;
 		
-//		dy = -dy;
-//		dx = -dx + paddle.dx/100;
-		
 	}
-	
-//	public boolean handleCollision(Block block){
-//		Point intersect;
-//		boolean collide = false;;
-//		Point block_left_top = new Point(block.x - block.width/2, block.y - block.height/2);
-//		Point block_right_top = new Point(block.x + block.width/2, block.y - block.height/2);
-//		Point block_left_bot = new Point(block.x - block.width/2, block.y + block.height/2);
-//		Point block_right_bot = new Point(block.x + block.width/2, block.y + block.height/2);
-//		
-//		float last_x = this.last_x;
-//		float last_y = this.last_x;
-//		float x = this.x;
-//		float y = this.y;
-//		
-//		if(last_x < x){
-//			last_x -= r;
-//			x += r;
-//		}else{
-//			last_x += r;
-//			x -= r;
-//		}
-//		
-//		if(last_y < y){
-//			last_y -= r;
-//			y += r;
-//		}else{
-//			last_y += r;
-//			y -= r;
-//		}
-//		
-//		Point from = new Point(last_x, last_y);
-//		Point to = new Point(x, y);
-//		
-//		//collide left edge of the block
-//		intersect = Utils.intersect(from, to, block_left_top, block_left_bot);
-//		if(intersect != null){
-//			x = intersect.x - r;
-//			y = intersect.y;
-//			dx = -dx;
-//			collide=true;
-//		}
-//		
-//		//collide right edge of the block
-//		intersect = Utils.intersect(from, to, block_right_top, block_right_bot);
-//		if(intersect != null){
-//			x = intersect.x + r;
-//			y = intersect.y;
-//
-//			dx = -dx;
-//			collide=true;
-//
-//		}
-//		
-//		//collide top edge of the block
-//		intersect = Utils.intersect(from, to, block_left_top, block_right_top);
-//		if(intersect != null){
-//			x = intersect.x;
-//
-//			y = intersect.y - r;
-//			dy = -dy;
-//			collide=true;
-//
-//		}
-//		
-//		//collide bottom edge of the block
-//		intersect = Utils.intersect(from, to, block_left_bot, block_right_bot);
-//		if(intersect != null){
-//			x = intersect.x;
-//
-//			y = intersect.y + r;
-//			dy = -dy;
-//			collide=true;
-//
-//		}
-//		
-//		return collide;
-//		
-//	}
-//	
-//	public void handleBlockCollision(ArrayList<Block> blocks){
-//		
-//		Point from = new Point(x,y);
-//		update(1);
-//		Point to = new Point(x,y);
-//		
-//		ListIterator<Block> list = blocks.listIterator(blocks.size());
-//		//iterate each block
-//		ArrayList<Block> collideBlocks = new ArrayList<Block>();
-//		
-//		while(list.hasPrevious()){
-//			Block b = list.previous();
-//			//if collide then remove the block
-//			Point left_top = new Point(b.left_edge, b.top_edge);
-//			Point left_bot = new Point(b.left_edge, b.bottom_edge);
-//			Point right_top = new Point(b.right_edge, b.top_edge);
-//			Point right_bot = new Point(b.right_edge, b.bottom_edge);
-//			
-//			
-//			if()
-//			
-//			Point intersect = Utils.intersect(x, y, b1, b2)
-//			if(this.hasCollision(ball, b)){
-//			//if(ball.handleCollision(b)){
-//				list.remove();
-//				if(!ballReacted){
-//					ball.bounceBlock(b);
-//					ballReacted = true;
-//				}
-//				this.blockRemoved();
-//			}else{
-//				b.onDraw(canvas);
-//			}
-//		}	
-//	}
 }

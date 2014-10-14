@@ -1,5 +1,10 @@
 package com.unimelb.breakout.object;
 
+/**
+ * JSON Object
+ * @author Siyuan Zhang
+ *
+ */
 public class Rank {
 
 	private String name;

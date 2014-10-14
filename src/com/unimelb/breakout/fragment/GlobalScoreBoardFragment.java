@@ -7,15 +7,10 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonSyntaxException;
 import com.unimelb.breakout.R;
-import com.unimelb.breakout.activity.MapSelectionActivity;
 import com.unimelb.breakout.adapter.ScoreboardAdapter;
-import com.unimelb.breakout.object.Map;
-import com.unimelb.breakout.object.MapMeta;
 import com.unimelb.breakout.object.ScoreBoard;
-import com.unimelb.breakout.object.UploadResponse;
 import com.unimelb.breakout.preference.AccountPreference;
 import com.unimelb.breakout.utils.AsyncUtils;
-import com.unimelb.breakout.utils.LocalMapUtils;
 import com.unimelb.breakout.utils.Utils;
 import com.unimelb.breakout.view.BreakoutGame;
 import com.unimelb.breakout.webservice.DataManager;
@@ -30,9 +25,14 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+/**
+ * The class display global score ranks.
+ * 
+ * @author Siyuan Zhang
+ *
+ */
 public class GlobalScoreBoardFragment extends Fragment{
 	
 	ListView listView;
@@ -109,13 +109,12 @@ public class GlobalScoreBoardFragment extends Fragment{
         downloadGlobalScoreboard();        
     }
     
+    /**
+     * Download score ranks from the server.
+     */
     public void downloadGlobalScoreboard(){
 		final Dialog loadingDialog = Utils.showLoadingDialog(getActivity(), "Querying high scores..");
-		final ListenableFuture<ScoreBoard> scoreboard = DataManager.getScoreBoard();
-		
-		
-
-		
+		final ListenableFuture<ScoreBoard> scoreboard = DataManager.getScoreBoard();	
 		
         AsyncUtils.addCallback(scoreboard, new FutureCallback<ScoreBoard>() {
             @Override
@@ -160,6 +159,10 @@ public class GlobalScoreBoardFragment extends Fragment{
 		
 	}
     
+    /**
+     * Load the downloaded data into the listview.
+     * @param sb
+     */
     public void loadData(ScoreBoard sb){
     	if(sb.getScores()!=null && !sb.getScores().isEmpty()){
     		ScoreboardAdapter adapter = new ScoreboardAdapter(getActivity(), R.layout.scorelist_item, sb.getScores());

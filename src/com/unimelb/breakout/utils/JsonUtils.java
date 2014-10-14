@@ -1,7 +1,5 @@
 package com.unimelb.breakout.utils;
 
-import java.io.Reader;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 

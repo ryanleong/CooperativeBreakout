@@ -16,6 +16,9 @@
 	"paddleWidth": 30,
 	"paddleHeight": 4,
 	"initialX" : 50,
-	"initialY" : 80
+	"initialY" : 80,
+	
+	"ballInitialXSpeed" : 0,
+	"ballInitialYSpeed" : 2
 	
 }

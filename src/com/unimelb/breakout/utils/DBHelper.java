@@ -7,6 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+/**
+ * Define operations of local database
+ * @author Siyuan Zhang
+ *
+ */
 public class DBHelper extends SQLiteOpenHelper{
 
     //DATABASE NAME
@@ -65,7 +70,7 @@ public class DBHelper extends SQLiteOpenHelper{
      * @param level
      * @param score
      */
-    public void insertScoreRecord(int level, int score){
+    public void insertScoreRecord(String level, int score){
     	
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues cv=new ContentValues();
@@ -85,10 +90,10 @@ public class DBHelper extends SQLiteOpenHelper{
     }
     
     /**
-     * Fetch the best 10 score records from the database.
+     * Fetch records from the database.
      * @return
      */
-    public Cursor fetchBestTenRecords() {
+    public Cursor fetchRecords() {
         SQLiteDatabase db=this.getWritableDatabase();
 
     	Cursor mCursor = db.query(TABLENAME, new String[] {

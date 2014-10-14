@@ -1,5 +1,11 @@
 package com.unimelb.breakout.utils;
 
+/**
+ * Simple Vector Object
+ * Used in specific method
+ * @author Siyuan Zhang
+ *
+ */
 public class Vector {
 
 	public float x;

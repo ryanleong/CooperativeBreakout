@@ -1,12 +1,10 @@
 package com.unimelb.breakout.view;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ListIterator;
-import java.util.Random;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -22,8 +20,6 @@ import com.unimelb.breakout.object.Ball;
 import com.unimelb.breakout.object.Block;
 import com.unimelb.breakout.object.Paddle;
 import com.unimelb.breakout.utils.LocalMapUtils;
-import com.unimelb.breakout.utils.Utils;
-import com.unimelb.breakout.view.WorldView.onGameClearListener;
 
 /**
  * This class implements the game screen of arcade mode.
@@ -89,7 +85,7 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 											if(b.bottom_edge < dashLinePos){
 												//if collide then remove the block
 												if(!hasCollided && this.hasCollision(ball, b)){
-												//if(ball.handleCollision(b)){
+													hitEffect(b);
 													list.remove();
 													ball.bounceBlock(b);												
 													Log.d("LOOP", "one block removed");
@@ -99,13 +95,14 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 													Log.d("BALL SPEED", ball.dy+"");
 													Log.d("BALL POS", ball.y+"");
 													Log.d("LOOPED", i+"");
+												}else{
+													b.onDraw(canvas);
 												}
 											}else{
 												//if any blocks reach dash line, the game terminates immediately
 												gameover();
 												break;
 											}		
-											b.onDraw(canvas);
 											
 										}
 									}else{
@@ -153,23 +150,36 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 	
 	@Override
 	public void initialise(){
-		mMap = LocalMapUtils.getMap(((MainActivity) activity).getMap(), activity);
-		this.initial_x = ((float)mMap.getInitialX()/100)*width;
-		this.initial_y = ((float)mMap.getInitialY()/100)*height;
-		this.paddle_w = ((float)mMap.getPaddleWidth()/100)*width;
-		this.paddle_h = ((float)mMap.getPaddleHeight()/100)*height;
-		dashLinePaint = getDashLinePaint();
-		dashLinePos = initial_y - height/10;
-		this.blocks = this.generateBlocks(mMap, width, height);
-		this.collisionCount = 0;
-		this.paddle = new Paddle(this, null);
-		this.ball = new Ball(this, null);
-		start();
-	}
-	
-	
+		try {
+			mMap = LocalMapUtils.getMap(((MainActivity) activity).getMap(), activity);
+			this.initial_x = ((float)mMap.getInitialX()/100)*width;
+			this.initial_y = ((float)mMap.getInitialY()/100)*height;
+			this.paddle_w = ((float)mMap.getPaddleWidth()/100)*width;
+			this.paddle_h = ((float)mMap.getPaddleHeight()/100)*height;
+			this.initial_y = ((float)mMap.getInitialY()/100)*height;
+			this.initialBallXSpeed =  ((float)mMap.getBallInitialXSpeed()/100)*width;
+			this.initialBallYSpeed =  ((float)mMap.getBallInitialYSpeed()/100)*height;
+			dashLinePaint = getDashLinePaint();
+			dashLinePos = initial_y - height/10;
+			this.blocks = this.generateBlocks(mMap, width, height);
+			this.collisionCount = 0;
+			this.paddle = new Paddle(this, null);
+			this.ball = new Ball(this, null);
+			start();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			isRunning = false;
+			isPause = true;
+			((MainActivity)activity).showDialog("File Not Found","Cannot find the selected map.");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			((MainActivity)activity).showDialog("File Exception","Cannot open the selected map.");
+		}
 
-	
+	}
+		
 	public Paint getDashLinePaint(){
 		Paint paint = new Paint();
 		paint.setARGB(255, 255, 255, 255);
@@ -190,7 +200,7 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 		}
 		
 	    for(int i = 0; i < mMap.getColumn(); i++){	    
-	    		blocks.add(new Block(this, null, padding+blockWidth/2+i*blockWidth, padding+blockHeight/2, blockWidth, blockHeight, i));
+	    		blocks.add(new Block(this, null, padding+blockWidth/2+i*blockWidth, padding+blockHeight/2, blockWidth, blockHeight, 1));
 	    }
 	    
 	    this.collisionCount = 0;
@@ -240,6 +250,5 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 			gameOverListener.onGameOver();
 		}
 	}
-	
 }
 

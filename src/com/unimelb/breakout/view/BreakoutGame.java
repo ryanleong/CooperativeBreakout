@@ -2,6 +2,13 @@ package com.unimelb.breakout.view;
 
 import com.unimelb.breakout.object.ScoreBoard;
 
+/**
+ * This class extends the Application object.
+ * Variables in this class have the same lifecycle as the application.
+ * They are always available to use.
+ * @author Siyuan Zhang
+ *
+ */
 public class BreakoutGame extends android.app.Application{
     private static BreakoutGame instance;
     ScoreBoard scoreboard = null;

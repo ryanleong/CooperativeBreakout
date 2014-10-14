@@ -2,6 +2,12 @@ package com.unimelb.breakout.object;
 
 import java.util.ArrayList;
 
+/**
+ * JSON Object
+ * 
+ * @author Siyuan Zhang
+ *
+ */
 public class MapList {
 
 	private String name;

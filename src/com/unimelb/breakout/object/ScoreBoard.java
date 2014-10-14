@@ -2,6 +2,11 @@ package com.unimelb.breakout.object;
 
 import java.util.ArrayList;
 
+/**
+ * JSON Object
+ * @author Siyuan Zhang
+ *
+ */
 public class ScoreBoard {
 
 	private String name;

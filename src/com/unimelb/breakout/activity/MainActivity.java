@@ -1,10 +1,10 @@
 package com.unimelb.breakout.activity;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -25,39 +25,45 @@ import com.unimelb.breakout.view.WorldView;
 import com.unimelb.breakout.webservice.DataManager;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.pm.ActivityInfo;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.VelocityTracker;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * 
+ * The main activity that actually run the game.
+ *
+ * @author Siyuan Zhang
+ *
+ */
 public class MainActivity extends Activity implements WorldView.onBlockRemoveListener, 
 													  WorldView.onLifeLostListener,
 													  WorldView.onGameOverListener,
 													  WorldView.onGameClearListener,
 													  ArcadeWorldView.onDifficultyIncreaseListener{
+	
+	//The database helper
 	private DBHelper dbHelper;
+	
+	//the game canvas
 	private WorldView worldView;
 	
+	//current game level
 	private String currentMap;
 	
+	//current obtained socre
 	private int score = 0;
-	private int level = 0;
-	private int next = 2000;
 	
+	//TextViews
 	private TextView mLives;
 	private TextView mScore;
 	private TextView mLevel;
@@ -65,9 +71,7 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 	private TextView mRank;
 	private TextView mNext;
 
-
-	//private int lives = 3;
-	
+	//variables
 	private boolean isArcade = false;
 	private ScoreBoard  scoreboard = null;
 	private int rank = 10;
@@ -78,10 +82,12 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		//get data from its parent activity
 		Bundle bundle = this.getIntent().getExtras();
 		if(bundle != null){
 			int screenOrientation = bundle.getInt("screenOrientation");
 			
+			//fix screen orientation
 			switch(screenOrientation){
 			
 				case ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE:
@@ -92,22 +98,22 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 					break;
 			}	
 			
+			//get the game level
 			currentMap = bundle.getString("map");
 			
-
-			
 		}else{
+			//if no data passed over
 			Utils.showOkDialog(this, "Error", "Unknown error occurs.");
 		}
 		
 		if(currentMap.equals("1-0")){
-			//arcade mode
+			//Arcade mode
 			setContentView(R.layout.activity_main_arcade);
 			worldView = (ArcadeWorldView) this.findViewById(R.id.main_worldView);
 			isArcade = true;
 
 		}else{
-			//challenge mode
+			//Challenge mode
 			setContentView(R.layout.activity_main);
 			
 			worldView = (WorldView) this.findViewById(R.id.main_worldView);
@@ -132,8 +138,7 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		
 		worldView.setActivity(this);
 
-		//myScore.setText(score);
-		
+		//Check the name of the player
 		if(AccountPreference.hasPlayerName()){
 			String name = AccountPreference.getPlayerName();
 			this.name = name;
@@ -155,12 +160,18 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		
 	}
 	
+	/**
+	 * Called when back button pressed
+	 */
 	@Override
 	public void onBackPressed () {
 		super.onBackPressed();
 		worldView.stopRunning();
 	}
 
+	/**
+	 * Called when a block is removed
+	 */
 	@Override
 	public void onBlockRemoved(final int s) {
 		// TODO Auto-generated method stub
@@ -174,6 +185,10 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		});
 	}
 	
+	/**
+	 * Add score for removing a block
+	 * @param s
+	 */
 	public void addScore(int s){
 		this.score+=s;
 		this.mScore.setText(Integer.toString(score));
@@ -182,6 +197,9 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		}
 	}
 	
+	/**
+	 * Called when the player lost one life
+	 */
 	@Override
 	public void onLifeLost(final int lives) {
 		// TODO Auto-generated method stub
@@ -197,6 +215,11 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		});
 	}
 	
+	/**
+	 * Change the value on information board and 
+	 * push a message to notify the player his remaining lives
+	 * @param lives
+	 */
 	public void lostLife(int lives){
 		
 		this.mLives.setText(Integer.toString(lives));
@@ -209,6 +232,9 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		}
 	}
 
+	/**
+	 * Called when game over
+	 */
 	@Override
 	public void onGameOver() {
 		// TODO Auto-generated method stub
@@ -226,6 +252,9 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 	}
 
 	
+	/**
+	 * Pop up a dialog enabling player to restart or go back to home screen
+	 */
 	public void gameover(){
 
 		final Dialog dialog = new Dialog(this, R.style.dialog_no_decoration);
@@ -250,6 +279,7 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 	        rankView.setText(mLevel.getText().toString());
 	        
 	        if(!mRank.getText().equals("-")){
+	        	//If rank value is retrieved, then allow user to upload score
 		        detailView.setText("You have a high score! Would you like to upload to the server to get ranked?");
 		        
 		        upload.setOnClickListener(new OnClickListener() {
@@ -321,6 +351,11 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
         dialog.show();
 	}
 	
+	/**
+	 * Upload score to the server.
+	 * @param name
+	 * @param score
+	 */
 	public void uploadScore(String name, int score){
 		final Dialog loadingDialog = Utils.showLoadingDialog(this, "Uploading Score..");
 
@@ -334,6 +369,9 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 
             	if(sb.isSuccess()){
                     saveUploadedScoreinDB();
+                    Utils.showOkDialog(MainActivity.this, 
+                			"Upload Success", 
+                			"Congratulations! You have successfully uploaded your high score!");
             	}else{
             		Utils.showOkDialog(MainActivity.this, 
                 			"Upload Failed", 
@@ -368,6 +406,9 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
         });
 	}
 	
+	/**
+	 * Get scores from the server
+	 */
 	public void getScoreboard(){
 		ScoreBoard sb = BreakoutGame.getInstance().getScoreboard();
 		
@@ -417,6 +458,9 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		
 	}
 	
+	/**
+	 * Display the current rank of the player
+	 */
 	public void displayRank(){
 		if(scoreboard != null){
 			ArrayList<Rank> ranks = scoreboard.getScores();
@@ -436,15 +480,17 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		}
 	}
 	
-	public void setScoreBoard(ScoreBoard sb){
-		
-	}
-	
+	/**
+	 * Save the score in local database
+	 */
 	public void saveScoreInDB(){
 		
-        dbHelper.insertScoreRecord(this.level, this.score);
+        dbHelper.insertScoreRecord(this.currentMap, this.score);
 	}
 	
+	/**
+	 * Record uploaded score
+	 */
 	public void saveUploadedScoreinDB(){
         if(AccountPreference.hasScore()){
         	int s =  AccountPreference.getScore();
@@ -458,11 +504,17 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 	}
 	
 	
-	
+	/**
+	 * Get the current game level
+	 * @return
+	 */
 	public String getMap(){
 		return currentMap;
 	}
 
+	/**
+	 * Called when the current level clear
+	 */
 	@Override
 	public void onGameClear() {
 		// TODO Auto-generated method stub
@@ -479,6 +531,10 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 	}
 	
 
+	/**
+	 * Called when arcade mode clear. 
+	 * If it is called, reset the arcade mode and increase the difficulty
+	 */
 	@Override
 	public void onDifficultyIncrease() {
 		// TODO Auto-generated method stub
@@ -502,6 +558,9 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		});
 	}
 	
+	/**
+	 * Pop up a dialog notifying the player the level clear
+	 */
 	public void gameclear(){
 		
 		final Dialog dialog = new Dialog(this, R.style.dialog_no_decoration);
@@ -535,39 +594,61 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
             @Override
             public void onClick(View v) {
             	dialog.dismiss();
-            	MapMeta nextLevel = LocalMapUtils.getNextLevel(currentMap, MainActivity.this);
+            	MapMeta nextLevel;
+				try {
+					nextLevel = LocalMapUtils.getNextLevel(currentMap, MainActivity.this);
+					
+					if(nextLevel != null){
+	            		Log.d("MAINACTIBITY", nextLevel.getType().equals("remote")+"");
+	            		Log.d("MAINACTIBITY", LocalMapUtils.hasDownloaded(nextLevel.getName(), MainActivity.this)+"");
+
+	            		if(nextLevel.getType().equals("remote") && !LocalMapUtils.hasDownloaded(nextLevel.getName(), MainActivity.this)){
+	            				Dialog ok = Utils.showOkDialog(MainActivity.this, "New Map", "You need to download the next level from the server.");
+	            				ok.setOnDismissListener(new OnDismissListener(){
+
+									@Override
+									public void onDismiss(DialogInterface dialog) {
+										// TODO Auto-generated method stub
+										finish();
+									}
+	            					
+	            				});
+	            				//finish();
+	            		}else{
+	            		
+			            	Log.d("MAINACTIVITY", "Next Level is " + nextLevel);
+			            	currentMap = nextLevel.getName();
+			        		mLevel.setText(currentMap);
+							worldView.restart();
+							Log.d("MAINACTIVITY", "Next Level game starts");
+						}
+					}else{
+						Utils.showOkDialog(MainActivity.this, "Congratulations!", "You have clear all stages!");
+					}         	
+					
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					showDialog("File Not Found","Cannot find the next level map.");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					showDialog("File Exception","Cannot open the next level map.");
+				}
             	
-            	if(nextLevel != null){
-            		Log.d("MAINACTIBITY", nextLevel.getType().equals("remote")+"");
-            		Log.d("MAINACTIBITY", LocalMapUtils.hasDownloaded(nextLevel.getName(), MainActivity.this)+"");
-
-            		if(nextLevel.getType().equals("remote") && !LocalMapUtils.hasDownloaded(nextLevel.getName(), MainActivity.this)){
-            				Dialog ok = Utils.showOkDialog(MainActivity.this, "New Map", "You need to download the next level from the server.");
-            				ok.setOnDismissListener(new OnDismissListener(){
-
-								@Override
-								public void onDismiss(DialogInterface dialog) {
-									// TODO Auto-generated method stub
-									finish();
-								}
-            					
-            				});
-            				//finish();
-            		}else{
-            		
-		            	Log.d("MAINACTIVITY", "Next Level is " + nextLevel);
-		            	currentMap = nextLevel.getName();
-		        		mLevel.setText(currentMap);
-						worldView.restart();
-						Log.d("MAINACTIVITY", "Next Level game starts");
-					}
-				}else{
-					Utils.showOkDialog(MainActivity.this, "Congratulations!", "You have clear all stages!");
-				}         	
             }
         });
         
         dialog.show();
+	}
+	
+	public void showDialog(final String title, final String detail){
+		runOnUiThread(new Runnable() {
+		     @Override
+		     public void run() {
+		    	 Utils.showOkDialog(MainActivity.this, title, detail);
+		    }
+		});
 	}
 
 }

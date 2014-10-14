@@ -13,7 +13,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
 /**
- * 
+ * Run the request in separate thread.
  * @author Siyuan Zhang
  *
  */
