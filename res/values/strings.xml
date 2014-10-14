@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Breakout</string>
+    <string name="app_name">BREAKOUT</string>
     <string name="hello_world">Hello world!</string>
     <string name="logo_description">LOGO</string>
     <string name="action_settings">Settings</string>
@@ -29,8 +29,8 @@
     <string name="dialog_text_player">Player:</string>
     <string name="title_activity_help">HelpActivity</string>
     <string name="help_title">HELP</string>
-    <string name="help_game_description">blah .. blah</string>
-    <string name="help_challenge_description">blah .. blah</string>
-    <string name="help_arcade_description">blah .. blah</string>
+    <string name="help_game_description">This is a very classic game, hit bricks to get point.\nTry to get as many point as you can !</string>
+    <string name="help_challenge_description">In Challenge mode, there are different maps to play.\nGet more maps from the server !</string>
+    <string name="help_arcade_description">In Arcade mode, there are infinite number of bricks. The bricks will move down frequently until they reach the line below.</string>
 
 </resources>
