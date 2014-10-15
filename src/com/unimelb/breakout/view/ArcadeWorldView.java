@@ -156,6 +156,7 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 			this.initial_x = ((float)mMap.getInitialX()/100)*width;
 			this.initial_y = ((float)mMap.getInitialY()/100)*height;
 			this.paddle_w = ((float)mMap.getPaddleWidth()/100)*width;
+			this.paddle_max_w = paddle_w*2;
 			this.paddle_h = ((float)mMap.getPaddleHeight()/100)*height;
 			this.initial_y = ((float)mMap.getInitialY()/100)*height;
 			this.initialBallXSpeed =  ((float)mMap.getBallInitialXSpeed()/100)*width;
@@ -201,7 +202,12 @@ public class ArcadeWorldView extends WorldView implements SurfaceHolder.Callback
 		}
 		
 	    for(int i = 0; i < mMap.getColumn(); i++){	    
-	    		blocks.add(new Block(this, null, padding+blockWidth/2+i*blockWidth, padding+blockHeight/2, blockWidth, blockHeight, 1));
+	    		double random = Math.random();
+	    		if (random > 0.9){
+		    		blocks.add(new Block(this, null, padding+blockWidth/2+i*blockWidth, padding+blockHeight/2, blockWidth, blockHeight, 2));
+	    		}else{
+	    			blocks.add(new Block(this, null, padding+blockWidth/2+i*blockWidth, padding+blockHeight/2, blockWidth, blockHeight, 1));
+	    		}
 	    }
 	    
 	    this.collisionCount = 0;

@@ -45,7 +45,7 @@ public class DBHelper extends SQLiteOpenHelper{
                     + TABLENAME +" ("
                     + ID +" INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + LEVEL + " TEXT, "
-                    + SCORE + " TEXT, "
+                    + SCORE + " INTEGER, "
                     + TIME + " DATETIME DEFAULT CURRENT_TIMESTAMP)" );
         
         Log.i("DATABASE", "Score table created.");
@@ -98,11 +98,12 @@ public class DBHelper extends SQLiteOpenHelper{
 
     	Cursor mCursor = db.query(TABLENAME, new String[] {
     	    ID, LEVEL, SCORE, TIME}, 
-    	    null, null, null, null, SCORE);
+    	    null, null, null, null, SCORE+" DESC");
     	 
     	if (mCursor != null) {
     		mCursor.moveToFirst();
     	}
+    	
     	return mCursor;
     }
     

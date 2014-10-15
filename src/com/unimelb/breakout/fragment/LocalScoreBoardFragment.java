@@ -22,7 +22,9 @@ public class LocalScoreBoardFragment extends Fragment {
 	//the database helper that can be used to make database query.
 	DBHelper dbHelper;
 
-	
+	ListView listView;
+    LinearLayout labels;
+    TextView nodata;
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -73,10 +75,23 @@ public class LocalScoreBoardFragment extends Fragment {
     	//this.deleteDatabase(DBHelper.dbName);
     	dbHelper = new DBHelper(getActivity());  
 
-        ListView listView = (ListView) view.findViewById(R.id.scorelist);  
-        LinearLayout labels = (LinearLayout) view.findViewById(R.id.labels);
-        TextView nodata = (TextView) view.findViewById(R.id.label_nodata);
+        listView = (ListView) view.findViewById(R.id.scorelist);  
+        labels = (LinearLayout) view.findViewById(R.id.labels);
+        nodata = (TextView) view.findViewById(R.id.label_nodata);
           
+
+       
+       return view;
+               
+    }
+    
+    @Override
+    public void onResume(){
+    	super.onResume();
+        queryScore();        
+    }
+    
+    public void queryScore(){
         /**
          * Fetch records from the database and load them into the listview
          */
@@ -101,9 +116,6 @@ public class LocalScoreBoardFragment extends Fragment {
     	   labels.setVisibility(View.GONE);
     	   nodata.setVisibility(View.VISIBLE);
        }
-       
-       return view;
-               
     }
     
     

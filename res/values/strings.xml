@@ -29,8 +29,14 @@
     <string name="dialog_text_player">Player:</string>
     <string name="title_activity_help">HelpActivity</string>
     <string name="help_title">HELP</string>
-    <string name="help_game_description">This is a very classic game, hit bricks to get point.\nTry to get as many point as you can !</string>
-    <string name="help_challenge_description">In Challenge mode, there are different maps to play.\nGet more maps from the server !</string>
-    <string name="help_arcade_description">In Arcade mode, there are infinite number of bricks. The bricks will move down frequently until they reach the line below.</string>
-
+    <string name="help_game_description">In the classic Breakout game, you will control a paddle to prevent a ball from going pass it. Ball is bounced off paddle to destroy blocks. Player is scored based on time taken to destroy all blocks.</string>
+    <string name="help_challenge_description">In Challenge mode, you can challenge 3 interesting local levels. If these are too easy for you, then You can choose to download 3 more difficult levels from the server. </string>
+    <string name="help_arcade_description">There is no end in Arcade Mode. You will challenge yourself against inifite blocks for getting higher score. When you get a high score, you can upload it to the server to get ranked.</string>
+    <string name="help_ball_description">The ball will bounce back when it collides with other objects and it will remove the block when collision occurs. You can lauch the ball by simply touching the paddle. </string>
+    <string name="help_paddle_description">You can control the paddle to prevent the ball from dropping by moving it with your finger.</string>
+    <string name="help_block_green_description">You will get 5 scores as reward when it was removed from the screen.</string>
+    <string name="help_block_blue_description">You will get 5 scores and one extra life as reward when it was removed from the screen.</string>
+    <string name="help_block_orange_description">You will get 5 scores and a larger paddle as reward when it was removed from the screen.</string>
+    
+    
 </resources>

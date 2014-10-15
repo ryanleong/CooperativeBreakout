@@ -53,6 +53,8 @@ public class ScoreboardAdapter extends ArrayAdapter<Rank>{
             holder.name = (TextView)row.findViewById(R.id.item_level);
             holder.score = (TextView)row.findViewById(R.id.item_score);
             holder.rank = (TextView)row.findViewById(R.id.item_time);
+            holder.rank.setTextSize(22);
+
             
             row.setTag(holder);
         }

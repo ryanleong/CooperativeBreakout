@@ -158,7 +158,7 @@ public class MapSelectionActivity extends Activity{
             	try {
 					LocalMapUtils.saveDownloadedMap(m, MapSelectionActivity.this);
 	        		Utils.showOkDialog(MapSelectionActivity.this, "Congratulations!", "The map you choose has already been downloaded.");
-	                loadingDialog.dismiss();
+	                
 	                recreate();
 				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
@@ -169,7 +169,7 @@ public class MapSelectionActivity extends Activity{
 	        		Utils.showOkDialog(MapSelectionActivity.this, "IO Exception", "Unknown error when saving map.");
 					e.printStackTrace();
 				}
-
+        		loadingDialog.dismiss();
             }
 
             @Override
@@ -195,7 +195,6 @@ public class MapSelectionActivity extends Activity{
                     Log.e("MAPLISTFUTURE", "Throwable during getmaplist:" + throwable);
             	}
             	loadingDialog.dismiss();
-
             }
         });
 	}

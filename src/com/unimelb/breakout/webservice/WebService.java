@@ -29,10 +29,11 @@ import com.unimelb.breakout.utils.JsonUtils;
  */
 public class WebService {
 	
+	//TODO: manually set these values.
 	public static String SERVER_IP = "192.168.0.3";
 	public static int SERVER_PORT = 6789;
 	
-	public final static int timeout = 500;
+	public final static int timeout = 3000;
 
     
 	/**

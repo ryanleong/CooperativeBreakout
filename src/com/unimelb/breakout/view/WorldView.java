@@ -56,6 +56,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	public ArrayList<Block> blocks = null;
 	public Paddle paddle;
 	public float paddle_w = 300;
+	public float paddle_max_w = 600;
 	public float paddle_h = 50;
 	float blockWidth;
 	float blockHeight;
@@ -208,10 +209,6 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 		
 	}
 	
-	public void chanllengeModeLogic(){
-		
-	}
-	
 	@Override
 	protected void onDraw(Canvas canvas){
 		//canvas.drawColor(Color.BLUE);
@@ -227,6 +224,10 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 		
 		paddle.x = this.initial_x;
 		paddle.y = this.initial_y;
+		paddle.width = paddle_w;
+		paddle.height = paddle_h;
+		paddle.update();
+		
 	}
 	
 	public void initialise(){
@@ -239,6 +240,7 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 			this.initialBallXSpeed =  ((float)mMap.getBallInitialXSpeed()/100)*width;
 			this.initialBallYSpeed =  ((float)mMap.getBallInitialYSpeed()/100)*height;
 			this.paddle_w = ((float)mMap.getPaddleWidth()/100)*width;
+			this.paddle_max_w = paddle_w*2;
 			this.paddle_h = ((float)mMap.getPaddleHeight()/100)*height;
 			this.blocks = this.generateBlocks(mMap, width, height);
 			this.paddle = new Paddle(this, null);
@@ -313,9 +315,11 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 		blockWidth = (screenWidth-2*padding)*((float)mMap.getBlockWidth()/100);
 		blockHeight = (screenHeight-2*padding)*((float)mMap.getBlockHeight()/100);
 		
-		for(int i = 0; i < mMap.getColumn(); i++){
-			for(int j = 0; j < mMap.getRow(); j++){
-			
+		for(int i = 0; i < mMap.getRow(); i++){
+			//y-coordinate
+			for(int j = 0; j < mMap.getColumn(); j++){
+			//x coordinate
+				
 				if(map[i][j]!=0){
 					//blocks.add(new Block(this, null, padding+(i%8)*blockWidth, padding+(i%5)*blockHeight, blockWidth/2, blockHeight/2, i));
 	
@@ -463,8 +467,10 @@ public class WorldView extends SurfaceView implements SurfaceHolder.Callback, Ru
 	}
 	
 	public void enlargePaddle(){
-		this.paddle.width += width/10;
-		this.paddle.update();
+		if(this.paddle.width < this.paddle_max_w){
+			this.paddle.width += width/10;
+			this.paddle.update();
+		}
 	}
 	
 	/**

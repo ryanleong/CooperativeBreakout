@@ -7,11 +7,13 @@ import com.unimelb.breakout.utils.Utils;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 
 /**
  * The welcome screen. Player can choose to start the game, view scores, or quit the game.
@@ -104,9 +106,46 @@ public class WelcomeActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				//quit the game
-				finish();
+				showQuitDialog();  
 			}
     		
     	});
     }
+    
+	@Override
+	public void onBackPressed() {       
+		showQuitDialog();        
+	}
+	
+	public void showQuitDialog(){
+		final Dialog dialog = new Dialog(this, R.style.dialog_no_decoration);
+        dialog.setContentView(R.layout.dialog_quit);
+
+        TextView title = (TextView) dialog.findViewById(R.id.dialog_quit_title);
+        TextView detail = (TextView) dialog.findViewById(R.id.dialog_quit_detail);
+        
+        Button quit = (Button) dialog.findViewById(R.id.dialog_quit_button);
+        Button cancel = (Button) dialog.findViewById(R.id.dialog_cancel_button);
+
+        title.setText("Quit");
+
+        detail.setText("Do you want to quit the game?");
+
+        quit.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+
+        cancel.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            	dialog.dismiss();                
+            }
+        });
+        
+        dialog.show();
+	}
 }

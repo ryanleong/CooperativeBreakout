@@ -8,7 +8,7 @@
   android:paddingLeft="20dp"
   android:paddingRight="20dp"
   android:gravity="center_vertical"
-  android:layout_height="40dp">  
+  android:layout_height="50dp">  
   <!-- level -->  
 	<TextView  
 	   android:layout_width="fill_parent"  
@@ -37,7 +37,7 @@
 	   android:id="@+id/item_time"  
 	   android:gravity="center"
 	   android:text="time"	   
-	   android:textSize="@dimen/large_text"
+	   android:textSize="@dimen/small_text"
 	   android:layout_weight="1"
   />  
 </LinearLayout> 

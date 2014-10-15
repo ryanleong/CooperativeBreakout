@@ -287,7 +287,6 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		            public void onClick(View v) {
 		                dialog.dismiss();
 		                saveScoreInDB();
-		                finish();
 		                uploadScore(name, score);
 		            }
 		        });
@@ -362,21 +361,35 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		final ListenableFuture<UploadResponse> response = DataManager.uploadNewScore(name, score);
 		AsyncUtils.addCallback(response, new FutureCallback<UploadResponse>() {
             @Override
-            public void onSuccess(UploadResponse sb) {
+            public void onSuccess(UploadResponse ur) {
             	Log.d("MAPLISTFUTURE", "Download succeeds");
             	
                 loadingDialog.dismiss();
 
-            	if(sb.isSuccess()){
+                Dialog dialog;
+                Log.d("Upload", ur.getScore()+" "+ur.getRank());
+            	if(ur.isSuccess()){
                     saveUploadedScoreinDB();
-                    Utils.showOkDialog(MainActivity.this, 
+                    dialog = Utils.showOkDialog(MainActivity.this, 
                 			"Upload Success", 
                 			"Congratulations! You have successfully uploaded your high score!");
+
             	}else{
-            		Utils.showOkDialog(MainActivity.this, 
+
+            		dialog = Utils.showOkDialog(MainActivity.this, 
                 			"Upload Failed", 
                 			"Server error. Please try it late.");
             	}
+            	
+                dialog.setOnDismissListener(new OnDismissListener(){
+
+					@Override
+					public void onDismiss(DialogInterface arg0) {
+						// TODO Auto-generated method stub
+		                finish();
+					}
+                	
+                });
 
             }
 
@@ -413,7 +426,6 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 		ScoreBoard sb = BreakoutGame.getInstance().getScoreboard();
 		
 		if(sb == null){
-			//final Dialog loadingDialog = Utils.showLoadingDialog(this, "Querying high scores..");
 			final ListenableFuture<ScoreBoard> listenablescoreboard = DataManager.getScoreBoard();
 			
 	        AsyncUtils.addCallback(listenablescoreboard, new FutureCallback<ScoreBoard>() {
@@ -429,24 +441,23 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 
 	            @Override
 	            public void onFailure(Throwable throwable) {
-//	            	if(loadingDialog != null)
-//	            		loadingDialog.dismiss();
+
 	            	if(throwable instanceof SocketException){
 	            		Utils.showOkDialog(MainActivity.this, 
 	                			"Socket Exception", 
-	                			"Fail to connect the server. Your score will not be uploaded to the server.");
+	                			"Fail to connect the server. You cannot upload your score to the server. Please try it later.");
 	            	}else if(throwable instanceof SocketTimeoutException){
 	            		Utils.showOkDialog(MainActivity.this, 
 	                			"Socket Timeout", 
-	                			"Connection is timeout. Your score will not be uploaded to the server.");
+	                			"Fail to connect the server. You cannot upload your score to the server. Please try it later.");
 	            	}else if(throwable instanceof JsonSyntaxException){
 	            		Utils.showOkDialog(MainActivity.this, 
 	                			"Query Failed", 
-	                			"Unexpected response from the server. Your score will not be uploaded to the server. ");
+	                			"Unexpected response from the server. You cannot upload your score to the server. Please try it later.");
 	            	}else{
 	            		Utils.showOkDialog(MainActivity.this, 
 	                			"Query Failed", 
-	                			"Due to unknown error, your score will not be uploaded to the server.");
+	                			"Due to unknown error, you cannot upload your score to the server. Please try it later.");
 	            	}
 	                Log.e("MAPLISTFUTURE", "Throwable during getscore:" + throwable);
 	            }
