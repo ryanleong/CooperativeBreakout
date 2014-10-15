@@ -1,6 +1,6 @@
 {
 	"name": "Map List",
-	"maps": [
+	"maps": [ 
 		{
 			"name": "2-1",
 			"type": "remote",
@@ -15,7 +15,7 @@
 		{
 			"name": "2-3",
 			"type": "remote",
-			"next": "clear"
+			"next": "null"
 		}
 	]
 }

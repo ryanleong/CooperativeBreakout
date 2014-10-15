@@ -157,8 +157,7 @@ public class MapSelectionActivity extends Activity{
             	Log.d("MAPLISTFUTURE", "Download succeeds");
             	try {
 					LocalMapUtils.saveDownloadedMap(m, MapSelectionActivity.this);
-	        		Utils.showOkDialog(MapSelectionActivity.this, "Congratulations!", "The map you choose has already been downloaded.");
-	                
+	        		Utils.showOkDialog(MapSelectionActivity.this, "Congratulations!", "The map you choose has been downloaded.");          
 	                recreate();
 				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block

@@ -634,7 +634,15 @@ public class MainActivity extends Activity implements WorldView.onBlockRemoveLis
 							Log.d("MAINACTIVITY", "Next Level game starts");
 						}
 					}else{
-						Utils.showOkDialog(MainActivity.this, "Congratulations!", "You have clear all stages!");
+						Dialog dialog = Utils.showOkDialog(MainActivity.this, "Congratulations!", "You have clear all stages!");
+						dialog.setOnDismissListener(new OnDismissListener(){
+
+							@Override
+							public void onDismiss(DialogInterface dialog) {
+								// TODO Auto-generated method stub
+								finish();
+							}					
+						});
 					}         	
 					
 				} catch (FileNotFoundException e) {
